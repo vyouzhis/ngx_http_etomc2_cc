@@ -1,0 +1,29 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+BASE_PRINT_INC	etomc2.h	19;"	d
+BASE_PRINT_VERSION	etomc2.h	21;"	d
+ETOMC2_CC_ENABLE	etomc2.h	36;"	d
+WEB_BASE_PRINT	etomc2.h	38;"	d
+etomc2_enable	etomc2.h	/^    ngx_flag_t etomc2_enable;$/;"	m	struct:__anon2
+log	etomc2.h	/^    ngx_log_t *log;$/;"	m	struct:__anon1
+ngx_http_bp_loc_conf_t	etomc2.h	/^} ngx_http_bp_loc_conf_t; \/* ----------  end of struct$/;"	t	typeref:struct:__anon2
+ngx_http_bp_main_conf_t	etomc2.h	/^} ngx_http_bp_main_conf_t;$/;"	t	typeref:struct:__anon1
+ngx_http_etomc2_access_handler	ngx_http_etomc2_skeleton.c	/^static ngx_int_t ngx_http_etomc2_access_handler(ngx_http_request_t *r) {$/;"	f	file:
+ngx_http_etomc2_body_filter	ngx_http_etomc2_skeleton.c	/^ngx_int_t ngx_http_etomc2_body_filter(ngx_http_request_t *r, ngx_chain_t *in) {$/;"	f
+ngx_http_etomc2_cc_commands	ngx_http_etomc2_skeleton.c	/^static ngx_command_t ngx_http_etomc2_cc_commands[] = {$/;"	v	file:
+ngx_http_etomc2_cc_module	ngx_http_etomc2_skeleton.c	/^ngx_module_t ngx_http_etomc2_cc_module = {$/;"	v
+ngx_http_etomc2_cc_module_ctx	ngx_http_etomc2_skeleton.c	/^static ngx_http_module_t ngx_http_etomc2_cc_module_ctx = {$/;"	v	file:
+ngx_http_etomc2_create_loc_conf	ngx_http_etomc2_skeleton.c	/^static void *ngx_http_etomc2_create_loc_conf(ngx_conf_t *cf) {$/;"	f	file:
+ngx_http_etomc2_create_main_conf	ngx_http_etomc2_skeleton.c	/^void *ngx_http_etomc2_create_main_conf(ngx_conf_t *cf) {$/;"	f
+ngx_http_etomc2_dummy_init	ngx_http_etomc2_skeleton.c	/^static ngx_int_t ngx_http_etomc2_dummy_init(ngx_conf_t *cf) {$/;"	f	file:
+ngx_http_etomc2_header_filter	ngx_http_etomc2_skeleton.c	/^ngx_int_t ngx_http_etomc2_header_filter(ngx_http_request_t *r) {$/;"	f
+ngx_http_etomc2_merge_loc_conf	ngx_http_etomc2_skeleton.c	/^static char *ngx_http_etomc2_merge_loc_conf(ngx_conf_t *cf, void *parent,$/;"	f	file:
+ngx_http_etomc2_web	ngx_http_etomc2_skeleton.c	/^static char *ngx_http_etomc2_web(ngx_conf_t *cf, ngx_command_t *cmd, void *conf) {$/;"	f	file:
+ngx_http_etomc2_web_handler	ngx_http_etomc2_skeleton.c	/^static ngx_int_t ngx_http_etomc2_web_handler(ngx_http_request_t *r) {$/;"	f	file:
+ngx_http_next_body_filter	etomc2.h	/^static ngx_http_output_body_filter_pt ngx_http_next_body_filter;$/;"	v
+ngx_http_next_header_filter	etomc2.h	/^static ngx_http_output_header_filter_pt ngx_http_next_header_filter;$/;"	v
+ngx_web_etomc2	etomc2.h	/^static u_char ngx_web_etomc2[] = WEB_BASE_PRINT;$/;"	v
