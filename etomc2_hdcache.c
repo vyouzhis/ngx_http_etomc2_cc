@@ -181,7 +181,7 @@ ngx_str_t hdcache_hash_to_dir_def(ngx_http_request_t *r, const char *path,
  */
 ngx_str_t hdcache_hash_to_dir(ngx_http_request_t *r,
         uint32_t num, CC_THIN_COOKIE_MARK mark) {
-    ngx_http_dummy_loc_conf_t *lccf;
+    ngx_http_etomc2_loc_conf_t *lccf;
     lccf = ngx_http_get_module_loc_conf(r, ngx_http_etomc2_cc_module);
     if (!lccf) {
        ngx_str_t n;

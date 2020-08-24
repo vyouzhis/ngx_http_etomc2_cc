@@ -39,6 +39,7 @@
 
 #ifndef __ETOMC2_DEBUG
 #define __ETOMC2_DEBUG
+
 #define NX_DEBUG(FEATURE, DEF, LOG, ST, ...)                   \
     do {                                                       \
         if (FEATURE) ngx_log_debug(DEF, LOG, ST, __VA_ARGS__); \
@@ -101,7 +102,7 @@
 #define  CUSTOM_IP_PATH "custom_ip_path"
 
 #define PEM_SECURE_TUNNEL "secure-tunnel"
-#define NAXSI_PEM_PK_FILE "SimbaCCPemPrivateKey"
+#define etomc2_PEM_PK_FILE "SimbaCCPemPrivateKey"
 
 #define RSA_PEM_AUTH "rsa_pem_auth"
 
@@ -125,13 +126,18 @@ static const float Fibonacci[4][2] = {
 
 static const size_t Intensity[] = {5 * 60,       13 * 60,         60 * 60,
                                    24 * 60 * 60, 7 * 24 * 60 * 60};
+
 /**
  *  define  global var
  */
 /* The hello world string. */
-static u_char ngx_web_etomc2[] = WEB_ETOMC2;
-static ngx_http_output_header_filter_pt ngx_http_next_header_filter;
-static ngx_http_output_body_filter_pt ngx_http_next_body_filter;
+
+extern ngx_module_t ngx_http_etomc2_cc_module;
+
+
+// static int pem_auth;
+ngx_log_t *cc_black_ip_file;
+
 
 /**
  *
@@ -466,20 +472,20 @@ typedef struct {
 ngx_table_elt_t *search_headers_in(ngx_http_request_t *r, u_char *name,
                                    size_t len);
 
-Ngx_naxsi_shm_tree_data *tree_create(ngx_slab_pool_t *shpool);
-size_t tree_insert(ngx_http_request_t *r, Ngx_naxsi_shm_tree_data **tree,
+Ngx_etomc2_shm_tree_data *tree_create(ngx_slab_pool_t *shpool);
+size_t tree_insert(ngx_http_request_t *r, Ngx_etomc2_shm_tree_data **tree,
                    uint32_t hashkey, void *data, ngx_slab_pool_t *shpool);
-void tree_print(ngx_http_request_t *r, Ngx_naxsi_shm_tree_data *tree);
-Ngx_naxsi_shm_tree_data *tree_search(Ngx_naxsi_shm_tree_data **tree,
+void tree_print(ngx_http_request_t *r, Ngx_etomc2_shm_tree_data *tree);
+Ngx_etomc2_shm_tree_data *tree_search(Ngx_etomc2_shm_tree_data **tree,
                                      uint32_t hashkey);
 
-Ngx_naxsi_aiwaf_list *list_create(ngx_slab_pool_t *shpool);
+Ngx_etomc2_aiwaf_list *list_create(ngx_slab_pool_t *shpool);
 void list_insert(ngx_http_request_t *r, ngx_slab_pool_t *shpool,
-                 Ngx_naxsi_aiwaf_list **list_root, uint32_t hash_rule);
+                 Ngx_etomc2_aiwaf_list **list_root, uint32_t hash_rule);
 int timeIndex();
 int timeSecond();
 int findstring(const char *rest, const char *dest);
-void visit_print(ngx_http_request_t *r, Ngx_naxsi_shm_tree_data *tree);
+void visit_print(ngx_http_request_t *r, Ngx_etomc2_shm_tree_data *tree);
 
 // ---- cc function----
 
@@ -502,7 +508,7 @@ void setcookie(ngx_http_request_t *r, ngx_str_t cookie);
 ngx_int_t cc_cookie_mark(ngx_http_request_t *r);
 int behavior_uuid_cookie(ngx_http_request_t *r);
 
-Ngx_naxsi_cc_domain *domain_uri_create(ngx_slab_pool_t *shpool);
+Ngx_etomc2_cc_domain *domain_uri_create(ngx_slab_pool_t *shpool);
 ngx_int_t domain_uri(ngx_http_request_t *r);
 void domain_uri_add(ngx_http_request_t *r);
 void domain_uri_show(ngx_http_request_t *r);
@@ -526,10 +532,10 @@ ngx_str_t *ngx_cc_rbtree_hash_key(ngx_http_request_t *r);
 int ArrayMax(size_t array[]);
 
 void ngx_cc_gt(ngx_http_request_t *r);
-Ngx_naxsi_shm_gt * ngx_cc_gt_init ( ngx_slab_pool_t *shpool);
+Ngx_etomc2_shm_gt * ngx_cc_gt_init ( ngx_slab_pool_t *shpool);
 int ngx_cc_gt_check(ngx_http_request_t *r,uint32_t hash_uri);
 int gt_index(SHM_GT_LEVEL gt);
-void ngx_cc_gt_search(ngx_http_request_t *r, Ngx_naxsi_shm_gt **gt_node_ptr);
+void ngx_cc_gt_search(ngx_http_request_t *r, Ngx_etomc2_shm_gt **gt_node_ptr);
 void black_ip_log(ngx_http_request_t *r);
 ngx_str_t client_forward_ip(ngx_http_request_t *r);
 // ---- cc function----
@@ -575,5 +581,18 @@ void lreq_queue_show(ngx_http_request_t *r);
 int lreq_operate_uri(ngx_http_request_t *r);
 // ------ limit request   ------
 
+/**
+ * util
+ */
+uint32_t to_hash(const char *key, size_t length);
+int timeIndex();
+Ngx_etomc2_shm_tree_data *tree_create(ngx_slab_pool_t *shpool);
+size_t tree_insert(ngx_http_request_t *r, Ngx_etomc2_shm_tree_data **tree,
+                   uint32_t hashkey, void *data, ngx_slab_pool_t *shpool);
+Ngx_etomc2_shm_tree_data *tree_search(Ngx_etomc2_shm_tree_data **tree,                                                                                                       
+          uint32_t hashkey);
+void visit_print(ngx_http_request_t *r, Ngx_etomc2_shm_tree_data *tree);
+ngx_table_elt_t *search_headers_in(ngx_http_request_t *r, u_char *name,
+                                   size_t len);
 #endif   /* ----- #ifndef ETOMC2_INC  ----- */
 

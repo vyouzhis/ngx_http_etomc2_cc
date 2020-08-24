@@ -31,7 +31,7 @@
 void rsa_encrypt(ngx_http_request_t *r, const ngx_str_t from) {
     /** ngx_file_t rsa_pem_pk_file; */
     FILE *file;
-    ngx_http_dummy_loc_conf_t *cf;
+    ngx_http_etomc2_loc_conf_t *cf;
     RSA *rsa = NULL;
     char *en = NULL;
     /** int len = 0; */

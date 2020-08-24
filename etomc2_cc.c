@@ -39,7 +39,7 @@ ngx_str_t get_uri(ngx_http_request_t *r) {
  * =====================================================================================
  */
 ngx_int_t cc_thin_enter(ngx_http_request_t *r) {
-    ngx_http_dummy_loc_conf_t *lccf;
+    ngx_http_etomc2_loc_conf_t *lccf;
     ngx_table_elt_t *pem;
 
     ngx_shm_zone_t *shm_zone_cc_ub;
@@ -53,8 +53,6 @@ ngx_int_t cc_thin_enter(ngx_http_request_t *r) {
     int timestamp = -1, uuid;
 
     /** ngx_cc_gt(r); */
-
-
 
     now = ngx_time();
     lccf = ngx_http_get_module_loc_conf(r, ngx_http_etomc2_cc_module);
@@ -332,7 +330,7 @@ void domain_uri_add(ngx_http_request_t *r) {
     int istype = -1;
     int len, i;
     int time_index, pre_index;
-    ngx_http_dummy_loc_conf_t *lccf;
+    ngx_http_etomc2_loc_conf_t *lccf;
     ngx_shm_zone_t *shm_zone, *shm_zone_cc_thin;
     ngx_slab_pool_t *shpool;
 
@@ -529,7 +527,7 @@ void domain_uri_add(ngx_http_request_t *r) {
  * =====================================================================================
  */
 void domain_uri_show(ngx_http_request_t *r) {
-    ngx_http_dummy_loc_conf_t *lccf;
+    ngx_http_etomc2_loc_conf_t *lccf;
     ngx_shm_zone_t *shm_zone;
     /** ngx_slab_pool_t *shpool; */
     /**    ngx_etomc2_shm_t *ptr; */
@@ -837,7 +835,7 @@ int cc_thin_user_behavior_red(ngx_http_request_t *r,
     ngx_str_t file_path, path;
     ngx_str_t key;
     Ngx_etomc2_shm_gt *cc_gt_ptr;
-    ngx_http_dummy_loc_conf_t *lccf;
+    ngx_http_etomc2_loc_conf_t *lccf;
     /***
      *
      * MARK_READY_NEXT_TIME  or  check url is  app loop url
@@ -1222,7 +1220,7 @@ int cc_thin_user_behavior_add(ngx_http_request_t *r, ngx_slab_pool_t *shpool,
  *  Description:
  * =====================================================================================
  */
-void cc_thin_ub_queue(ngx_http_request_t *r, ngx_http_dummy_loc_conf_t *lccf,
+void cc_thin_ub_queue(ngx_http_request_t *r, ngx_http_etomc2_loc_conf_t *lccf,
         Ngx_etomc2_cc_user_behavior *cc_ub_ptr, ngx_str_t *key,
         int memory_free) {
     ngx_shm_zone_t *shm_zone_ub_queue;
@@ -1282,7 +1280,7 @@ void cc_thin_ub_queue(ngx_http_request_t *r, ngx_http_dummy_loc_conf_t *lccf,
 void cc_thin_user_behavior_lookup(ngx_http_request_t *r, ngx_str_t *key) {
     ngx_shm_zone_t *shm_zone_cc_ub;
 
-    ngx_http_dummy_loc_conf_t *lccf;
+    ngx_http_etomc2_loc_conf_t *lccf;
     Ngx_etomc2_cc_user_behavior *cc_ub_ptr;
 
     uint32_t hash, hash_uri, hash_type;
@@ -1549,7 +1547,7 @@ void ngx_cc_rbtree_loop(ngx_http_request_t *r, ngx_rbtree_node_t *node,
  * =====================================================================================
  */
 void ngx_cc_rbtree_showall(ngx_http_request_t *r) {
-    ngx_http_dummy_loc_conf_t *lccf;
+    ngx_http_etomc2_loc_conf_t *lccf;
     Ngx_etomc2_cc_user_behavior *cc_ub_ptr;
     ngx_rbtree_node_t *node, *sentinel;
     Ngx_etomc2_cc_user_behavior *lrn;
@@ -1603,7 +1601,7 @@ void ngx_cc_rbtree_showall(ngx_http_request_t *r) {
  * =====================================================================================
  */
 ngx_str_t *ngx_cc_rbtree_hash_key(ngx_http_request_t *r) {
-    /** ngx_http_dummy_loc_conf_t *lccf; */
+    /** ngx_http_etomc2_loc_conf_t *lccf; */
 
     ngx_str_t *key;
     const char *fmt = "%.*s,%.*s,%.*s,%s";

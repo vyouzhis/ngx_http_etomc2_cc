@@ -4,26 +4,557 @@
 !_TAG_PROGRAM_NAME	Exuberant Ctags	//
 !_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
 !_TAG_PROGRAM_VERSION	5.8	//
-BASE_PRINT_INC	etomc2.h	19;"	d
-BASE_PRINT_VERSION	etomc2.h	21;"	d
-ETOMC2_CC_ENABLE	etomc2.h	36;"	d
-WEB_BASE_PRINT	etomc2.h	38;"	d
-etomc2_enable	etomc2.h	/^    ngx_flag_t etomc2_enable;$/;"	m	struct:__anon2
-log	etomc2.h	/^    ngx_log_t *log;$/;"	m	struct:__anon1
-ngx_http_bp_loc_conf_t	etomc2.h	/^} ngx_http_bp_loc_conf_t; \/* ----------  end of struct$/;"	t	typeref:struct:__anon2
-ngx_http_bp_main_conf_t	etomc2.h	/^} ngx_http_bp_main_conf_t;$/;"	t	typeref:struct:__anon1
-ngx_http_etomc2_access_handler	ngx_http_etomc2_skeleton.c	/^static ngx_int_t ngx_http_etomc2_access_handler(ngx_http_request_t *r) {$/;"	f	file:
-ngx_http_etomc2_body_filter	ngx_http_etomc2_skeleton.c	/^ngx_int_t ngx_http_etomc2_body_filter(ngx_http_request_t *r, ngx_chain_t *in) {$/;"	f
-ngx_http_etomc2_cc_commands	ngx_http_etomc2_skeleton.c	/^static ngx_command_t ngx_http_etomc2_cc_commands[] = {$/;"	v	file:
-ngx_http_etomc2_cc_module	ngx_http_etomc2_skeleton.c	/^ngx_module_t ngx_http_etomc2_cc_module = {$/;"	v
-ngx_http_etomc2_cc_module_ctx	ngx_http_etomc2_skeleton.c	/^static ngx_http_module_t ngx_http_etomc2_cc_module_ctx = {$/;"	v	file:
-ngx_http_etomc2_create_loc_conf	ngx_http_etomc2_skeleton.c	/^static void *ngx_http_etomc2_create_loc_conf(ngx_conf_t *cf) {$/;"	f	file:
-ngx_http_etomc2_create_main_conf	ngx_http_etomc2_skeleton.c	/^void *ngx_http_etomc2_create_main_conf(ngx_conf_t *cf) {$/;"	f
-ngx_http_etomc2_dummy_init	ngx_http_etomc2_skeleton.c	/^static ngx_int_t ngx_http_etomc2_dummy_init(ngx_conf_t *cf) {$/;"	f	file:
-ngx_http_etomc2_header_filter	ngx_http_etomc2_skeleton.c	/^ngx_int_t ngx_http_etomc2_header_filter(ngx_http_request_t *r) {$/;"	f
-ngx_http_etomc2_merge_loc_conf	ngx_http_etomc2_skeleton.c	/^static char *ngx_http_etomc2_merge_loc_conf(ngx_conf_t *cf, void *parent,$/;"	f	file:
-ngx_http_etomc2_web	ngx_http_etomc2_skeleton.c	/^static char *ngx_http_etomc2_web(ngx_conf_t *cf, ngx_command_t *cmd, void *conf) {$/;"	f	file:
-ngx_http_etomc2_web_handler	ngx_http_etomc2_skeleton.c	/^static ngx_int_t ngx_http_etomc2_web_handler(ngx_http_request_t *r) {$/;"	f	file:
+ATTR_NAME	ext/libinjection/libinjection_html5.h	/^    , ATTR_NAME$/;"	e	enum:html5_type
+ATTR_VALUE	ext/libinjection/libinjection_html5.h	/^    , ATTR_VALUE$/;"	e	enum:html5_type
+ArrayMax	etomc2_cc.c	/^int ArrayMax(size_t array[]) {$/;"	f
+BAD_BEHAVIOR	etomc2.h	90;"	d
+BB_BOT	etomc2.h	/^    BB_BOT$/;"	e	enum:BROWSER_BOT
+BB_BROWSER	etomc2.h	/^    BB_BROWSER,$/;"	e	enum:BROWSER_BOT
+BB_DEFAULT	etomc2.h	/^    BB_DEFAULT = 0,$/;"	e	enum:BROWSER_BOT
+BEHAVIOR_URI_SMALL	etomc2.h	89;"	d
+BLACKATTR	ext/libinjection/libinjection_xss.c	/^static stringtype_t BLACKATTR[] = {$/;"	v	file:
+BLACKTAG	ext/libinjection/libinjection_xss.c	/^static const char* BLACKTAG[] = {$/;"	v	file:
+BROWSER_BOT	etomc2.h	/^enum BROWSER_BOT {$/;"	g
+BROWSER_BOT	etomc2.h	/^typedef enum BROWSER_BOT BROWSER_BOT;$/;"	t	typeref:enum:BROWSER_BOT
+BrowserOrBot	etomc2.h	/^    BROWSER_BOT BrowserOrBot;  \/\/ Browser  bot (or app)  set uuid cookie  check$/;"	m	struct:ngx_etomc2_cc_user_behavior
+CC_BLACK_IP_FILE	etomc2.h	98;"	d
+CC_GT_LEVEL	etomc2.h	114;"	d
+CC_GT_URI_MAX	etomc2.h	71;"	d
+CC_ITEMIZE	etomc2.h	112;"	d
+CC_NGX_CTRL	etomc2.h	117;"	d
+CC_RETURN_STATUS	etomc2.h	115;"	d
+CC_SHM_SIZE	etomc2.h	97;"	d
+CC_THIN_COOKIE_MARK	etomc2.h	/^enum CC_THIN_COOKIE_MARK {$/;"	g
+CC_THIN_COOKIE_MARK	etomc2.h	/^typedef enum CC_THIN_COOKIE_MARK CC_THIN_COOKIE_MARK;$/;"	t	typeref:enum:CC_THIN_COOKIE_MARK
+CHAR_BANG	ext/libinjection/libinjection_html5.c	16;"	d	file:
+CHAR_DASH	ext/libinjection/libinjection_html5.c	20;"	d	file:
+CHAR_DOUBLE	ext/libinjection/libinjection_html5.c	17;"	d	file:
+CHAR_DOUBLE	ext/libinjection/libinjection_sqli.c	35;"	d	file:
+CHAR_EOF	ext/libinjection/libinjection_html5.c	14;"	d	file:
+CHAR_EQUALS	ext/libinjection/libinjection_html5.c	23;"	d	file:
+CHAR_GT	ext/libinjection/libinjection_html5.c	24;"	d	file:
+CHAR_LT	ext/libinjection/libinjection_html5.c	22;"	d	file:
+CHAR_NULL	ext/libinjection/libinjection_html5.c	15;"	d	file:
+CHAR_NULL	ext/libinjection/libinjection_sqli.c	33;"	d	file:
+CHAR_PERCENT	ext/libinjection/libinjection_html5.c	18;"	d	file:
+CHAR_QUESTION	ext/libinjection/libinjection_html5.c	25;"	d	file:
+CHAR_RIGHTB	ext/libinjection/libinjection_html5.c	26;"	d	file:
+CHAR_SINGLE	ext/libinjection/libinjection_html5.c	19;"	d	file:
+CHAR_SINGLE	ext/libinjection/libinjection_sqli.c	34;"	d	file:
+CHAR_SLASH	ext/libinjection/libinjection_html5.c	21;"	d	file:
+CHAR_TICK	ext/libinjection/libinjection_html5.c	27;"	d	file:
+CHAR_TICK	ext/libinjection/libinjection_sqli.c	36;"	d	file:
+CONTENT_SIZE	etomc2.h	88;"	d
+COOKIE_GREEN_NAME	etomc2.h	120;"	d
+COOKIE_UUID_NAME	etomc2.h	121;"	d
+CUSTOM_IP_PATH	etomc2.h	101;"	d
+DATA_STATE	ext/libinjection/libinjection_html5.h	/^  DATA_STATE$/;"	e	enum:html5_flags
+DATA_TEXT	ext/libinjection/libinjection_html5.h	/^    DATA_TEXT$/;"	e	enum:html5_type
+DOCTYPE	ext/libinjection/libinjection_html5.h	/^    , DOCTYPE$/;"	e	enum:html5_type
+ETOMC2_CC_ENABLE	etomc2.h	63;"	d
+ETOMC2_INC	etomc2.h	19;"	d
+ETOMC2_VERSION	etomc2.h	21;"	d
+FALSE	ext/libinjection/libinjection_sqli.c	30;"	d	file:
+FALSE	ext/libinjection/reader.c	14;"	d	file:
+FLAG_NONE	ext/libinjection/libinjection_sqli.h	/^    FLAG_NONE            = 0$/;"	e	enum:sqli_flags
+FLAG_QUOTE_DOUBLE	ext/libinjection/libinjection_sqli.h	/^    , FLAG_QUOTE_DOUBLE  = 4   \/* 1 << 2 *\/$/;"	e	enum:sqli_flags
+FLAG_QUOTE_NONE	ext/libinjection/libinjection_sqli.h	/^    , FLAG_QUOTE_NONE    = 1   \/* 1 << 0 *\/$/;"	e	enum:sqli_flags
+FLAG_QUOTE_SINGLE	ext/libinjection/libinjection_sqli.h	/^    , FLAG_QUOTE_SINGLE  = 2   \/* 1 << 1 *\/$/;"	e	enum:sqli_flags
+FLAG_SQL_ANSI	ext/libinjection/libinjection_sqli.h	/^    , FLAG_SQL_ANSI      = 8   \/* 1 << 3 *\/$/;"	e	enum:sqli_flags
+FLAG_SQL_MYSQL	ext/libinjection/libinjection_sqli.h	/^    , FLAG_SQL_MYSQL     = 16  \/* 1 << 4 *\/$/;"	e	enum:sqli_flags
+FOLD_DEBUG	ext/libinjection/libinjection_sqli.c	44;"	d	file:
+Fibonacci	etomc2.h	/^static const float Fibonacci[4][2] = {$/;"	v
+GET_ARRAY_LEN	etomc2.h	56;"	d
+GTL_1	etomc2.h	/^    GTL_1 = 1,$/;"	e	enum:SHM_GT_LEVEL
+GTL_2	etomc2.h	/^    GTL_2 = 5,$/;"	e	enum:SHM_GT_LEVEL
+GTL_3	etomc2.h	/^    GTL_3 = 13,$/;"	e	enum:SHM_GT_LEVEL
+GTL_4	etomc2.h	/^    GTL_4 = 55,$/;"	e	enum:SHM_GT_LEVEL
+GTL_5	etomc2.h	/^    GTL_5 = 233,$/;"	e	enum:SHM_GT_LEVEL
+HASH_COOKIE_KEY	etomc2.h	91;"	d
+HDCACHE_PATH	etomc2.h	100;"	d
+ILL_RETURN_STATUS	etomc2.h	108;"	d
+ISDIGIT	ext/libinjection/libinjection_sqli.c	39;"	d	file:
+Intensity	etomc2.h	/^static const size_t Intensity[] = {5 * 60,       13 * 60,         60 * 60,$/;"	v
+LIBINJECTION_BEGIN_DECLS	ext/libinjection/libinjection.h	14;"	d
+LIBINJECTION_BEGIN_DECLS	ext/libinjection/libinjection.h	17;"	d
+LIBINJECTION_END_DECLS	ext/libinjection/libinjection.h	15;"	d
+LIBINJECTION_END_DECLS	ext/libinjection/libinjection.h	18;"	d
+LIBINJECTION_HTML5	ext/libinjection/libinjection_html5.h	2;"	d
+LIBINJECTION_SQLI_MAX_TOKENS	ext/libinjection/libinjection_sqli.c	24;"	d	file:
+LIBINJECTION_SQLI_TOKEN_SIZE	ext/libinjection/libinjection_sqli.c	23;"	d	file:
+LIBINJECTION_VERSION	ext/libinjection/libinjection_sqli.c	21;"	d	file:
+LIBINJECTION_XSS	ext/libinjection/libinjection_xss.h	2;"	d
+LM	ext/mt19937/mt19937-64.c	64;"	d	file:
+LOOKUP_FINGERPRINT	ext/libinjection/libinjection_sqli.h	/^    , LOOKUP_FINGERPRINT = 4$/;"	e	enum:lookup_type
+LOOKUP_OPERATOR	ext/libinjection/libinjection_sqli.h	/^    , LOOKUP_OPERATOR    = 3$/;"	e	enum:lookup_type
+LOOKUP_TYPE	ext/libinjection/libinjection_sqli.h	/^    , LOOKUP_TYPE        = 2$/;"	e	enum:lookup_type
+LOOKUP_WORD	ext/libinjection/libinjection_sqli.h	/^    LOOKUP_WORD        = 1$/;"	e	enum:lookup_type
+LREQ_HEADER_TIME	etomc2.h	82;"	d
+LREQ_QUEUE_MAX	etomc2.h	83;"	d
+LTIME_SECOND	etomc2.h	78;"	d
+MARK_READY_NEXT_TIME	etomc2.h	94;"	d
+MARK_READY_NEXT_TIME_INVALID	etomc2.h	95;"	d
+MATRIX_A	ext/mt19937/mt19937-64.c	62;"	d	file:
+MM	ext/mt19937/mt19937-64.c	61;"	d	file:
+MODE_SQLI	ext/libinjection/reader.c	/^    MODE_SQLI,$/;"	e	enum:__anon3	file:
+MODE_XSS	ext/libinjection/reader.c	/^    MODE_XSS$/;"	e	enum:__anon3	file:
+M_GREEN	etomc2.h	/^    M_GREEN,       \/\/ green is  trust  client$/;"	e	enum:CC_THIN_COOKIE_MARK
+M_READY	etomc2.h	/^    M_READY,       \/\/ checking  client $/;"	e	enum:CC_THIN_COOKIE_MARK
+M_RED	etomc2.h	/^    M_RED          \/\/ block  client$/;"	e	enum:CC_THIN_COOKIE_MARK
+M_SMALL	etomc2.h	/^    M_SMALL,        \/\/  only  one  uri$/;"	e	enum:CC_THIN_COOKIE_MARK
+M_YELLOW	etomc2.h	/^    M_YELLOW = 0,  \/\/ init  new  client$/;"	e	enum:CC_THIN_COOKIE_MARK
+NN	ext/mt19937/mt19937-64.c	60;"	d	file:
+NX_DEBUG	etomc2.h	42;"	d
+NX_LOG_DEBUG	etomc2.h	50;"	d
+Ngx_etomc2_aiwaf_list	etomc2.h	/^typedef struct ngx_etomc2_aiwaf_list Ngx_etomc2_aiwaf_list;$/;"	t	typeref:struct:ngx_etomc2_aiwaf_list
+Ngx_etomc2_cc_domain	etomc2.h	/^typedef struct ngx_etomc2_cc_domain Ngx_etomc2_cc_domain;$/;"	t	typeref:struct:ngx_etomc2_cc_domain
+Ngx_etomc2_cc_uri	etomc2.h	/^typedef struct ngx_etomc2_cc_uri Ngx_etomc2_cc_uri;$/;"	t	typeref:struct:ngx_etomc2_cc_uri
+Ngx_etomc2_cc_user_behavior	etomc2.h	/^typedef struct ngx_etomc2_cc_user_behavior Ngx_etomc2_cc_user_behavior;$/;"	t	typeref:struct:ngx_etomc2_cc_user_behavior
+Ngx_etomc2_lreq_queue	etomc2.h	/^typedef struct ngx_etomc2_lreq_queue Ngx_etomc2_lreq_queue;$/;"	t	typeref:struct:ngx_etomc2_lreq_queue
+Ngx_etomc2_lreq_uri	etomc2.h	/^typedef struct ngx_etomc2_lreq_uri Ngx_etomc2_lreq_uri;$/;"	t	typeref:struct:ngx_etomc2_lreq_uri
+Ngx_etomc2_shm_gt	etomc2.h	/^typedef struct ngx_etomc2_shm_gt Ngx_etomc2_shm_gt;$/;"	t	typeref:struct:ngx_etomc2_shm_gt
+Ngx_etomc2_shm_tree_data	etomc2.h	/^typedef struct ngx_etomc2_shm_tree_data Ngx_etomc2_shm_tree_data;$/;"	t	typeref:struct:ngx_etomc2_shm_tree_data
+Ngx_etomc2_ub_queue	etomc2.h	/^typedef struct ngx_etomc2_ub_queue Ngx_etomc2_ub_queue;$/;"	t	typeref:struct:ngx_etomc2_ub_queue
+Ngx_ub_queue_ptr	etomc2.h	/^typedef struct ngx_ub_queue_ptr Ngx_ub_queue_ptr;$/;"	t	typeref:struct:ngx_ub_queue_ptr
+Ngx_visit_cc_attack	etomc2.h	/^typedef struct ngx_visit_cc_attack Ngx_visit_cc_attack;$/;"	t	typeref:struct:ngx_visit_cc_attack
+PEM_SECURE_TUNNEL	etomc2.h	103;"	d
+ROAD_MAP_URI_MAX	etomc2.h	87;"	d
+RSA_PEM_AUTH	etomc2.h	106;"	d
+SHM_GT_LEVEL	etomc2.h	/^enum SHM_GT_LEVEL {$/;"	g
+SHM_GT_LEVEL	etomc2.h	/^typedef enum SHM_GT_LEVEL SHM_GT_LEVEL;$/;"	t	typeref:enum:SHM_GT_LEVEL
+SHM_GT_TIMEOUT	etomc2.h	74;"	d
+SHM_SIZE_DEFAULT_COMMON	etomc2.h	68;"	d
+SHM_SIZE_MAX_COMMON	etomc2.h	67;"	d
+STIME_SECOND	etomc2.h	77;"	d
+TAG_CLOSE	ext/libinjection/libinjection_html5.h	/^    , TAG_CLOSE$/;"	e	enum:html5_type
+TAG_COMMENT	ext/libinjection/libinjection_html5.h	/^    , TAG_COMMENT$/;"	e	enum:html5_type
+TAG_DATA	ext/libinjection/libinjection_html5.h	/^    , TAG_DATA$/;"	e	enum:html5_type
+TAG_NAME_CLOSE	ext/libinjection/libinjection_html5.h	/^    , TAG_NAME_CLOSE$/;"	e	enum:html5_type
+TAG_NAME_OPEN	ext/libinjection/libinjection_html5.h	/^    , TAG_NAME_OPEN$/;"	e	enum:html5_type
+TAG_NAME_SELFCLOSE	ext/libinjection/libinjection_html5.h	/^    , TAG_NAME_SELFCLOSE$/;"	e	enum:html5_type
+TIME_RATE_INTERVAL	etomc2.h	86;"	d
+TIME_RECKON_OUT	etomc2.h	85;"	d
+TRACE	ext/libinjection/libinjection_html5.c	10;"	d	file:
+TRACE	ext/libinjection/libinjection_html5.c	8;"	d	file:
+TRUE	ext/libinjection/libinjection_sqli.c	27;"	d	file:
+TRUE	ext/libinjection/reader.c	11;"	d	file:
+TYPE_ATTR_INDIRECT	ext/libinjection/libinjection_xss.c	/^    , TYPE_ATTR_INDIRECT  \/* attribute *name* is given in *value* *\/$/;"	e	enum:attribute	file:
+TYPE_ATTR_URL	ext/libinjection/libinjection_xss.c	/^    , TYPE_ATTR_URL   \/* attribute value takes a URL-like object *\/$/;"	e	enum:attribute	file:
+TYPE_BACKSLASH	ext/libinjection/libinjection_sqli.c	/^    , TYPE_BACKSLASH   = (int)'\\\\'$/;"	e	enum:__anon1	file:
+TYPE_BAREWORD	ext/libinjection/libinjection_sqli.c	/^    , TYPE_BAREWORD    = (int)'n'$/;"	e	enum:__anon1	file:
+TYPE_BLACK	ext/libinjection/libinjection_xss.c	/^    , TYPE_BLACK     \/* ban always *\/$/;"	e	enum:attribute	file:
+TYPE_COLLATE	ext/libinjection/libinjection_sqli.c	/^    , TYPE_COLLATE     = (int)'A'$/;"	e	enum:__anon1	file:
+TYPE_COLON	ext/libinjection/libinjection_sqli.c	/^    , TYPE_COLON       = (int)':'$/;"	e	enum:__anon1	file:
+TYPE_COMMA	ext/libinjection/libinjection_sqli.c	/^    , TYPE_COMMA       = (int)','$/;"	e	enum:__anon1	file:
+TYPE_COMMENT	ext/libinjection/libinjection_sqli.c	/^    , TYPE_COMMENT     = (int)'c'$/;"	e	enum:__anon1	file:
+TYPE_DOT	ext/libinjection/libinjection_sqli.c	/^    , TYPE_DOT         = (int)'.'$/;"	e	enum:__anon1	file:
+TYPE_EVIL	ext/libinjection/libinjection_sqli.c	/^    , TYPE_EVIL        = (int)'X'  \/* unparsable, abort  *\/$/;"	e	enum:__anon1	file:
+TYPE_EXPRESSION	ext/libinjection/libinjection_sqli.c	/^    , TYPE_EXPRESSION  = (int)'E'$/;"	e	enum:__anon1	file:
+TYPE_FINGERPRINT	ext/libinjection/libinjection_sqli.c	/^    , TYPE_FINGERPRINT = (int)'F'  \/* not really a token *\/$/;"	e	enum:__anon1	file:
+TYPE_FUNCTION	ext/libinjection/libinjection_sqli.c	/^    , TYPE_FUNCTION    = (int)'f'$/;"	e	enum:__anon1	file:
+TYPE_GROUP	ext/libinjection/libinjection_sqli.c	/^    , TYPE_GROUP       = (int)'B'$/;"	e	enum:__anon1	file:
+TYPE_KEYWORD	ext/libinjection/libinjection_sqli.c	/^    , TYPE_KEYWORD     = (int)'k'$/;"	e	enum:__anon1	file:
+TYPE_LEFTBRACE	ext/libinjection/libinjection_sqli.c	/^    , TYPE_LEFTBRACE   = (int)'{'$/;"	e	enum:__anon1	file:
+TYPE_LEFTPARENS	ext/libinjection/libinjection_sqli.c	/^    , TYPE_LEFTPARENS  = (int)'('$/;"	e	enum:__anon1	file:
+TYPE_LOGIC_OPERATOR	ext/libinjection/libinjection_sqli.c	/^    , TYPE_LOGIC_OPERATOR = (int)'&'$/;"	e	enum:__anon1	file:
+TYPE_NONE	ext/libinjection/libinjection_sqli.c	/^    TYPE_NONE        = 0$/;"	e	enum:__anon1	file:
+TYPE_NONE	ext/libinjection/libinjection_xss.c	/^    TYPE_NONE$/;"	e	enum:attribute	file:
+TYPE_NUMBER	ext/libinjection/libinjection_sqli.c	/^    , TYPE_NUMBER      = (int)'1'$/;"	e	enum:__anon1	file:
+TYPE_OPERATOR	ext/libinjection/libinjection_sqli.c	/^    , TYPE_OPERATOR    = (int)'o'$/;"	e	enum:__anon1	file:
+TYPE_RIGHTBRACE	ext/libinjection/libinjection_sqli.c	/^    , TYPE_RIGHTBRACE  = (int)'}'$/;"	e	enum:__anon1	file:
+TYPE_RIGHTPARENS	ext/libinjection/libinjection_sqli.c	/^    , TYPE_RIGHTPARENS = (int)')'  \/* not used? *\/$/;"	e	enum:__anon1	file:
+TYPE_SEMICOLON	ext/libinjection/libinjection_sqli.c	/^    , TYPE_SEMICOLON   = (int)';'$/;"	e	enum:__anon1	file:
+TYPE_SQLTYPE	ext/libinjection/libinjection_sqli.c	/^    , TYPE_SQLTYPE     = (int)'t'$/;"	e	enum:__anon1	file:
+TYPE_STRING	ext/libinjection/libinjection_sqli.c	/^    , TYPE_STRING      = (int)'s'$/;"	e	enum:__anon1	file:
+TYPE_STYLE	ext/libinjection/libinjection_xss.c	/^    , TYPE_STYLE$/;"	e	enum:attribute	file:
+TYPE_TSQL	ext/libinjection/libinjection_sqli.c	/^    , TYPE_TSQL        = (int)'T'  \/* TSQL start *\/$/;"	e	enum:__anon1	file:
+TYPE_UNION	ext/libinjection/libinjection_sqli.c	/^    , TYPE_UNION       = (int)'U'$/;"	e	enum:__anon1	file:
+TYPE_UNKNOWN	ext/libinjection/libinjection_sqli.c	/^    , TYPE_UNKNOWN     = (int)'?'$/;"	e	enum:__anon1	file:
+TYPE_VARIABLE	ext/libinjection/libinjection_sqli.c	/^    , TYPE_VARIABLE    = (int)'v'$/;"	e	enum:__anon1	file:
+UM	ext/mt19937/mt19937-64.c	63;"	d	file:
+VALUE_BACK_QUOTE	ext/libinjection/libinjection_html5.h	/^  , VALUE_BACK_QUOTE$/;"	e	enum:html5_flags
+VALUE_DOUBLE_QUOTE	ext/libinjection/libinjection_html5.h	/^  , VALUE_DOUBLE_QUOTE$/;"	e	enum:html5_flags
+VALUE_NO_QUOTE	ext/libinjection/libinjection_html5.h	/^  , VALUE_NO_QUOTE$/;"	e	enum:html5_flags
+VALUE_SINGLE_QUOTE	ext/libinjection/libinjection_html5.h	/^  , VALUE_SINGLE_QUOTE$/;"	e	enum:html5_flags
+VISITS_RATE_SIZE	etomc2.h	92;"	d
+WEB_ETOMC2	etomc2.h	64;"	d
+_LIBINJECTION_H	ext/libinjection/libinjection.h	11;"	d
+_LIBINJECTION_SQLI_DATA_H	ext/libinjection/libinjection_sqli_data.h	3;"	d
+_LIBINJECTION_SQLI_H	ext/libinjection/libinjection_sqli.h	11;"	d
+__ETOMC2_DEBUG	etomc2.h	41;"	d
+__ETOMC2_LOG_DEBUG	etomc2.h	49;"	d
+active	etomc2.h	/^    float active;  \/\/ default 0  active>0,  agvTime[0]\/active  < Fibonacci[0][1]$/;"	m	struct:ngx_etomc2_lreq_uri
+attribute	ext/libinjection/libinjection_xss.c	/^typedef enum attribute {$/;"	g	file:
+attribute_t	ext/libinjection/libinjection_xss.c	/^} attribute_t;$/;"	t	typeref:enum:attribute	file:
+atype	ext/libinjection/libinjection_xss.c	/^    attribute_t atype;$/;"	m	struct:stringtype	file:
+avgtime	etomc2.h	/^    float avgtime[4];  \/\/ ma  value now  5 minutes  and  30 pre minutes$/;"	m	struct:ngx_etomc2_lreq_uri
+behavior_uuid_cookie	etomc2_cc.c	/^int behavior_uuid_cookie(ngx_http_request_t *r) {$/;"	f
+black_ip_log	etomc2_cc.c	/^void black_ip_log(ngx_http_request_t *r) {$/;"	f
+bsearch_keyword_type	ext/libinjection/libinjection_sqli.c	/^static char bsearch_keyword_type(const char *key, size_t len,$/;"	f	file:
+cc_cookie	etomc2_cc.c	/^void cc_cookie(ngx_http_request_t *r) {$/;"	f
+cc_cookie_mark	etomc2_cc.c	/^ngx_int_t cc_cookie_mark(ngx_http_request_t *r) {$/;"	f
+cc_gt_level	etomc2.h	/^    ngx_uint_t cc_gt_level;$/;"	m	struct:__anon5
+cc_itemize	etomc2.h	/^    ngx_flag_t cc_itemize;$/;"	m	struct:__anon5
+cc_queue_insert_tail	etomc2.h	384;"	d
+cc_queue_pop_head	etomc2.h	399;"	d
+cc_queue_show	etomc2.h	391;"	d
+cc_return_status	etomc2.h	/^    ngx_uint_t cc_return_status;$/;"	m	struct:__anon5
+cc_setcookie	etomc2_cc.c	/^void cc_setcookie(ngx_http_request_t *r, ngx_str_t key) {$/;"	f
+cc_thin_PageNotFound	etomc2_cc.c	/^void cc_thin_PageNotFound(ngx_http_request_t *r) {$/;"	f
+cc_thin_create	etomc2_cc.c	/^Ngx_visit_cc_attack *cc_thin_create(ngx_slab_pool_t *shpool) {$/;"	f
+cc_thin_delete	etomc2_cc.c	/^void cc_thin_delete(Ngx_visit_cc_attack **thin_root, uint32_t hash_uri,$/;"	f
+cc_thin_enter	etomc2_cc.c	/^ngx_int_t cc_thin_enter(ngx_http_request_t *r) {$/;"	f
+cc_thin_insert	etomc2_cc.c	/^void cc_thin_insert(ngx_slab_pool_t *shpool, Ngx_visit_cc_attack **thin_root,$/;"	f
+cc_thin_search	etomc2_cc.c	/^size_t cc_thin_search(Ngx_visit_cc_attack **thin_root, uint32_t hash_uri,$/;"	f
+cc_thin_show	etomc2_cc.c	/^void cc_thin_show(ngx_http_request_t *r, Ngx_visit_cc_attack *thin_root) {$/;"	f
+cc_thin_ub_queue	etomc2_cc.c	/^void cc_thin_ub_queue(ngx_http_request_t *r, ngx_http_dummy_loc_conf_t *lccf,$/;"	f
+cc_thin_ub_queue_insert	etomc2_cc.c	/^void cc_thin_ub_queue_insert(Ngx_ub_queue_ptr *ub_queue_ptr,$/;"	f
+cc_thin_user_agent	etomc2_cc.c	/^void cc_thin_user_agent(ngx_http_request_t *r) {$/;"	f
+cc_thin_user_behavior_add	etomc2_cc.c	/^int cc_thin_user_behavior_add(ngx_http_request_t *r, ngx_slab_pool_t *shpool,$/;"	f
+cc_thin_user_behavior_check_node	etomc2_cc.c	/^int cc_thin_user_behavior_check_node(ngx_http_request_t *r,$/;"	f
+cc_thin_user_behavior_delete	etomc2_cc.c	/^void cc_thin_user_behavior_delete(ngx_rbtree_t *root, ngx_rbtree_node_t *node,$/;"	f
+cc_thin_user_behavior_green	etomc2_cc.c	/^void cc_thin_user_behavior_green(ngx_http_request_t *r,$/;"	f
+cc_thin_user_behavior_lookup	etomc2_cc.c	/^void cc_thin_user_behavior_lookup(ngx_http_request_t *r, ngx_str_t *key) {$/;"	f
+cc_thin_user_behavior_lreq	etomc2_cc.c	/^void cc_thin_user_behavior_lreq(ngx_http_request_t *r,$/;"	f
+cc_thin_user_behavior_red	etomc2_cc.c	/^int cc_thin_user_behavior_red(ngx_http_request_t *r,$/;"	f
+cc_thin_user_behavior_redaction	etomc2_cc.c	/^int cc_thin_user_behavior_redaction(ngx_http_request_t *r,$/;"	f
+cc_thin_user_behavior_search	etomc2_cc.c	/^ngx_rbtree_node_t *cc_thin_user_behavior_search(ngx_rbtree_node_t *node,$/;"	f
+cc_uri_create	etomc2_cc.c	/^Ngx_etomc2_cc_uri *cc_uri_create(ngx_slab_pool_t *shpool) {$/;"	f
+char_is_white	ext/libinjection/libinjection_sqli.c	/^static int char_is_white(char ch) {$/;"	f	file:
+char_parse_map	ext/libinjection/libinjection_sqli_data.h	/^static const pt2Function char_parse_map[] = {$/;"	v
+client_forward_ip	etomc2_cc.c	/^ngx_str_t client_forward_ip(ngx_http_request_t *r) {$/;"	f
+content_types	etomc2.h	/^    size_t content_types[ROAD_MAP_URI_MAX];  \/\/  how many content type;$/;"	m	struct:ngx_etomc2_cc_user_behavior
+count	etomc2.h	/^    int count;$/;"	m	struct:ngx_etomc2_cc_domain
+count	etomc2.h	/^    size_t count;     $/;"	m	struct:ngx_etomc2_shm_gt
+count	etomc2.h	/^    uint32_t count;   \/\/ visit  count$/;"	m	struct:ngx_etomc2_lreq_uri
+count	ext/libinjection/libinjection_sqli.h	/^    int  count;$/;"	m	struct:libinjection_sqli_token
+cstrcasecmp	ext/libinjection/libinjection_sqli.c	/^static int cstrcasecmp(const char *a, const char *b, size_t n)$/;"	f	file:
+cstrcasecmp_with_null	ext/libinjection/libinjection_xss.c	/^static int cstrcasecmp_with_null(const char *a, const char *b, size_t n)$/;"	f	file:
+current	ext/libinjection/libinjection_sqli.h	/^    struct libinjection_sqli_token *current;$/;"	m	struct:libinjection_sqli_state	typeref:struct:libinjection_sqli_state::libinjection_sqli_token
+custom_ip_attack_exist	etomc2_hdcache.c	/^int  custom_ip_attack_exist ( ngx_http_request_t *r,CC_THIN_COOKIE_MARK mark ){$/;"	f
+custom_ip_path	etomc2.h	/^    ngx_str_t  custom_ip_path;$/;"	m	struct:__anon5
+data	etomc2.h	/^    void *data;$/;"	m	struct:ngx_etomc2_shm_tree_data
+detect_mode_t	ext/libinjection/reader.c	/^} detect_mode_t;$/;"	t	typeref:enum:__anon3	file:
+domain_uri_add	etomc2_cc.c	/^void domain_uri_add(ngx_http_request_t *r) {$/;"	f
+domain_uri_create	etomc2_cc.c	/^Ngx_etomc2_cc_domain *domain_uri_create(ngx_slab_pool_t *shpool) {$/;"	f
+domain_uri_show	etomc2_cc.c	/^void domain_uri_show(ngx_http_request_t *r) {$/;"	f
+etomc2_PEM_PK_FILE	etomc2.h	104;"	d
+etomc2_cc_enable	etomc2.h	/^    ngx_flag_t etomc2_cc_enable;$/;"	m	struct:__anon5
+findstring	etomc2_cc.c	/^int findstring(const char *rest, const char *dest) {$/;"	f
+fingerprint	ext/libinjection/libinjection_sqli.h	/^    char fingerprint[8];$/;"	m	struct:libinjection_sqli_state
+flag2delim	ext/libinjection/libinjection_sqli.c	/^static char flag2delim(int flag)$/;"	f	file:
+flags	ext/libinjection/libinjection_sqli.h	/^    int flags;$/;"	m	struct:libinjection_sqli_state
+g_expected	ext/libinjection/testdriver.c	/^static char g_expected[8096];$/;"	v	file:
+g_input	ext/libinjection/testdriver.c	/^static char g_input[8096];$/;"	v	file:
+g_test	ext/libinjection/testdriver.c	/^static char g_test[8096];$/;"	v	file:
+g_test_fail	ext/libinjection/reader.c	/^static int g_test_fail = 0;$/;"	v	file:
+g_test_ok	ext/libinjection/reader.c	/^static int g_test_ok = 0;$/;"	v	file:
+genrand64_int63	ext/mt19937/mt19937-64.c	/^long long genrand64_int63(void)$/;"	f
+genrand64_int64	ext/mt19937/mt19937-64.c	/^unsigned long long genrand64_int64(void)$/;"	f
+genrand64_real1	ext/mt19937/mt19937-64.c	/^double genrand64_real1(void)$/;"	f
+genrand64_real2	ext/mt19937/mt19937-64.c	/^double genrand64_real2(void)$/;"	f
+genrand64_real3	ext/mt19937/mt19937-64.c	/^double genrand64_real3(void)$/;"	f
+get_uri	etomc2_cc.c	/^ngx_str_t get_uri(ngx_http_request_t *r) {$/;"	f
+gsHexDecodeMap	ext/libinjection/libinjection_xss.c	/^static const int gsHexDecodeMap[256] = {$/;"	v	file:
+gt_index	etomc2_gt.c	/^int gt_index(SHM_GT_LEVEL gt) {$/;"	f
+h5_is_white	ext/libinjection/libinjection_html5.c	/^static int h5_is_white(char ch)$/;"	f	file:
+h5_skip_white	ext/libinjection/libinjection_html5.c	/^static int h5_skip_white(h5_state_t* hs)$/;"	f	file:
+h5_state	ext/libinjection/libinjection_html5.h	/^typedef struct h5_state {$/;"	s
+h5_state_after_attribute_name	ext/libinjection/libinjection_html5.c	/^static int h5_state_after_attribute_name(h5_state_t* hs)$/;"	f	file:
+h5_state_after_attribute_value_quoted_state	ext/libinjection/libinjection_html5.c	/^static int h5_state_after_attribute_value_quoted_state(h5_state_t* hs)$/;"	f	file:
+h5_state_attribute_name	ext/libinjection/libinjection_html5.c	/^static int h5_state_attribute_name(h5_state_t* hs)$/;"	f	file:
+h5_state_attribute_value_back_quote	ext/libinjection/libinjection_html5.c	/^int h5_state_attribute_value_back_quote(h5_state_t* hs)$/;"	f	file:
+h5_state_attribute_value_double_quote	ext/libinjection/libinjection_html5.c	/^int h5_state_attribute_value_double_quote(h5_state_t* hs)$/;"	f	file:
+h5_state_attribute_value_no_quote	ext/libinjection/libinjection_html5.c	/^static int h5_state_attribute_value_no_quote(h5_state_t* hs)$/;"	f	file:
+h5_state_attribute_value_quote	ext/libinjection/libinjection_html5.c	/^static int h5_state_attribute_value_quote(h5_state_t* hs, char qchar)$/;"	f	file:
+h5_state_attribute_value_single_quote	ext/libinjection/libinjection_html5.c	/^int h5_state_attribute_value_single_quote(h5_state_t* hs)$/;"	f	file:
+h5_state_before_attribute_name	ext/libinjection/libinjection_html5.c	/^static int h5_state_before_attribute_name(h5_state_t* hs)$/;"	f	file:
+h5_state_before_attribute_value	ext/libinjection/libinjection_html5.c	/^static int h5_state_before_attribute_value(h5_state_t* hs)$/;"	f	file:
+h5_state_bogus_comment	ext/libinjection/libinjection_html5.c	/^static int h5_state_bogus_comment(h5_state_t* hs)$/;"	f	file:
+h5_state_bogus_comment2	ext/libinjection/libinjection_html5.c	/^static int h5_state_bogus_comment2(h5_state_t* hs)$/;"	f	file:
+h5_state_cdata	ext/libinjection/libinjection_html5.c	/^static int h5_state_cdata(h5_state_t* hs)$/;"	f	file:
+h5_state_comment	ext/libinjection/libinjection_html5.c	/^static int h5_state_comment(h5_state_t* hs)$/;"	f	file:
+h5_state_data	ext/libinjection/libinjection_html5.c	/^static int h5_state_data(h5_state_t* hs)$/;"	f	file:
+h5_state_doctype	ext/libinjection/libinjection_html5.c	/^static int h5_state_doctype(h5_state_t* hs)$/;"	f	file:
+h5_state_end_tag_open	ext/libinjection/libinjection_html5.c	/^static int h5_state_end_tag_open(h5_state_t* hs)$/;"	f	file:
+h5_state_eof	ext/libinjection/libinjection_html5.c	/^static int h5_state_eof(h5_state_t* hs)$/;"	f	file:
+h5_state_markup_declaration_open	ext/libinjection/libinjection_html5.c	/^static int h5_state_markup_declaration_open(h5_state_t* hs)$/;"	f	file:
+h5_state_self_closing_start_tag	ext/libinjection/libinjection_html5.c	/^static int h5_state_self_closing_start_tag(h5_state_t* hs)$/;"	f	file:
+h5_state_t	ext/libinjection/libinjection_html5.h	/^} h5_state_t;$/;"	t	typeref:struct:h5_state
+h5_state_tag_name	ext/libinjection/libinjection_html5.c	/^static int h5_state_tag_name(h5_state_t* hs)$/;"	f	file:
+h5_state_tag_name_close	ext/libinjection/libinjection_html5.c	/^static int h5_state_tag_name_close(h5_state_t* hs)$/;"	f	file:
+h5_state_tag_open	ext/libinjection/libinjection_html5.c	/^static int h5_state_tag_open(h5_state_t* hs)$/;"	f	file:
+h5_type_to_string	ext/libinjection/html5_cli.c	/^const char* h5_type_to_string(enum html5_type x)$/;"	f
+h5_type_to_string	ext/libinjection/testdriver.c	/^const char* h5_type_to_string(enum html5_type x)$/;"	f
+hash_domain	etomc2.h	/^    uint32_t hash_domain;$/;"	m	struct:ngx_etomc2_aiwaf_list
+hash_domain	etomc2.h	/^    uint32_t hash_domain;$/;"	m	struct:ngx_etomc2_cc_domain
+hash_domain	etomc2.h	/^    uint32_t hash_domain;$/;"	m	struct:ngx_etomc2_lreq_queue
+hash_domain	etomc2.h	/^    uint32_t hash_domain;$/;"	m	struct:ngx_etomc2_shm_gt
+hash_domain	etomc2.h	/^    uint32_t hash_domain;$/;"	m	struct:ngx_visit_cc_attack
+hash_rule	etomc2.h	/^    uint32_t hash_rule;$/;"	m	struct:ngx_etomc2_aiwaf_list
+hash_str	etomc2.h	/^    ngx_str_t hash_str;  \/\/  hash(server_name+ip+ua+key)   key:$/;"	m	struct:ngx_etomc2_ub_queue
+hash_str	etomc2.h	/^    ngx_str_t hash_str;$/;"	m	struct:ngx_etomc2_cc_user_behavior
+hash_uri	etomc2.h	/^    uint32_t hash_uri;  \/\/\/   uri$/;"	m	struct:ngx_etomc2_lreq_uri
+hash_uri	etomc2.h	/^    uint32_t hash_uri;$/;"	m	struct:ngx_visit_cc_attack
+hashkey	etomc2.h	/^    uint32_t hashkey;$/;"	m	struct:ngx_etomc2_shm_tree_data
+hdcache_behavior	etomc2_hdcache.c	/^int hdcache_behavior(ngx_http_request_t *r,$/;"	f
+hdcache_create_dir	etomc2_hdcache.c	/^int hdcache_create_dir(const char *path, const mode_t mode) {$/;"	f
+hdcache_create_file	etomc2_hdcache.c	/^void hdcache_create_file(const char *path, int inten, int timestamp) {$/;"	f
+hdcache_file_build	etomc2_hdcache.c	/^ngx_str_t hdcache_file_build(ngx_http_request_t *r, ngx_str_t path,$/;"	f
+hdcache_file_content	etomc2_hdcache.c	/^int hdcache_file_content(const char *file, int *timestamp) {$/;"	f
+hdcache_file_exist	etomc2_hdcache.c	/^int hdcache_file_exist(const char *file) {$/;"	f
+hdcache_hash_to_dir	etomc2_hdcache.c	/^ngx_str_t hdcache_hash_to_dir(ngx_http_request_t *r,$/;"	f
+hdcache_hash_to_dir_def	etomc2_hdcache.c	/^ngx_str_t hdcache_hash_to_dir_def(ngx_http_request_t *r, const char *path,$/;"	f
+hdcache_path	etomc2.h	/^    ngx_str_t hdcache_path;$/;"	m	struct:__anon5
+hdcache_unlink_file	etomc2_hdcache.c	/^int  hdcache_unlink_file ( const char *path ){$/;"	f
+head	etomc2.h	/^    Ngx_etomc2_ub_queue *head;$/;"	m	struct:ngx_ub_queue_ptr
+header_time	etomc2.h	/^    ngx_msec_t header_time;$/;"	m	struct:ngx_etomc2_lreq_uri
+html5_flags	ext/libinjection/libinjection_html5.h	/^enum html5_flags {$/;"	g
+html5_type	ext/libinjection/libinjection_html5.h	/^enum html5_type {$/;"	g
+html_decode_char_at	ext/libinjection/libinjection_xss.c	/^static int html_decode_char_at(const char* src, size_t len, size_t* consumed)$/;"	f	file:
+htmlencode_startswith	ext/libinjection/libinjection_xss.c	/^static int htmlencode_startswith(const char *a, const char *b, size_t n)$/;"	f	file:
+ill_return_status	etomc2.h	/^    ngx_str_t ill_return_status;$/;"	m	struct:__anon5
+immutable	ext/libinjection/libinjection_sqli.h	/^%immutable;$/;"	m	struct:libinjection_sqli_state
+immutable	ext/libinjection/libinjection_sqli.h	/^%immutable;$/;"	m	struct:libinjection_sqli_token
+init_by_array64	ext/mt19937/mt19937-64.c	/^void init_by_array64(unsigned long long init_key[],$/;"	f
+init_genrand64	ext/mt19937/mt19937-64.c	/^void init_genrand64(unsigned long long seed)$/;"	f
+initialize_mt	etomc2_uuid.c	/^ngx_int_t initialize_mt() {$/;"	f
+initialize_uuid	etomc2_uuid.c	/^void initialize_uuid() {$/;"	f
+is_backslash_escaped	ext/libinjection/libinjection_sqli.c	/^static int is_backslash_escaped(const char* end, const char* start)$/;"	f	file:
+is_black_attr	ext/libinjection/libinjection_xss.c	/^static attribute_t is_black_attr(const char* s, size_t len)$/;"	f	file:
+is_black_tag	ext/libinjection/libinjection_xss.c	/^static int is_black_tag(const char* s, size_t len)$/;"	f	file:
+is_black_url	ext/libinjection/libinjection_xss.c	/^static int is_black_url(const char* s, size_t len)$/;"	f	file:
+is_close	ext/libinjection/libinjection_html5.h	/^    int is_close;$/;"	m	struct:h5_state
+is_double_delim_escaped	ext/libinjection/libinjection_sqli.c	/^static size_t is_double_delim_escaped(const char* cur,  const char* end)$/;"	f	file:
+is_keyword	ext/libinjection/libinjection_sqli.c	/^static char is_keyword(const char* key, size_t len)$/;"	f	file:
+is_mysql_comment	ext/libinjection/libinjection_sqli.c	/^static size_t is_mysql_comment(const char *cs, const size_t len, size_t pos)$/;"	f	file:
+keyword_t	ext/libinjection/libinjection_sqli_data.h	/^} keyword_t;$/;"	t	typeref:struct:__anon2
+lastTime	etomc2.h	/^    time_t lastTime;  \/\/ visit  last time$/;"	m	struct:ngx_etomc2_lreq_uri
+left	etomc2.h	/^    struct ngx_etomc2_shm_tree_data *right, *left;$/;"	m	struct:ngx_etomc2_shm_tree_data	typeref:struct:ngx_etomc2_shm_tree_data::
+len	ext/libinjection/libinjection_html5.h	/^    size_t len;$/;"	m	struct:h5_state
+len	ext/libinjection/libinjection_sqli.h	/^    size_t len;$/;"	m	struct:libinjection_sqli_token
+level	etomc2.h	/^    SHM_GT_LEVEL level;$/;"	m	struct:ngx_etomc2_shm_gt
+libinjection_h5_init	ext/libinjection/libinjection_html5.c	/^void libinjection_h5_init(h5_state_t* hs, const char* s, size_t len, enum html5_flags flags)$/;"	f
+libinjection_h5_next	ext/libinjection/libinjection_html5.c	/^int libinjection_h5_next(h5_state_t* hs)$/;"	f
+libinjection_is_sqli	ext/libinjection/libinjection_sqli.c	/^int libinjection_is_sqli(struct libinjection_sqli_state * sql_state)$/;"	f
+libinjection_is_xss	ext/libinjection/libinjection_xss.c	/^int libinjection_is_xss(const char* s, size_t len, int flags)$/;"	f
+libinjection_sqli	ext/libinjection/libinjection_sqli.c	/^int libinjection_sqli(const char* input, size_t slen, char fingerprint[])$/;"	f
+libinjection_sqli_blacklist	ext/libinjection/libinjection_sqli.c	/^int libinjection_sqli_blacklist(struct libinjection_sqli_state* sql_state)$/;"	f
+libinjection_sqli_callback	ext/libinjection/libinjection_sqli.c	/^void libinjection_sqli_callback(struct libinjection_sqli_state * sf, ptr_lookup_fn fn, void* userdata)$/;"	f
+libinjection_sqli_check_fingerprint	ext/libinjection/libinjection_sqli.c	/^int libinjection_sqli_check_fingerprint(struct libinjection_sqli_state* sql_state)$/;"	f
+libinjection_sqli_fingerprint	ext/libinjection/libinjection_sqli.c	/^const char* libinjection_sqli_fingerprint(struct libinjection_sqli_state * sql_state, int flags)$/;"	f
+libinjection_sqli_fold	ext/libinjection/libinjection_sqli.c	/^int libinjection_sqli_fold(struct libinjection_sqli_state * sf)$/;"	f
+libinjection_sqli_get_token	ext/libinjection/libinjection_sqli.c	/^libinjection_sqli_get_token(struct libinjection_sqli_state * sql_state, int i)$/;"	f
+libinjection_sqli_init	ext/libinjection/libinjection_sqli.c	/^void libinjection_sqli_init(struct libinjection_sqli_state * sf, const char *s, size_t len, int flags)$/;"	f
+libinjection_sqli_lookup_word	ext/libinjection/libinjection_sqli.c	/^char libinjection_sqli_lookup_word(struct libinjection_sqli_state *sql_state, int lookup_type,$/;"	f
+libinjection_sqli_not_whitelist	ext/libinjection/libinjection_sqli.c	/^int libinjection_sqli_not_whitelist(struct libinjection_sqli_state* sql_state)$/;"	f
+libinjection_sqli_reset	ext/libinjection/libinjection_sqli.c	/^void libinjection_sqli_reset(struct libinjection_sqli_state * sf, int flags)$/;"	f
+libinjection_sqli_state	ext/libinjection/libinjection_sqli.h	/^struct libinjection_sqli_state {$/;"	s
+libinjection_sqli_token	ext/libinjection/libinjection_sqli.h	/^struct libinjection_sqli_token {$/;"	s
+libinjection_sqli_tokenize	ext/libinjection/libinjection_sqli.c	/^int libinjection_sqli_tokenize(struct libinjection_sqli_state * sf)$/;"	f
+libinjection_version	ext/libinjection/libinjection_sqli.c	/^const char* libinjection_version()$/;"	f
+libinjection_xss	ext/libinjection/libinjection_xss.c	/^int libinjection_xss(const char* s, size_t len)$/;"	f
+log	etomc2.h	/^    ngx_log_t *log;$/;"	m	struct:__anon4
+lookup	ext/libinjection/libinjection_sqli.h	/^    ptr_lookup_fn lookup;$/;"	m	struct:libinjection_sqli_state
+lookup_type	ext/libinjection/libinjection_sqli.h	/^enum lookup_type {$/;"	g
+lreq	etomc2.h	/^    Ngx_etomc2_lreq_uri lreq[LREQ_QUEUE_MAX];  \/\/  new  add  and  push last time$/;"	m	struct:ngx_etomc2_lreq_queue
+lreq_header_time	etomc2_limitreq.c	/^ngx_msec_t lreq_header_time(ngx_http_request_t *r) {$/;"	f
+lreq_operate_uri	etomc2_limitreq.c	/^int lreq_operate_uri(ngx_http_request_t *r) {$/;"	f
+lreq_queue_show	etomc2_limitreq.c	/^void lreq_queue_show(ngx_http_request_t *r) {$/;"	f
+lreq_status	etomc2_limitreq.c	/^void lreq_status(ngx_http_request_t *r) {$/;"	f
+lreq_uri_queue	etomc2_limitreq.c	/^void lreq_uri_queue(ngx_http_request_t *r) {$/;"	f
+ltime	etomc2.h	/^    time_t ltime;       \/\/  30  minute$/;"	m	struct:ngx_etomc2_lreq_uri
+main	ext/libinjection/example1.c	/^int main(int argc, const char* argv[])$/;"	f
+main	ext/libinjection/fptool.c	/^int main(int argc, const char* argv[])$/;"	f
+main	ext/libinjection/html5_cli.c	/^int main(int argc, const char* argv[])$/;"	f
+main	ext/libinjection/reader.c	/^int main(int argc, const char *argv[])$/;"	f
+main	ext/libinjection/sqli_cli.c	/^int main(int argc, const char* argv[])$/;"	f
+main	ext/libinjection/test_speed_sqli.c	/^int main()$/;"	f
+main	ext/libinjection/test_speed_xss.c	/^int main()$/;"	f
+main	ext/libinjection/testdriver.c	/^int main(int argc, char** argv)$/;"	f
+main	ext/mt19937/mt19937-64test.c	/^int main(void)$/;"	f
+mark	etomc2.h	/^    CC_THIN_COOKIE_MARK mark;  \/\/ first  is M_YELLOW  ,bad is M_RED clean$/;"	m	struct:ngx_etomc2_cc_user_behavior
+memchr2	ext/libinjection/libinjection_sqli.c	/^memchr2(const char *haystack, size_t haystack_len, char c0, char c1)$/;"	f	file:
+method	etomc2.h	/^    ngx_flag_t method;         \/\/ get and post  == 1, only get  or post  == 0$/;"	m	struct:ngx_etomc2_cc_user_behavior
+modp_rtrim	ext/libinjection/reader.c	/^size_t modp_rtrim(char* str, size_t len)$/;"	f
+modp_rtrim	ext/libinjection/testdriver.c	/^size_t modp_rtrim(char* str, size_t len)$/;"	f
+modp_toprint	ext/libinjection/reader.c	/^void modp_toprint(char* str, size_t len)$/;"	f
+modp_url_decode	ext/libinjection/html5_cli.c	/^size_t modp_url_decode(char* dest, const char* s, size_t len)$/;"	f
+modp_url_decode	ext/libinjection/reader.c	/^size_t modp_url_decode(char* dest, const char* s, size_t len)$/;"	f
+mt	ext/mt19937/mt19937-64.c	/^static unsigned long long mt[NN]; $/;"	v	file:
+mt_initialized	etomc2_uuid.c	/^static int mt_initialized = 0;$/;"	v	file:
+mti	ext/mt19937/mt19937-64.c	/^static int mti=NN+1; $/;"	v	file:
+my_memmem	ext/libinjection/libinjection_sqli.c	/^my_memmem(const char* haystack, size_t hlen, const char* needle, size_t nlen)$/;"	f	file:
+name	ext/libinjection/libinjection_xss.c	/^    const char* name;$/;"	m	struct:stringtype	file:
+next	etomc2.h	/^    struct ngx_etomc2_aiwaf_list *next;$/;"	m	struct:ngx_etomc2_aiwaf_list	typeref:struct:ngx_etomc2_aiwaf_list::ngx_etomc2_aiwaf_list
+next	etomc2.h	/^    struct ngx_etomc2_cc_domain *next;$/;"	m	struct:ngx_etomc2_cc_domain	typeref:struct:ngx_etomc2_cc_domain::ngx_etomc2_cc_domain
+next	etomc2.h	/^    struct ngx_etomc2_lreq_queue *next;$/;"	m	struct:ngx_etomc2_lreq_queue	typeref:struct:ngx_etomc2_lreq_queue::ngx_etomc2_lreq_queue
+next	etomc2.h	/^    struct ngx_etomc2_shm_gt *next;$/;"	m	struct:ngx_etomc2_shm_gt	typeref:struct:ngx_etomc2_shm_gt::ngx_etomc2_shm_gt
+next	etomc2.h	/^    struct ngx_etomc2_ub_queue *next;$/;"	m	struct:ngx_etomc2_ub_queue	typeref:struct:ngx_etomc2_ub_queue::ngx_etomc2_ub_queue
+next	etomc2.h	/^    struct ngx_visit_cc_attack *next;$/;"	m	struct:ngx_visit_cc_attack	typeref:struct:ngx_visit_cc_attack::ngx_visit_cc_attack
+ngx_cc_gt	etomc2_gt.c	/^void ngx_cc_gt(ngx_http_request_t *r) {$/;"	f
+ngx_cc_gt_check	etomc2_gt.c	/^int ngx_cc_gt_check(ngx_http_request_t *r,uint32_t hash_uri) {$/;"	f
+ngx_cc_gt_init	etomc2_gt.c	/^Ngx_etomc2_shm_gt *ngx_cc_gt_init(ngx_slab_pool_t *shpool) {$/;"	f
+ngx_cc_gt_search	etomc2_gt.c	/^void ngx_cc_gt_search(ngx_http_request_t *r, Ngx_etomc2_shm_gt **gt_node_ptr) {$/;"	f
+ngx_cc_rbtree_hash_key	etomc2_cc.c	/^ngx_str_t *ngx_cc_rbtree_hash_key(ngx_http_request_t *r) {$/;"	f
+ngx_cc_rbtree_insert_value	etomc2_skeleton.c	/^static void ngx_cc_rbtree_insert_value(ngx_rbtree_node_t *temp,$/;"	f	file:
+ngx_cc_rbtree_loop	etomc2_cc.c	/^void ngx_cc_rbtree_loop(ngx_http_request_t *r, ngx_rbtree_node_t *node,$/;"	f
+ngx_cc_rbtree_showall	etomc2_cc.c	/^void ngx_cc_rbtree_showall(ngx_http_request_t *r) {$/;"	f
+ngx_cc_run_check	etomc2.h	/^static ngx_uint_t ngx_cc_run_check; $/;"	v
+ngx_etomc2_aiwaf_list	etomc2.h	/^struct ngx_etomc2_aiwaf_list {$/;"	s
+ngx_etomc2_cc_domain	etomc2.h	/^struct ngx_etomc2_cc_domain {$/;"	s
+ngx_etomc2_cc_uri	etomc2.h	/^struct ngx_etomc2_cc_uri {$/;"	s
+ngx_etomc2_cc_user_behavior	etomc2.h	/^struct ngx_etomc2_cc_user_behavior {$/;"	s
+ngx_etomc2_init_shm_zone_cc_gt	etomc2_skeleton.c	/^static ngx_int_t ngx_etomc2_init_shm_zone_cc_gt(ngx_shm_zone_t *shm_zone,$/;"	f	file:
+ngx_etomc2_init_shm_zone_cc_thin	etomc2_skeleton.c	/^static ngx_int_t ngx_etomc2_init_shm_zone_cc_thin(ngx_shm_zone_t *shm_zone,$/;"	f	file:
+ngx_etomc2_init_shm_zone_cc_ub	etomc2_skeleton.c	/^static ngx_int_t ngx_etomc2_init_shm_zone_cc_ub(ngx_shm_zone_t *shm_zone,$/;"	f	file:
+ngx_etomc2_init_shm_zone_lreq_queue	etomc2_skeleton.c	/^static ngx_int_t ngx_etomc2_init_shm_zone_lreq_queue(ngx_shm_zone_t *shm_zone,$/;"	f	file:
+ngx_etomc2_init_shm_zone_ub_queue	etomc2_skeleton.c	/^static ngx_int_t ngx_etomc2_init_shm_zone_ub_queue(ngx_shm_zone_t *shm_zone,$/;"	f	file:
+ngx_etomc2_lreq_queue	etomc2.h	/^struct ngx_etomc2_lreq_queue {$/;"	s
+ngx_etomc2_lreq_uri	etomc2.h	/^struct ngx_etomc2_lreq_uri {$/;"	s
+ngx_etomc2_shm_gt	etomc2.h	/^struct ngx_etomc2_shm_gt {$/;"	s
+ngx_etomc2_shm_tree_data	etomc2.h	/^struct ngx_etomc2_shm_tree_data {$/;"	s
+ngx_etomc2_ub_queue	etomc2.h	/^struct ngx_etomc2_ub_queue {$/;"	s
+ngx_http_cc_set_shm_size	etomc2_skeleton.c	/^static char *ngx_http_cc_set_shm_size(ngx_conf_t *cf, ngx_command_t *cmd,$/;"	f	file:
+ngx_http_cc_shm_size	etomc2.h	/^static ngx_uint_t ngx_http_cc_shm_size;$/;"	v
+ngx_http_etomc2_access_handler	etomc2_skeleton.c	/^static ngx_int_t ngx_http_etomc2_access_handler(ngx_http_request_t *r) {$/;"	f	file:
+ngx_http_etomc2_body_filter	etomc2_skeleton.c	/^ngx_int_t ngx_http_etomc2_body_filter(ngx_http_request_t *r, ngx_chain_t *in) {$/;"	f
+ngx_http_etomc2_cc_commands	etomc2_skeleton.c	/^static ngx_command_t ngx_http_etomc2_cc_commands[] = {$/;"	v	file:
+ngx_http_etomc2_cc_module	etomc2_skeleton.c	/^ngx_module_t ngx_http_etomc2_cc_module = {$/;"	v
+ngx_http_etomc2_cc_module_ctx	etomc2_skeleton.c	/^static ngx_http_module_t ngx_http_etomc2_cc_module_ctx = {$/;"	v	file:
+ngx_http_etomc2_create_loc_conf	etomc2_skeleton.c	/^static void *ngx_http_etomc2_create_loc_conf(ngx_conf_t *cf) {$/;"	f	file:
+ngx_http_etomc2_create_main_conf	etomc2_skeleton.c	/^void *ngx_http_etomc2_create_main_conf(ngx_conf_t *cf) {$/;"	f
+ngx_http_etomc2_dummy_init	etomc2_skeleton.c	/^static ngx_int_t ngx_http_etomc2_dummy_init(ngx_conf_t *cf) {$/;"	f	file:
+ngx_http_etomc2_header_filter	etomc2_skeleton.c	/^ngx_int_t ngx_http_etomc2_header_filter(ngx_http_request_t *r) {$/;"	f
+ngx_http_etomc2_loc_conf_t	etomc2.h	/^} ngx_http_etomc2_loc_conf_t; \/* ----------  end of struct$/;"	t	typeref:struct:__anon5
+ngx_http_etomc2_main_conf_t	etomc2.h	/^} ngx_http_etomc2_main_conf_t;$/;"	t	typeref:struct:__anon4
+ngx_http_etomc2_merge_loc_conf	etomc2_skeleton.c	/^static char *ngx_http_etomc2_merge_loc_conf(ngx_conf_t *cf, void *parent,$/;"	f	file:
+ngx_http_etomc2_web	etomc2_skeleton.c	/^static char *ngx_http_etomc2_web(ngx_conf_t *cf, ngx_command_t *cmd,$/;"	f	file:
+ngx_http_etomc2_web_handler	etomc2_skeleton.c	/^static ngx_int_t ngx_http_etomc2_web_handler(ngx_http_request_t *r) {$/;"	f	file:
 ngx_http_next_body_filter	etomc2.h	/^static ngx_http_output_body_filter_pt ngx_http_next_body_filter;$/;"	v
 ngx_http_next_header_filter	etomc2.h	/^static ngx_http_output_header_filter_pt ngx_http_next_header_filter;$/;"	v
-ngx_web_etomc2	etomc2.h	/^static u_char ngx_web_etomc2[] = WEB_BASE_PRINT;$/;"	v
+ngx_ub_queue_ptr	etomc2.h	/^struct ngx_ub_queue_ptr {$/;"	s
+ngx_visit_cc_attack	etomc2.h	/^struct ngx_visit_cc_attack {$/;"	s
+ngx_web_etomc2	etomc2.h	/^static u_char ngx_web_etomc2[] = WEB_ETOMC2;$/;"	v
+now	etomc2.h	/^    time_t now;$/;"	m	struct:ngx_etomc2_shm_gt
+parse_backslash	ext/libinjection/libinjection_sqli.c	/^static size_t parse_backslash(struct libinjection_sqli_state * sf)$/;"	f	file:
+parse_bstring	ext/libinjection/libinjection_sqli.c	/^static size_t parse_bstring(struct libinjection_sqli_state *sf)$/;"	f	file:
+parse_bword	ext/libinjection/libinjection_sqli.c	/^static size_t parse_bword(struct libinjection_sqli_state * sf)$/;"	f	file:
+parse_char	ext/libinjection/libinjection_sqli.c	/^static size_t parse_char(struct libinjection_sqli_state * sf)$/;"	f	file:
+parse_dash	ext/libinjection/libinjection_sqli.c	/^static size_t parse_dash(struct libinjection_sqli_state * sf)$/;"	f	file:
+parse_eol_comment	ext/libinjection/libinjection_sqli.c	/^static size_t parse_eol_comment(struct libinjection_sqli_state * sf)$/;"	f	file:
+parse_estring	ext/libinjection/libinjection_sqli.c	/^static size_t parse_estring(struct libinjection_sqli_state * sf)$/;"	f	file:
+parse_hash	ext/libinjection/libinjection_sqli.c	/^static size_t parse_hash(struct libinjection_sqli_state * sf)$/;"	f	file:
+parse_money	ext/libinjection/libinjection_sqli.c	/^static size_t parse_money(struct libinjection_sqli_state *sf)$/;"	f	file:
+parse_nqstring	ext/libinjection/libinjection_sqli.c	/^static size_t parse_nqstring(struct libinjection_sqli_state * sf)$/;"	f	file:
+parse_number	ext/libinjection/libinjection_sqli.c	/^static size_t parse_number(struct libinjection_sqli_state * sf)$/;"	f	file:
+parse_operator1	ext/libinjection/libinjection_sqli.c	/^static size_t parse_operator1(struct libinjection_sqli_state * sf)$/;"	f	file:
+parse_operator2	ext/libinjection/libinjection_sqli.c	/^static size_t parse_operator2(struct libinjection_sqli_state * sf)$/;"	f	file:
+parse_other	ext/libinjection/libinjection_sqli.c	/^static size_t parse_other(struct libinjection_sqli_state * sf)$/;"	f	file:
+parse_qstring	ext/libinjection/libinjection_sqli.c	/^static size_t parse_qstring(struct libinjection_sqli_state * sf)$/;"	f	file:
+parse_qstring_core	ext/libinjection/libinjection_sqli.c	/^static size_t parse_qstring_core(struct libinjection_sqli_state * sf, size_t offset)$/;"	f	file:
+parse_slash	ext/libinjection/libinjection_sqli.c	/^static size_t parse_slash(struct libinjection_sqli_state * sf)$/;"	f	file:
+parse_string	ext/libinjection/libinjection_sqli.c	/^static size_t parse_string(struct libinjection_sqli_state * sf)$/;"	f	file:
+parse_string_core	ext/libinjection/libinjection_sqli.c	/^static size_t parse_string_core(const char *cs, const size_t len, size_t pos,$/;"	f	file:
+parse_tick	ext/libinjection/libinjection_sqli.c	/^static size_t parse_tick(struct libinjection_sqli_state* sf)$/;"	f	file:
+parse_ustring	ext/libinjection/libinjection_sqli.c	/^static size_t parse_ustring(struct libinjection_sqli_state * sf)$/;"	f	file:
+parse_var	ext/libinjection/libinjection_sqli.c	/^static size_t parse_var(struct libinjection_sqli_state * sf)$/;"	f	file:
+parse_white	ext/libinjection/libinjection_sqli.c	/^static size_t parse_white(struct libinjection_sqli_state * sf)$/;"	f	file:
+parse_word	ext/libinjection/libinjection_sqli.c	/^static size_t parse_word(struct libinjection_sqli_state * sf)$/;"	f	file:
+parse_xstring	ext/libinjection/libinjection_sqli.c	/^static size_t parse_xstring(struct libinjection_sqli_state *sf)$/;"	f	file:
+pos	ext/libinjection/libinjection_html5.h	/^    size_t pos;$/;"	m	struct:h5_state
+pos	ext/libinjection/libinjection_sqli.h	/^    size_t pos;$/;"	m	struct:libinjection_sqli_state
+pos	ext/libinjection/libinjection_sqli.h	/^    size_t pos;$/;"	m	struct:libinjection_sqli_token
+print_html5_token	ext/libinjection/html5_cli.c	/^void print_html5_token(h5_state_t* hs)$/;"	f
+print_html5_token	ext/libinjection/testdriver.c	/^size_t print_html5_token(char* buf, size_t len, h5_state_t* hs)$/;"	f
+print_string	ext/libinjection/sqli_cli.c	/^void print_string(stoken_t* t)$/;"	f
+print_string	ext/libinjection/testdriver.c	/^size_t print_string(char* buf, size_t len, stoken_t* t)$/;"	f
+print_token	ext/libinjection/sqli_cli.c	/^void print_token(stoken_t *t) {$/;"	f
+print_token	ext/libinjection/testdriver.c	/^size_t print_token(char* buf, size_t len, stoken_t *t)$/;"	f
+print_var	ext/libinjection/sqli_cli.c	/^void print_var(stoken_t* t)$/;"	f
+print_var	ext/libinjection/testdriver.c	/^size_t print_var(char* buf, size_t len, stoken_t* t)$/;"	f
+pt2Function	ext/libinjection/libinjection_sqli_data.h	/^typedef size_t (*pt2Function)(sfilter *sf);$/;"	t
+ptr_html5_state	ext/libinjection/libinjection_html5.h	/^typedef int (*ptr_html5_state)(struct h5_state*);$/;"	t
+ptr_lookup_fn	ext/libinjection/libinjection_sqli.h	/^typedef char (*ptr_lookup_fn)(struct libinjection_sqli_state*, int lookuptype, const char* word, size_t len);$/;"	t
+rate_0	etomc2.h	/^    time_t rate_0;  \/\/\/  timestamp　interval > TIME_RATE_INTERVAL$/;"	m	struct:ngx_etomc2_cc_user_behavior
+rate_1	etomc2.h	/^    time_t rate_1;$/;"	m	struct:ngx_etomc2_cc_user_behavior
+rbtree	etomc2.h	/^    ngx_rbtree_t rbtree;$/;"	m	struct:ngx_etomc2_cc_user_behavior
+read_file	ext/libinjection/testdriver.c	/^int read_file(const char* fname, int flags, int testtype)$/;"	f
+reason	ext/libinjection/libinjection_sqli.h	/^    int reason;$/;"	m	struct:libinjection_sqli_state
+referer	etomc2.h	/^    size_t referer;$/;"	m	struct:ngx_etomc2_cc_user_behavior
+reparse_as_mysql	ext/libinjection/libinjection_sqli.c	/^static int reparse_as_mysql(struct libinjection_sqli_state * sql_state)$/;"	f	file:
+right	etomc2.h	/^    struct ngx_etomc2_shm_tree_data *right, *left;$/;"	m	struct:ngx_etomc2_shm_tree_data	typeref:struct:ngx_etomc2_shm_tree_data::ngx_etomc2_shm_tree_data
+rise_level	etomc2.h	/^    size_t rise_level;  \/\/ now rise level  visits\/visited  from  Fibonacci$/;"	m	struct:ngx_visit_cc_attack
+road_maps	etomc2.h	/^    uint32_t road_maps[ROAD_MAP_URI_MAX];  \/\/ uri  road maps;$/;"	m	struct:ngx_etomc2_cc_user_behavior
+rsa_auth	etomc2_pem.c	/^int  rsa_auth ( ngx_http_request_t *r,const ngx_str_t base64 ){$/;"	f
+rsa_decrypt	etomc2_pem.c	/^int rsa_decrypt(ngx_http_request_t *r, const ngx_str_t base64, const ngx_str_t  pem, char **decrypt) {$/;"	f
+rsa_encrypt	etomc2_pem.c	/^void rsa_encrypt(ngx_http_request_t *r, const ngx_str_t from) {$/;"	f
+rsa_pem	etomc2.h	/^    ngx_str_t rsa_pem;$/;"	m	struct:__anon5
+rsa_pem_pk	etomc2.h	/^    ngx_str_t rsa_pem_pk;$/;"	m	struct:__anon5
+s	ext/libinjection/libinjection_html5.h	/^    const char* s;$/;"	m	struct:h5_state
+s	ext/libinjection/libinjection_sqli.h	/^    const char *s;$/;"	m	struct:libinjection_sqli_state
+sentinel	etomc2.h	/^    ngx_rbtree_node_t sentinel;$/;"	m	struct:ngx_etomc2_cc_user_behavior
+setcookie	etomc2_cc.c	/^void setcookie(ngx_http_request_t *r, ngx_str_t cookie) {$/;"	f
+sfilter	ext/libinjection/libinjection_sqli.h	/^typedef struct libinjection_sqli_state sfilter;$/;"	t	typeref:struct:libinjection_sqli_state
+shm_zone_cc_gt	etomc2.h	/^    ngx_shm_zone_t *shm_zone_cc_gt;$/;"	m	struct:__anon5
+shm_zone_cc_thin	etomc2.h	/^    ngx_shm_zone_t *shm_zone_cc_thin;$/;"	m	struct:__anon5
+shm_zone_cc_ub	etomc2.h	/^    ngx_shm_zone_t *shm_zone_cc_ub;$/;"	m	struct:__anon5
+shm_zone_list	etomc2.h	/^    ngx_shm_zone_t *shm_zone_list;$/;"	m	struct:__anon5
+shm_zone_lreq_queue	etomc2.h	/^    ngx_shm_zone_t *shm_zone_lreq_queue;$/;"	m	struct:__anon5
+shm_zone_ub_queue	etomc2.h	/^    ngx_shm_zone_t *shm_zone_ub_queue;$/;"	m	struct:__anon5
+shm_zone_uri	etomc2.h	/^    ngx_shm_zone_t *shm_zone_uri;$/;"	m	struct:__anon5
+shm_zone_waf	etomc2.h	/^    ngx_shm_zone_t *shm_zone_waf;$/;"	m	struct:__anon5
+shpool	etomc2.h	/^    ngx_slab_pool_t *shpool;$/;"	m	struct:__anon5
+slen	ext/libinjection/libinjection_sqli.h	/^    size_t slen;$/;"	m	struct:libinjection_sqli_state
+sql_keywords	ext/libinjection/libinjection_sqli_data.h	/^static const keyword_t sql_keywords[] = {$/;"	v
+sql_keywords_sz	ext/libinjection/libinjection_sqli_data.h	/^static const size_t sql_keywords_sz = 9049;$/;"	v
+sqli_flags	ext/libinjection/libinjection_sqli.h	/^enum sqli_flags {$/;"	g
+sqli_token_types	ext/libinjection/libinjection_sqli.c	/^} sqli_token_types;$/;"	t	typeref:enum:__anon1	file:
+st_assign	ext/libinjection/libinjection_sqli.c	/^static void st_assign(stoken_t * st, const char stype,$/;"	f	file:
+st_assign_char	ext/libinjection/libinjection_sqli.c	/^static void st_assign_char(stoken_t * st, const char stype, size_t pos, size_t len,$/;"	f	file:
+st_clear	ext/libinjection/libinjection_sqli.c	/^static void st_clear(stoken_t * st)$/;"	f	file:
+st_copy	ext/libinjection/libinjection_sqli.c	/^static void st_copy(stoken_t * dest, const stoken_t * src)$/;"	f	file:
+st_is_arithmetic_op	ext/libinjection/libinjection_sqli.c	/^static int st_is_arithmetic_op(const stoken_t* st)$/;"	f	file:
+st_is_unary_op	ext/libinjection/libinjection_sqli.c	/^static int st_is_unary_op(const stoken_t * st)$/;"	f	file:
+state	ext/libinjection/libinjection_html5.h	/^    ptr_html5_state state;$/;"	m	struct:h5_state
+stats_comment_c	ext/libinjection/libinjection_sqli.h	/^    int stats_comment_c;$/;"	m	struct:libinjection_sqli_state
+stats_comment_ddw	ext/libinjection/libinjection_sqli.h	/^     int stats_comment_ddw;$/;"	m	struct:libinjection_sqli_state
+stats_comment_ddx	ext/libinjection/libinjection_sqli.h	/^    int stats_comment_ddx;$/;"	m	struct:libinjection_sqli_state
+stats_comment_hash	ext/libinjection/libinjection_sqli.h	/^    int stats_comment_hash;$/;"	m	struct:libinjection_sqli_state
+stats_folds	ext/libinjection/libinjection_sqli.h	/^    int stats_folds;$/;"	m	struct:libinjection_sqli_state
+stats_tokens	ext/libinjection/libinjection_sqli.h	/^    int stats_tokens;$/;"	m	struct:libinjection_sqli_state
+stime	etomc2.h	/^    time_t stime;       \/\/ 5 minutes  average$/;"	m	struct:ngx_etomc2_lreq_uri
+stoken_t	ext/libinjection/libinjection_sqli.h	/^typedef struct libinjection_sqli_token stoken_t;$/;"	t	typeref:struct:libinjection_sqli_token
+str_close	ext/libinjection/libinjection_sqli.h	/^    char str_close;$/;"	m	struct:libinjection_sqli_token
+str_open	ext/libinjection/libinjection_sqli.h	/^    char str_open;$/;"	m	struct:libinjection_sqli_token
+streq	ext/libinjection/libinjection_sqli.c	/^static int streq(const char *a, const char *b)$/;"	f	file:
+stringtype	ext/libinjection/libinjection_xss.c	/^typedef struct stringtype {$/;"	s	file:
+stringtype_t	ext/libinjection/libinjection_xss.c	/^} stringtype_t;$/;"	t	typeref:struct:stringtype	file:
+strlencspn	ext/libinjection/libinjection_sqli.c	/^strlencspn(const char *s, size_t len, const char *accept)$/;"	f	file:
+strlenspn	ext/libinjection/libinjection_sqli.c	/^strlenspn(const char *s, size_t len, const char *accept)$/;"	f	file:
+syntax_merge_words	ext/libinjection/libinjection_sqli.c	/^static int syntax_merge_words(struct libinjection_sqli_state * sf,stoken_t * a, stoken_t * b)$/;"	f	file:
+tail	etomc2.h	/^    Ngx_etomc2_ub_queue *tail;$/;"	m	struct:ngx_ub_queue_ptr
+take	etomc2.h	/^    ngx_flag_t take;   \/\/ default 0 is  itemizeing,  1 is itemizeed $/;"	m	struct:ngx_etomc2_shm_gt
+testIsSQL	ext/libinjection/test_speed_sqli.c	/^int testIsSQL(void)$/;"	f
+testIsSQL	ext/libinjection/test_speed_xss.c	/^int testIsSQL(void)$/;"	f
+test_positive	ext/libinjection/reader.c	/^void test_positive(FILE * fd, const char *fname, detect_mode_t mode,$/;"	f
+time_reckon	etomc2.h	/^    uint32_t time_reckon;  \/\/( now time - time_reckon )> TIME_RECKON_OUT  to$/;"	m	struct:ngx_etomc2_ub_queue
+token_len	ext/libinjection/libinjection_html5.h	/^    size_t token_len;$/;"	m	struct:h5_state
+token_start	ext/libinjection/libinjection_html5.h	/^    const char* token_start;$/;"	m	struct:h5_state
+token_type	ext/libinjection/libinjection_html5.h	/^    enum html5_type token_type;$/;"	m	struct:h5_state	typeref:enum:h5_state::html5_type
+tokenvec	ext/libinjection/libinjection_sqli.h	/^    struct libinjection_sqli_token tokenvec[8];$/;"	m	struct:libinjection_sqli_state	typeref:struct:libinjection_sqli_state::libinjection_sqli_token
+tree_uri	etomc2.h	/^    Ngx_etomc2_shm_tree_data *tree_uri;$/;"	m	struct:ngx_etomc2_cc_domain
+type	ext/libinjection/libinjection_sqli.h	/^    char type;$/;"	m	struct:libinjection_sqli_token
+type	ext/libinjection/libinjection_sqli_data.h	/^    char type;$/;"	m	struct:__anon2
+uri	etomc2.h	/^    ngx_str_t *uri;$/;"	m	struct:ngx_etomc2_cc_uri
+uri_amount	etomc2.h	/^    size_t uri_amount[ROAD_MAP_URI_MAX];   \/\/ uri  amount;$/;"	m	struct:ngx_etomc2_cc_user_behavior
+uri_itemize	etomc2.h	/^    uint32_t uri_itemize[CC_GT_URI_MAX];  \/\/ uri  is loop  itemize level+1;$/;"	m	struct:ngx_etomc2_shm_gt
+urlcharmap	ext/libinjection/html5_cli.c	/^int urlcharmap(char ch) {$/;"	f
+urlcharmap	ext/libinjection/reader.c	/^int urlcharmap(char ch) {$/;"	f
+usage	ext/libinjection/reader.c	/^static void usage(const char* argv[])$/;"	f	file:
+userdata	ext/libinjection/libinjection_sqli.h	/^    void*         userdata;$/;"	m	struct:libinjection_sqli_state
+uuid4_data	etomc2_uuid.c	/^int uuid4_data(ngx_http_request_t *r) {$/;"	f
+val	ext/libinjection/libinjection_sqli.h	/^    char val[32];$/;"	m	struct:libinjection_sqli_token
+visited	etomc2.h	/^    size_t visited[60];  \/\/ 24 time uri visited$/;"	m	struct:ngx_etomc2_cc_uri
+visits	etomc2.h	/^    size_t visits[60];   \/\/ 24 time uri visit$/;"	m	struct:ngx_etomc2_cc_uri
+word	ext/libinjection/libinjection_sqli_data.h	/^    const char *word;$/;"	m	struct:__anon2

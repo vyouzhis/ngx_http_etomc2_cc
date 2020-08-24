@@ -81,7 +81,7 @@ void lreq_uri_queue(ngx_http_request_t *r) {
     int old_id, i;
     ngx_msec_t header_time;
 
-    ngx_http_dummy_loc_conf_t *lccf;
+    ngx_http_etomc2_loc_conf_t *lccf;
     lccf = ngx_http_get_module_loc_conf(r, ngx_http_etomc2_cc_module);
     if (!lccf) return;
 
@@ -249,7 +249,7 @@ int lreq_operate_uri(ngx_http_request_t *r) {
     int i;
     /** time_t now = ngx_time(); */
     Ngx_etomc2_lreq_uri lreq_uri;
-    ngx_http_dummy_loc_conf_t *lccf;
+    ngx_http_etomc2_loc_conf_t *lccf;
     lccf = ngx_http_get_module_loc_conf(r, ngx_http_etomc2_cc_module);
     if (!lccf) return -1;
 
@@ -350,7 +350,7 @@ void lreq_queue_show(ngx_http_request_t *r) {
     /** float fib1, fib2; */
     int i;
     Ngx_etomc2_lreq_uri lreq_uri;
-    ngx_http_dummy_loc_conf_t *lccf;
+    ngx_http_etomc2_loc_conf_t *lccf;
     lccf = ngx_http_get_module_loc_conf(r, ngx_http_etomc2_cc_module);
     if (!lccf) return;
 

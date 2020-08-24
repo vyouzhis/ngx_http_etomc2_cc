@@ -137,3 +137,4 @@ int uuid4_data(ngx_http_request_t *r) {
 
     return exist;
 } /* -----  end of function uuid4_variable  ----- */
+

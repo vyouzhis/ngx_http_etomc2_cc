@@ -24,7 +24,7 @@
  * =====================================================================================
  */
 void ngx_cc_gt(ngx_http_request_t *r) {
-    ngx_http_dummy_loc_conf_t *lccf;
+    ngx_http_etomc2_loc_conf_t *lccf;
     ngx_slab_pool_t *shpool;
 
     Ngx_etomc2_shm_gt *cc_gt_ptr, *cc_new_ptr;
@@ -210,7 +210,7 @@ int ngx_cc_gt_check(ngx_http_request_t *r,uint32_t hash_uri) {
  * =====================================================================================
  */
 void ngx_cc_gt_search(ngx_http_request_t *r, Ngx_etomc2_shm_gt **gt_node_ptr) {
-    ngx_http_dummy_loc_conf_t *lccf;
+    ngx_http_etomc2_loc_conf_t *lccf;
     Ngx_etomc2_shm_gt *cc_gt_ptr;
     ngx_shm_zone_t *shm_zone_cc_gt;
     uint32_t hash_domain;
