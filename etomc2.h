@@ -3,7 +3,7 @@
  *
  *       Filename:  etomc2.h
  *
- *    Description:  
+ *    Description:
  *
  *        Version:  1.0
  *        Created:  2020年08月10日 11时50分24秒
@@ -15,8 +15,8 @@
  *
  * =====================================================================================
  */
-#ifndef  ETOMC2_INC                                                                                                                                                                                         
-#define  ETOMC2_INC                                                          
+#ifndef ETOMC2_INC
+#define ETOMC2_INC
 
 #define ETOMC2_VERSION "0.0.1"
 
@@ -29,7 +29,6 @@
 #include <ngx_http_core_module.h>
 #include <ngx_md5.h>
 #include <pcre.h>
-
 #include <sys/times.h>
 #include <unistd.h>
 
@@ -37,37 +36,43 @@
  *  define  function
  */
 
+#ifndef __ETOMC2_LOG
+#define __ETOMC2_LOG
+#define NX_LOG(LOG, ST, ...)                                        \
+    do {                                                            \
+        ngx_log_debug(NGX_LOG_DEBUG_HTTP, r->connect->log, LOG, ST, \
+                      __VA_ARGS__);                                 \
+    } while (0)
+#endif
+
 #ifndef __ETOMC2_DEBUG
 #define __ETOMC2_DEBUG
-
 #define NX_DEBUG(FEATURE, DEF, LOG, ST, ...)                   \
     do {                                                       \
         if (FEATURE) ngx_log_debug(DEF, LOG, ST, __VA_ARGS__); \
     } while (0)
 #endif
 
-#ifndef __ETOMC2_LOG_DEBUG
-#define __ETOMC2_LOG_DEBUG
-#define NX_LOG_DEBUG(FEATURE, DEF, LOG, ST, ...)                    \
-    do {                                                            \
-        if (FEATURE) ngx_conf_log_error(DEF, LOG, ST, __VA_ARGS__); \
+#ifndef __ETOMC2_CONF_DEBUG
+#define __ETOMC2_CONF_DEBUG
+#define NX_CONF_DEBUG(LOG, ST, ...)                                        \
+    do {                                                                  \
+        ngx_conf_log_error(NGX_LOG_EMERG, cf, 0, LOG, ST, __VA_ARGS__); \
     } while (0)
 #endif
 
 #define GET_ARRAY_LEN(array, len) \
     { len = (sizeof(array) / sizeof(array[0])); }
 
-
 /**
  * define  var
  */
-#define ETOMC2_CC_ENABLE "etomc2_enable"
+#define ETOMC2_CC_ENABLE "Etomc2CCEnable"
 #define WEB_ETOMC2 "hello world!"
 
 // share memory size;
 #define SHM_SIZE_MAX_COMMON 128 * ngx_pagesize
 #define SHM_SIZE_DEFAULT_COMMON 8 * ngx_pagesize
-
 
 #define CC_GT_URI_MAX 8
 
@@ -80,7 +85,7 @@
 /**
  *  header_time > 5  lreq limit
  */
-#define LREQ_HEADER_TIME  5000
+#define LREQ_HEADER_TIME 5000
 #define LREQ_QUEUE_MAX 8
 
 #define TIME_RECKON_OUT 3600
@@ -95,28 +100,28 @@
 #define MARK_READY_NEXT_TIME 2
 #define MARK_READY_NEXT_TIME_INVALID 4
 
-#define CC_SHM_SIZE "cc_shm_size"
 #define CC_BLACK_IP_FILE  "cc_black_ip_file"
+#define CC_SHM_SIZE "cc_shm_size"
+// #define CC_PATH "cc_path"
 
 #define HDCACHE_PATH "hdcache_path"
-#define  CUSTOM_IP_PATH "custom_ip_path"
+#define CUSTOM_IP_PATH "custom_ip_path"
 
 #define PEM_SECURE_TUNNEL "secure-tunnel"
-#define etomc2_PEM_PK_FILE "SimbaCCPemPrivateKey"
+#define etomc2_PEM_PK_FILE "Etomc2CCPemPrivateKey"
 
 #define RSA_PEM_AUTH "rsa_pem_auth"
 
 #define ILL_RETURN_STATUS "ill_return_status"
 
 //  itemize behavior  and when  ngx found  itemize will write log
-                    //  itemize_id for  uri
-#define  CC_ITEMIZE "cc_itemize"
+//  itemize_id for  uri
+#define CC_ITEMIZE "cc_itemize"
 
 #define CC_GT_LEVEL "cc_level"
 #define CC_RETURN_STATUS "cc_return_status"
 
 #define CC_NGX_CTRL "ngx_ctrl_admin"
-
 
 #define COOKIE_GREEN_NAME "behavior_cc"
 #define COOKIE_UUID_NAME "__secure-uuid"
@@ -124,8 +129,8 @@
 static const float Fibonacci[4][2] = {
     {0.382, 0.5}, {1.13, 1.618}, {2.24, 2.618}, {3.14, 3.618}};
 
-static const size_t Intensity[] = {5 * 60,       13 * 60,         60 * 60,
-                                   24 * 60 * 60, 7 * 24 * 60 * 60};
+static const size_t Intensity[] = {5 * 60, 13 * 60, 60 * 60, 24 * 60 * 60,
+                                   7 * 24 * 60 * 60};
 
 /**
  *  define  global var
@@ -134,10 +139,8 @@ static const size_t Intensity[] = {5 * 60,       13 * 60,         60 * 60,
 
 extern ngx_module_t ngx_http_etomc2_cc_module;
 
-
 // static int pem_auth;
 ngx_log_t *cc_black_ip_file;
-
 
 /**
  *
@@ -146,8 +149,8 @@ ngx_log_t *cc_black_ip_file;
 enum CC_THIN_COOKIE_MARK {
     M_YELLOW = 0,  // init  new  client
     M_GREEN,       // green is  trust  client
-    M_SMALL,        //  only  one  uri
-    M_READY,       // checking  client 
+    M_SMALL,       //  only  one  uri
+    M_READY,       // checking  client
     M_RED          // block  client
 };                 /* ----------  end of enum CC_THIN_COOKIE_MARK  ---------- */
 typedef enum CC_THIN_COOKIE_MARK CC_THIN_COOKIE_MARK;
@@ -159,7 +162,6 @@ enum BROWSER_BOT {
 }; /* ----------  end of enum BROWSER_BOT  ---------- */
 
 typedef enum BROWSER_BOT BROWSER_BOT;
-
 
 /**
  * aiwaf hash list
@@ -180,7 +182,6 @@ struct ngx_etomc2_shm_tree_data {
 
 typedef struct ngx_etomc2_shm_tree_data Ngx_etomc2_shm_tree_data;
 
-
 /* ---- etomc2 cc------ */
 enum SHM_GT_LEVEL {
     GTL_1 = 1,
@@ -194,10 +195,10 @@ typedef enum SHM_GT_LEVEL SHM_GT_LEVEL;
 
 struct ngx_etomc2_shm_gt {
     uint32_t hash_domain;
-    size_t count;     
+    size_t count;
     time_t now;
     uint32_t uri_itemize[CC_GT_URI_MAX];  // uri  is loop  itemize level+1;
-    ngx_flag_t take;   // default 0 is  itemizeing,  1 is itemizeed 
+    ngx_flag_t take;  // default 0 is  itemizeing,  1 is itemizeed
     SHM_GT_LEVEL level;
     struct ngx_etomc2_shm_gt *next;
 }; /* ----------  end of struct ngx_etomc2_shm_gt  ---------- */
@@ -207,7 +208,6 @@ typedef struct ngx_etomc2_shm_gt Ngx_etomc2_shm_gt;
  * the step 0
  * use  Fibonacci to calculate increase
  */
-
 
 /**
  *  二级防护，当量大于后端可承受阶段的时候，启用
@@ -262,8 +262,6 @@ typedef struct ngx_visit_cc_attack Ngx_visit_cc_attack;
  *  Fibonacci[]
  */
 
-
-
 struct ngx_etomc2_lreq_uri {
     // ngx_str_t uri_md5;
     uint32_t hash_uri;  ///   uri
@@ -305,7 +303,6 @@ typedef struct ngx_etomc2_lreq_queue Ngx_etomc2_lreq_queue;
 /* typedef struct ngx_etomc2_cc_info Ngx_etomc2_cc_attack; */
 
 // time  out  60  second
-
 
 /**
  * -----  time out 60 second   -----
@@ -409,7 +406,6 @@ typedef struct ngx_ub_queue_ptr Ngx_ub_queue_ptr;
 
 /* ---- etomc2 cc------ */
 
-
 typedef struct {
     ngx_log_t *log;
 
@@ -418,8 +414,9 @@ typedef struct {
 typedef struct {
     ngx_flag_t etomc2_cc_enable;
 
+    // ngx_str_t cc_path;
     ngx_str_t hdcache_path;
-    ngx_str_t  custom_ip_path;
+    ngx_str_t custom_ip_path;
     ngx_str_t rsa_pem_pk;
     ngx_str_t rsa_pem;
 
@@ -466,8 +463,6 @@ typedef struct {
 
 } ngx_http_etomc2_loc_conf_t; /* ----------  end of struct
                                 ngx_http_lb_loc_conf_t  ---------- */
-
-
 
 ngx_table_elt_t *search_headers_in(ngx_http_request_t *r, u_char *name,
                                    size_t len);
@@ -532,8 +527,8 @@ ngx_str_t *ngx_cc_rbtree_hash_key(ngx_http_request_t *r);
 int ArrayMax(size_t array[]);
 
 void ngx_cc_gt(ngx_http_request_t *r);
-Ngx_etomc2_shm_gt * ngx_cc_gt_init ( ngx_slab_pool_t *shpool);
-int ngx_cc_gt_check(ngx_http_request_t *r,uint32_t hash_uri);
+Ngx_etomc2_shm_gt *ngx_cc_gt_init(ngx_slab_pool_t *shpool);
+int ngx_cc_gt_check(ngx_http_request_t *r, uint32_t hash_uri);
 int gt_index(SHM_GT_LEVEL gt);
 void ngx_cc_gt_search(ngx_http_request_t *r, Ngx_etomc2_shm_gt **gt_node_ptr);
 void black_ip_log(ngx_http_request_t *r);
@@ -544,7 +539,7 @@ ngx_str_t client_forward_ip(ngx_http_request_t *r);
 void rsa_encrypt(ngx_http_request_t *r, const ngx_str_t from);
 int rsa_decrypt(ngx_http_request_t *r, const ngx_str_t base64,
                 const ngx_str_t pem, char **decrypt);
-int  rsa_auth ( ngx_http_request_t *r,const ngx_str_t base64 );
+int rsa_auth(ngx_http_request_t *r, const ngx_str_t base64);
 // -----  openssl  rsa function -----
 
 // ----  uuid ---
@@ -557,19 +552,19 @@ int uuid4_data(ngx_http_request_t *r);
 // ------  hdcache ----
 int hdcache_create_dir(const char *path, const mode_t mode);
 void hdcache_create_file(const char *path, int inten, int timestamp);
-int  hdcache_unlink_file ( const char *path );
+int hdcache_unlink_file(const char *path);
 int hdcache_file_exist(const char *file);
 
 ngx_str_t hdcache_hash_to_dir(ngx_http_request_t *r, uint32_t num,
                               CC_THIN_COOKIE_MARK mark);
 ngx_str_t hdcache_hash_to_dir_def(ngx_http_request_t *r, const char *path,
-        uint32_t num, CC_THIN_COOKIE_MARK mark); 
+                                  uint32_t num, CC_THIN_COOKIE_MARK mark);
 ngx_str_t hdcache_file_build(ngx_http_request_t *r, ngx_str_t path,
                              ngx_str_t file_name);
 int hdcache_file_content(const char *file, int *timestamp);
-int hdcache_behavior(ngx_http_request_t *r, 
-                     ngx_str_t *key, CC_THIN_COOKIE_MARK mark, int *timestamp);
-int  custom_ip_attack_exist ( ngx_http_request_t *r,CC_THIN_COOKIE_MARK mark );
+int hdcache_behavior(ngx_http_request_t *r, ngx_str_t *key,
+                     CC_THIN_COOKIE_MARK mark, int *timestamp);
+int custom_ip_attack_exist(ngx_http_request_t *r, CC_THIN_COOKIE_MARK mark);
 //-------- hdcache -----
 
 // ------ limit request   ------
@@ -589,10 +584,10 @@ int timeIndex();
 Ngx_etomc2_shm_tree_data *tree_create(ngx_slab_pool_t *shpool);
 size_t tree_insert(ngx_http_request_t *r, Ngx_etomc2_shm_tree_data **tree,
                    uint32_t hashkey, void *data, ngx_slab_pool_t *shpool);
-Ngx_etomc2_shm_tree_data *tree_search(Ngx_etomc2_shm_tree_data **tree,                                                                                                       
-          uint32_t hashkey);
+Ngx_etomc2_shm_tree_data *tree_search(Ngx_etomc2_shm_tree_data **tree,
+                                     uint32_t hashkey);
 void visit_print(ngx_http_request_t *r, Ngx_etomc2_shm_tree_data *tree);
 ngx_table_elt_t *search_headers_in(ngx_http_request_t *r, u_char *name,
                                    size_t len);
-#endif   /* ----- #ifndef ETOMC2_INC  ----- */
+#endif /* ----- #ifndef ETOMC2_INC  ----- */
 
