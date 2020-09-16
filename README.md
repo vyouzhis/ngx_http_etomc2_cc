@@ -56,11 +56,11 @@
 <!-- TABLE OF CONTENTS -->
 ## 栏目(Table of Contents)
 
-* [关于该项目(About the Project)](#about-the-project)
-  * [依赖关系(Built With)](#built-with)
-* [起始(Getting Started)](#getting-started)
-  * [编译安装(Installation)](#installation)
-* [Usage](#usage)
+* [关于该项目(About the Project)](#关于该项目about-the-project)
+  * [依赖关系(Built With)](#依赖关系built-with)
+* [起始(Getting Started)](#起始getting-started)
+  * [编译安装(Installation)](#编译安装installation)
+* [配置(Usage)](#配置usage)
 * [Roadmap](#roadmap)
 * [Contributing](#contributing)
 * [License](#license)
@@ -118,7 +118,7 @@ gmake install
 
 
 <!-- USAGE EXAMPLES -->
-## Usage
+## 配置(Usage)
 
 Use this space to show useful examples of how a project can be used. Additional screenshots, code examples and demos work well in this space. You may also link to more resources.
 
