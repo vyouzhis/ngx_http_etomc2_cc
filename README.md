@@ -29,7 +29,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-  <a href="https://github.com/othneildrew/Best-README-Template">
+  <a href="https://github.com/vyouzhi">
     <img src="images/logo.png" alt="Logo" width="80" height="80">
   </a>
 
@@ -38,27 +38,28 @@
   <p align="center">
     ngx_http_etomc2_cc is nginx module Anti attack cc!
     <br />
-    <a href="https://github.com/othneildrew/Best-README-Template"><strong>Explore the docs »</strong></a>
+    ngx_http_etomc2_cc 是 nginx 一个智能防护 CC 攻击的模块插件
+    <br />
+    <a href="https://github.com/vyouzhis/ngx_http_etomc2_cc"><strong>Explore the docs »</strong></a>
     <br />
     <br />
-    <a href="https://github.com/othneildrew/Best-README-Template">View Demo</a>
+    <a href="https://github.com/vyouzhis/ngx_http_etomc2_cc">View Demo</a>
     ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Report Bug</a>
+    <a href="https://github.com/vyouzhis/ngx_http_etomc2_cc/issues">Report Bug</a>
     ·
-    <a href="https://github.com/othneildrew/Best-README-Template/issues">Request Feature</a>
+    <a href="https://github.com/vyouzhis/ngx_http_etomc2_cc/issues">Request Feature</a>
   </p>
 </p>
 
 
 
 <!-- TABLE OF CONTENTS -->
-## Table of Contents
+## 栏目(Table of Contents)
 
-* [About the Project](#about-the-project)
-  * [Built With](#built-with)
-* [Getting Started](#getting-started)
-  * [Prerequisites](#prerequisites)
-  * [Installation](#installation)
+* [关于该项目(About the Project)](#about-the-project)
+  * [依赖关系(Built With)](#built-with)
+* [起始(Getting Started)](#getting-started)
+  * [编译安装(Installation)](#installation)
 * [Usage](#usage)
 * [Roadmap](#roadmap)
 * [Contributing](#contributing)
@@ -69,57 +70,49 @@
 
 
 <!-- ABOUT THE PROJECT -->
-## About The Project
+## 关于该项目(About the Project)
 
-[![Product Name Screen Shot][product-screenshot]](https://example.com)
+主要分析网站访问者的用户行为.不同的访问者在浏览某一个网站的时候，都会产生不同的用户行为。目前暂把该行为分成三类：
 
-There are many great README templates available on GitHub, however, I didn't find one that really suit my needs so I created this enhanced one. I want to create a README template so amazing that it'll be the last one you ever need.
+用户行为:
+* 正常的访问者：一般的访问者都是从首页进入，之后综横分开访问不同的内页。
+* 恶意的访问者：会通过大量的IP同时访问某一个页面或API，从而造成服务器的内存及CPU消耗，而形成攻击。
+* 单点访问者：这种访问基本上都是流失型，只会访问次数较少的，产生不了用户行为，就消失了。
 
-Here's why:
-* Your time should be focused on creating something amazing. A project that solves a problem and helps others
-* You shouldn't be doing the same tasks over and over like creating a README from scratch
-* You should element DRY principles to the rest of your life :smile:
+目前本插件模块，可以快速分析有恶意的访问者，从而可以进行拦截。
 
-Of course, no one template will serve all projects since your needs may be different. So I'll be adding more in the near future. You may also suggest changes by forking this repo and creating a pull request or opening an issue.
-
-A list of commonly used resources that I find helpful are listed in the acknowledgements.
-
-### Built With
-This section should list any major frameworks that you built your project using. Leave any add-ons/plugins for the acknowledgements section. Here are a few examples.
-* [Bootstrap](https://getbootstrap.com)
-* [JQuery](https://jquery.com)
-* [Laravel](https://laravel.com)
+### 依赖关系(Built With)
+需要用到的软件版本.
+* [nginx](http://nginx.org/en/download.html)
+* [ngx_http_etomc2_cc](https://github.com/vyouzhis/ngx_http_etomc2_cc)
 
 
 
 <!-- GETTING STARTED -->
-## Getting Started
+## 起始(Getting Started)
 
-This is an example of how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
+需要下载以下的文件.
 
-### Prerequisites
+### 编译安装(Installation)
 
-This is an example of how to list things you need to use the software and how to install them.
-* npm
+1. 在这儿选择 nginx 的版本 [http://nginx.org/download/nginx-1.18.0.tar.gz](http://nginx.org/en/download.html)
+2. 下载nginx
 ```sh
-npm install npm@latest -g
+wget http://nginx.org/download/nginx-1.18.0.tar.gz
 ```
-
-### Installation
-
-1. Get a free API Key at [https://example.com](https://example.com)
-2. Clone the repo
+3. 解压
 ```sh
-git clone https://github.com/your_username_/Project-Name.git
+tar -zxvf nginx-1.18.0.tar.gz
 ```
-3. Install NPM packages
-```sh
-npm install
-```
-4. Enter your API in `config.js`
+4. git clone ngx_http_etomc2_cc
 ```JS
-const API_KEY = 'ENTER YOUR API';
+git clone https://github.com/vyouzhis/ngx_http_etomc2_cc.git
+```
+5. 编译安装
+```sh
+./configure --add-module=../ngx_http_etomc2_cc --with-http_ssl_module --with-stream_ssl_module
+gmake
+gmake install
 ```
 
 
@@ -136,7 +129,7 @@ _For more examples, please refer to the [Documentation](https://example.com)_
 <!-- ROADMAP -->
 ## Roadmap
 
-See the [open issues](https://github.com/othneildrew/Best-README-Template/issues) for a list of proposed features (and known issues).
+See the [open issues](https://github.com/vyouzhis/ngx_http_etomc2_cc/issues) for a list of proposed features (and known issues).
 
 
 
@@ -189,16 +182,16 @@ Project Link: [https://github.com/your_username/repo_name](https://github.com/yo
 
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/othneildrew/Best-README-Template.svg?style=flat-square
-[contributors-url]: https://github.com/othneildrew/Best-README-Template/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/othneildrew/Best-README-Template.svg?style=flat-square
-[forks-url]: https://github.com/othneildrew/Best-README-Template/network/members
-[stars-shield]: https://img.shields.io/github/stars/othneildrew/Best-README-Template.svg?style=flat-square
-[stars-url]: https://github.com/othneildrew/Best-README-Template/stargazers
-[issues-shield]: https://img.shields.io/github/issues/othneildrew/Best-README-Template.svg?style=flat-square
-[issues-url]: https://github.com/othneildrew/Best-README-Template/issues
-[license-shield]: https://img.shields.io/github/license/othneildrew/Best-README-Template.svg?style=flat-square
-[license-url]: https://github.com/othneildrew/Best-README-Template/blob/master/LICENSE.txt
+[contributors-shield]: https://img.shields.io/github/contributors/vyouzhis/ngx_http_etomc2_cc.svg?style=flat-square
+[contributors-url]: https://github.com/vyouzhis/ngx_http_etomc2_cc/graphs/contributors
+[forks-shield]: https://img.shields.io/github/forks/vyouzhis/ngx_http_etomc2_cc.svg?style=flat-square
+[forks-url]: https://github.com/vyouzhis/ngx_http_etomc2_cc/network/members
+[stars-shield]: https://img.shields.io/github/stars/vyouzhis/ngx_http_etomc2_cc.svg?style=flat-square
+[stars-url]: https://github.com/vyouzhis/ngx_http_etomc2_cc/stargazers
+[issues-shield]: https://img.shields.io/github/issues/vyouzhis/ngx_http_etomc2_cc.svg?style=flat-square
+[issues-url]: https://github.com/vyouzhis/ngx_http_etomc2_cc/issues
+[license-shield]: https://img.shields.io/github/license/vyouzhis/ngx_http_etomc2_cc.svg?style=flat-square
+[license-url]: https://github.com/vyouzhis/ngx_http_etomc2_cc/blob/master/LICENSE.txt
 [linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/othneildrew
+[linkedin-url]: https://linkedin.com/in/vyouzhis
 [product-screenshot]: images/screenshot.png
