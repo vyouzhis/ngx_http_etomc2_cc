@@ -52,32 +52,18 @@ ngx_int_t cc_thin_enter(ngx_http_request_t *r) {
     time_t now;
     int timestamp = -1, uuid;
 
-    /** ngx_cc_gt(r); */
-
     now = ngx_time();
     lccf = ngx_http_get_module_loc_conf(r, ngx_http_etomc2_cc_module);
     if (!lccf) {
-
         return (NGX_DECLINED);
     }
     if (lccf->cc_itemize == 0) {
         return NGX_OK;
-
-    }
-    if (lccf->hdcache_path.len > 0) {
-        int black_ip = custom_ip_attack_exist(r,M_RED);
-
-        if (black_ip == 0) {
-            ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
-                    "custom_ip_attack");
-            return NGX_ERROR;
-        }
     }
 
     key = ngx_cc_rbtree_hash_key(r);
     if (!key) {
-        ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
-                "ngx_cc_rbtree_hash_key is null");
+        NX_LOG("ngx_cc_rbtree_hash_key is null");
         return NGX_DECLINED;
     }
     /**
@@ -87,8 +73,8 @@ ngx_int_t cc_thin_enter(ngx_http_request_t *r) {
     int hb = hdcache_behavior(r, key, M_RED, &timestamp);
 
     if (hb != -1) {
-       /**  ngx_log_error(NGX_LOG_ERR, r->connection->log, 0, */
-                /** "hdcache_behavior:%d, timestamp:%d", hb, timestamp);        */
+        /**  NX_DEBUG( */
+        /** "hdcache_behavior:%d, timestamp:%d", hb, timestamp);        */
         time_space = (now - timestamp);
         if ((size_t)time_space < Intensity[hb]) {
             ngx_pfree(r->pool, key->data);
@@ -98,19 +84,17 @@ ngx_int_t cc_thin_enter(ngx_http_request_t *r) {
     }
 
     /**
-     * rsa  pem
+     * headers rsa  pem
      */
     if (lccf->rsa_pem_pk.len > 0) {
         pem = search_headers_in(r, (u_char *)PEM_SECURE_TUNNEL,
-                strlen(PEM_SECURE_TUNNEL));
+                                strlen(PEM_SECURE_TUNNEL));
 
         if (pem && pem->value.len > 0) {
             char *decrypt;
             rsa_decrypt(r, pem->value, lccf->rsa_pem, &decrypt);
         }
     }
-
-
 
     uuid = uuid4_data(r);
     int lou = lreq_operate_uri(r);
@@ -134,17 +118,17 @@ ngx_int_t cc_thin_enter(ngx_http_request_t *r) {
         cc_ub_ptr = (Ngx_etomc2_cc_user_behavior *)shm_zone_cc_ub->data;
         if (cc_ub_ptr) {
             find_node = cc_thin_user_behavior_search(
-                    cc_ub_ptr->rbtree.root, cc_ub_ptr->rbtree.sentinel, key);
+                cc_ub_ptr->rbtree.root, cc_ub_ptr->rbtree.sentinel, key);
             if (find_node != cc_ub_ptr->rbtree.sentinel) {
                 behavior = (Ngx_etomc2_cc_user_behavior *)find_node;
                 if (behavior->mark == M_SMALL) {
-                    // M_SMALL return busy 
+                    // M_SMALL return busy
                     ngx_pfree(r->pool, key->data);
                     ngx_pfree(r->pool, key);
                     return NGX_BUSY;
                 }
             }
-        } 
+        }
     }
 
     ngx_pfree(r->pool, key->data);
@@ -184,8 +168,8 @@ Ngx_visit_cc_attack *cc_thin_create(ngx_slab_pool_t *shpool) {
  * =====================================================================================
  */
 void cc_thin_insert(ngx_slab_pool_t *shpool, Ngx_visit_cc_attack **thin_root,
-        uint32_t hash_uri, uint32_t hash_domain,
-        size_t rise_level) {
+                    uint32_t hash_uri, uint32_t hash_domain,
+                    size_t rise_level) {
     Ngx_visit_cc_attack *tlist = NULL, *nlist = NULL;
 
     if (!(*thin_root)) {
@@ -227,7 +211,7 @@ void cc_thin_insert(ngx_slab_pool_t *shpool, Ngx_visit_cc_attack **thin_root,
  * =====================================================================================
  */
 void cc_thin_delete(Ngx_visit_cc_attack **thin_root, uint32_t hash_uri,
-        uint32_t hash_domain) {
+                    uint32_t hash_domain) {
     Ngx_visit_cc_attack *tlist = (*thin_root);
     while (tlist) {
         if (tlist->hash_domain == hash_domain && tlist->hash_uri == hash_uri) {
@@ -249,7 +233,7 @@ void cc_thin_delete(Ngx_visit_cc_attack **thin_root, uint32_t hash_uri,
  * =====================================================================================
  */
 size_t cc_thin_search(Ngx_visit_cc_attack **thin_root, uint32_t hash_uri,
-        uint32_t hash_domain) {
+                      uint32_t hash_domain) {
     Ngx_visit_cc_attack *tlist = (*thin_root);
     size_t rise_level = -1;
     while (tlist) {
@@ -273,7 +257,7 @@ size_t cc_thin_search(Ngx_visit_cc_attack **thin_root, uint32_t hash_uri,
 void cc_thin_show(ngx_http_request_t *r, Ngx_visit_cc_attack *thin_root) {
     Ngx_visit_cc_attack *tlist = thin_root;
     while (tlist) {
-        /** ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,"etomc2 visits cc
+        /** NX_LOG("etomc2 visits cc
          * attack:%z,domain:%z,rise:%d",tlist->hash_uri,
          * tlist->hash_domain,tlist->rise_level); */
         tlist = tlist->next;
@@ -374,7 +358,7 @@ void domain_uri_add(ngx_http_request_t *r) {
     cc_thin_ptr = (Ngx_visit_cc_attack *)shm_zone_cc_thin->data;
 
     if (!cc_domain) {
-        /** ngx_log_error(NGX_LOG_ERR, r->connection->log, 0, "cc_domain  is
+        /** NX_LOG( "cc_domain  is
          * null"); */
 
         ngx_shmtx_unlock(&shpool->mutex);
@@ -424,14 +408,13 @@ void domain_uri_add(ngx_http_request_t *r) {
 
             tree_uri = tree_search(&tree_cc_uri, hash_uri);
             if (!tree_uri) {
-                /** ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
+                /** NX_LOG(
                  * "tree_cc_uri is null %z tree
                  * hash:%z",hash_uri,cc_domain->tree_uri->hashkey); */
 
                 cc_uri_data = cc_uri_create(shpool);
                 if (!cc_uri_data) {
-                    ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
-                            "cc_uri_data 1 is null");
+                    NX_LOG("cc_uri_data 1 is null");
 
                     ngx_shmtx_unlock(&shpool->mutex);
 
@@ -440,13 +423,13 @@ void domain_uri_add(ngx_http_request_t *r) {
                 tree_insert(r, &tree_cc_uri, hash_uri, cc_uri_data, shpool);
 
             } else {
-                /** ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
+                /** NX_LOG(
                  * "cc_uri_data where is null %z tree
                  * hash:%z",hash_uri,cc_domain->tree_uri->hashkey); */
 
                 /** ngx_shmtx_lock(&shpool->mutex); */
                 if (!tree_uri->data) {
-                    /** ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
+                    /** NX_LOG(
                      * "cc_uri_data data is null"); */
                     ngx_shmtx_unlock(&shpool->mutex);
 
@@ -475,13 +458,13 @@ void domain_uri_add(ngx_http_request_t *r) {
                     }
 
                     cc_thin_insert(shpool, &cc_thin_ptr, hash_uri, hash_domain,
-                            fib_index);
-                    /** ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
+                                   fib_index);
+                    /** NX_LOG(
                      * "[Fibonacci:%f, %l,%l
                      * uri:%z]",Fibonacci[fib_index][0],cc_uri_data->visits[pre_index],cc_uri_data->visits[time_index],hash_uri);
                      */
                 } else {
-                    /** ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
+                    /** NX_LOG(
                      * fmt,hash_uri,
                      * cc_uri_data->visits[pre_index],pre_index,cc_uri_data->visits[time_index],cc_domain->count);
                      */
@@ -514,8 +497,8 @@ void domain_uri_add(ngx_http_request_t *r) {
     ngx_shmtx_unlock(&shpool->mutex);
 
     ngx_log_error(
-            NGX_LOG_ERR, r->connection->log, 0, "[domain:%s,uri status:%d,type:%s]",
-            r->headers_in.server.data, out_t.status, out_t.content_type.data);
+        NGX_LOG_ERR, r->connection->log, 0, "[domain:%s,uri status:%d,type:%s]",
+        r->headers_in.server.data, out_t.status, out_t.content_type.data);
     return;
 } /* -----  end of function domain_uri_add  ----- */
 
@@ -546,8 +529,7 @@ void domain_uri_show(ngx_http_request_t *r) {
     cc_domain = ((Ngx_etomc2_cc_domain *)shm_zone->data);
     /** cc_domain = ptr->list_domain_uri; */
     while (cc_domain && cc_domain->hash_domain != 0) {
-        ngx_log_error(NGX_LOG_ERR, r->connection->log, 0, "[domain:%z]",
-                cc_domain->hash_domain);
+        NX_LOG("[domain:%z]", cc_domain->hash_domain);
         visit_print(r, cc_domain->tree_uri);
         cc_domain = cc_domain->next;
     }
@@ -597,13 +579,13 @@ void cc_cookie(ngx_http_request_t *r) {
     /** if (nelts == 0) return; */
     /**  */
     /** exist = findstring((char *)cookies[0]->value.data, COOKIE_GREEN_NAME);
-    */
+     */
     /**  */
     /** if (exist != -1) { */
     /**     snprintf(md5, 32, "%s", cookies[0]->value.data + exist + */
     /**                                 strlen(COOKIE_GREEN_NAME) + 1); */
     /**  */
-    /**     ngx_log_error(NGX_LOG_ERR, r->connection->log, 0, */
+    /**     NX_LOG( */
     /**                   "[cookies value:%s, exits:%d]", md5, exist); */
     /** } */
 
@@ -642,12 +624,11 @@ void cc_setcookie(ngx_http_request_t *r, ngx_str_t key) {
  *  Description:
  * =====================================================================================
  */
-ngx_int_t cc_cookie_mark(ngx_http_request_t *r) {
+ngx_int_t cc_cookie_mark(ngx_http_request_t *r, ngx_str_t *ower_md5) {
     ngx_table_elt_t **cookies;
     int exist = -1;
     ngx_uint_t nelts, cmp = -1;
     char md5[33];
-    ngx_str_t *ower_md5;
 
     cookies = r->headers_in.cookies.elts;
     nelts = r->headers_in.cookies.nelts;
@@ -658,19 +639,10 @@ ngx_int_t cc_cookie_mark(ngx_http_request_t *r) {
 
     if (exist != -1) {
         snprintf(
-                md5, 33, "%s",
-                cookies[0]->value.data + exist + strlen(COOKIE_GREEN_NAME) + 1);
-
-        ower_md5 = ngx_cc_rbtree_hash_key(r);
-        if (ower_md5 == NULL || ower_md5->data == NULL) {
-            ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
-                    "cc cookie_mark null");
-            return -1;
-        }
+            md5, 33, "%s",
+            cookies[0]->value.data + exist + strlen(COOKIE_GREEN_NAME) + 1);
 
         cmp = ngx_memn2cmp(ower_md5->data, (u_char *)md5, 32, 32);
-        ngx_pfree(r->pool, ower_md5->data);
-        ngx_pfree(r->pool, ower_md5);
 
         if (cmp == 0) {
             return NGX_OK;
@@ -757,7 +729,7 @@ void cc_thin_PageNotFound(ngx_http_request_t *r) {
 void cc_thin_user_agent(ngx_http_request_t *r) {
     /** ngx_table_elt_t **forwarded; */
     /** forwarded = r->headers_in.x_forwarded_for.elts; */
-    /**     ngx_log_error(NGX_LOG_ERR, r->connection->log, 0, "[user_agent:%s
+    /**     NX_LOG( "[user_agent:%s
      * forwarded:%s]", */
     /** r->headers_in.user_agent->value.data,forwarded[0]->value.data); */
 
@@ -771,8 +743,8 @@ void cc_thin_user_agent(ngx_http_request_t *r) {
  * =====================================================================================
  */
 void cc_thin_user_behavior_green(ngx_http_request_t *r,
-        Ngx_etomc2_cc_user_behavior *behavior,
-        uint32_t hash) {
+                                 Ngx_etomc2_cc_user_behavior *behavior,
+                                 uint32_t hash) {
     ngx_str_t path;
     ngx_str_t file_path;
     int mh;
@@ -788,9 +760,8 @@ void cc_thin_user_behavior_green(ngx_http_request_t *r,
         mh = hdcache_create_dir((char *)path.data, 0700);
         if (mh == 0) {
             file_path = hdcache_file_build(r, path, behavior->hash_str);
-            ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
-                    "hdcache_file_build green  %s  %d", file_path.data,
-                    behavior->BrowserOrBot);
+            NX_LOG("hdcache_file_build green  %s  %d", file_path.data,
+                   behavior->BrowserOrBot);
             if (file_path.len > 0) {
                 hdcache_create_file((char *)file_path.data, 0, now);
                 ngx_pfree(r->pool, file_path.data);
@@ -809,9 +780,9 @@ void cc_thin_user_behavior_green(ngx_http_request_t *r,
  * =====================================================================================
  */
 int cc_thin_user_behavior_redaction(ngx_http_request_t *r,
-        Ngx_etomc2_cc_user_behavior *behavior,
-        uint32_t time_space, size_t maxVal,
-        time_t now, uint32_t hash) {
+                                    Ngx_etomc2_cc_user_behavior *behavior,
+                                    uint32_t time_space, size_t maxVal,
+                                    time_t now, uint32_t hash) {
     return 0;
 } /* -----  end of function cc_thin_user_behavior_redaction  ----- */
 /*
@@ -822,8 +793,8 @@ int cc_thin_user_behavior_redaction(ngx_http_request_t *r,
  * =====================================================================================
  */
 int cc_thin_user_behavior_red(ngx_http_request_t *r,
-        Ngx_etomc2_cc_user_behavior *behavior, time_t now,
-        uint32_t hash,uint32_t hash_uri) {
+                              Ngx_etomc2_cc_user_behavior *behavior, time_t now,
+                              uint32_t hash, uint32_t hash_uri) {
     uint32_t time_space;
     /** int l = 0; */
     int fib_index, maxIndex;
@@ -844,13 +815,15 @@ int cc_thin_user_behavior_red(ngx_http_request_t *r,
     maxVal = behavior->uri_amount[maxIndex];
 
     time_space = (now - behavior->rate_0);
-    if (time_space > MARK_READY_NEXT_TIME_INVALID && behavior->mark == M_READY) {
+    if (time_space > MARK_READY_NEXT_TIME_INVALID &&
+        behavior->mark == M_READY) {
         /**
          *  next  MARK_READY_NEXT_TIME  to check
          */
-        ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
-                "M_READY status continue, now:%z, rate_0:%z,time_space:%di, maxVal:%d", now,
-                behavior->rate_0, time_space, maxVal);
+        NX_LOG(
+            "M_READY status continue, now:%z, "
+            "rate_0:%z,time_space:%di, maxVal:%d",
+            now, behavior->rate_0, time_space, maxVal);
 
         behavior->rate_1 = behavior->rate_0;
         behavior->rate_0 = now;
@@ -888,10 +861,8 @@ int cc_thin_user_behavior_red(ngx_http_request_t *r,
                 return -1;
             }
         }
-        ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
-                "M_RED status  rise:%.5f,  increase:%d max:%d, amount:%d",
-                rise, increase, maxVal,
-                behavior->uri_amount[ROAD_MAP_URI_MAX - 1]);
+        NX_LOG("M_RED status  rise:%.5f,  increase:%d max:%d, amount:%d", rise,
+               increase, maxVal, behavior->uri_amount[ROAD_MAP_URI_MAX - 1]);
         lccf = ngx_http_get_module_loc_conf(r, ngx_http_etomc2_cc_module);
         if (!lccf) return -1;
 
@@ -899,22 +870,21 @@ int cc_thin_user_behavior_red(ngx_http_request_t *r,
          *  itemize
          *
          */
-        /**         ngx_log_error(NGX_LOG_ERR, r->connection->log, 0, "cc_itemize:%d", */
+        /**         NX_LOG(
+         * "cc_itemize:%d", */
         /** lccf->cc_itemize); */
         if (lccf->cc_itemize == 1) {
-
             cc_gt_ptr = NULL;
             ngx_cc_gt_search(r, &cc_gt_ptr);
-            if(cc_gt_ptr){
-                ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
-                        "[CC Attack check:%d  level:%d  cc_id:%z,take:%d]",
-                        cc_gt_ptr->count, cc_gt_ptr->level,
-                        hash_uri,cc_gt_ptr->take);
-            }else{
+            if (cc_gt_ptr) {
+                ngx_log_error(
+                    NGX_LOG_ERR, r->connection->log, 0,
+                    "[CC Attack check:%d  level:%d  cc_id:%z,take:%d]",
+                    cc_gt_ptr->count, cc_gt_ptr->level, hash_uri,
+                    cc_gt_ptr->take);
+            } else {
                 ngx_cc_gt(r);
-                ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
-                        "[CC Attack  cc_id:%z]",
-                        hash_uri);
+                NX_LOG("[CC Attack  cc_id:%z]", hash_uri);
             }
             if (cc_gt_ptr == NULL || cc_gt_ptr->take == 0) {
                 return -1;
@@ -949,10 +919,9 @@ int cc_thin_user_behavior_red(ngx_http_request_t *r,
             /**
              * enter cc attacking
              */
-            ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
-                    "M_READY status  rise:%.5f", rise);
+            NX_LOG("M_READY status  rise:%.5f", rise);
             if (behavior->uri_amount[BEHAVIOR_URI_SMALL] == 0 &&
-                    behavior->content_types[BEHAVIOR_URI_SMALL] == 0) {
+                behavior->content_types[BEHAVIOR_URI_SMALL] == 0) {
                 behavior->mark = M_SMALL;
             } else {
                 behavior->mark = M_READY;
@@ -962,7 +931,7 @@ int cc_thin_user_behavior_red(ngx_http_request_t *r,
     }
 
     if (behavior->mark == M_RED) {
-        int gt = ngx_cc_gt_check(r,hash_uri);
+        int gt = ngx_cc_gt_check(r, hash_uri);
 
         if (gt == -1) {
             return -1;
@@ -972,15 +941,13 @@ int cc_thin_user_behavior_red(ngx_http_request_t *r,
         path = hdcache_hash_to_dir(r, hash, behavior->mark);
         hb = hdcache_create_dir((char *)path.data, 0700);
         if (hb == -1) {
-            ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
-                    "hdcache_create_dir  error");
+            NX_LOG("hdcache_create_dir  error");
             return -1;
         }
 
         file_path = hdcache_file_build(r, path, key);
         if (file_path.len == 0) {
-            ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
-                    "file_path  error");
+            NX_LOG("file_path  error");
             return -1;
         }
         I_index = hdcache_file_content((char *)file_path.data, &timestamp);
@@ -1006,8 +973,8 @@ int cc_thin_user_behavior_red(ngx_http_request_t *r,
  * =====================================================================================
  */
 void cc_thin_user_behavior_lreq(ngx_http_request_t *r,
-        Ngx_etomc2_cc_user_behavior *behavior,
-        time_t now) {
+                                Ngx_etomc2_cc_user_behavior *behavior,
+                                time_t now) {
     int fib_index, maxIndex;
     size_t maxVal;
     float rise;
@@ -1030,8 +997,7 @@ void cc_thin_user_behavior_lreq(ngx_http_request_t *r,
     rise = (float)maxVal / (float)behavior->uri_amount[ROAD_MAP_URI_MAX - 1];
     fib_index = (int)rise;
     behavior->uri_amount[ROAD_MAP_URI_MAX - 1] = maxVal;
-    ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
-            "cc_thin_user_behavior_lreq, %.2f, %d", rise, fib_index);
+    NX_LOG("cc_thin_user_behavior_lreq, %.2f, %d", rise, fib_index);
     /**     if (fib_index <= Fibonacci[1][0] && fib_index > Fibonacci[0][0])
      * {
      */
@@ -1047,10 +1013,10 @@ void cc_thin_user_behavior_lreq(ngx_http_request_t *r,
  * =====================================================================================
  */
 int cc_thin_user_behavior_check_node(ngx_http_request_t *r,
-        Ngx_etomc2_cc_user_behavior *cc_ub_ptr,
-        ngx_str_t *key, uint32_t hash,
-        uint32_t hash_uri, uint32_t hash_type,
-        ngx_slab_pool_t *shpool) {
+                                     Ngx_etomc2_cc_user_behavior *cc_ub_ptr,
+                                     ngx_str_t *key, uint32_t hash,
+                                     uint32_t hash_uri, uint32_t hash_type,
+                                     ngx_slab_pool_t *shpool) {
     ngx_rbtree_node_t *find_node;
     int m = 0, n = 0, rate0, rate1;
     size_t referer = 0;
@@ -1058,7 +1024,7 @@ int cc_thin_user_behavior_check_node(ngx_http_request_t *r,
     Ngx_etomc2_cc_user_behavior *behavior;
     int now = ngx_time();
     find_node = cc_thin_user_behavior_search(cc_ub_ptr->rbtree.root,
-            cc_ub_ptr->rbtree.sentinel, key);
+                                             cc_ub_ptr->rbtree.sentinel, key);
     if (find_node == cc_ub_ptr->rbtree.sentinel) {
         return -1;
     }
@@ -1068,11 +1034,10 @@ int cc_thin_user_behavior_check_node(ngx_http_request_t *r,
      *  check uuid
      */
     int amount = behavior->uri_amount[0] + behavior->uri_amount[1] +
-        behavior->uri_amount[2];
+                 behavior->uri_amount[2];
     if (behavior->BrowserOrBot == BB_DEFAULT && amount >= 3) {
         int bb = behavior_uuid_cookie(r);
-        ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
-                "behavior_uuid_cookie:%d", bb);
+        NX_LOG("behavior_uuid_cookie:%d", bb);
         if (bb == -1) {
             behavior->BrowserOrBot = BB_BOT;
         } else if (bb == 0) {
@@ -1088,9 +1053,7 @@ int cc_thin_user_behavior_check_node(ngx_http_request_t *r,
         }
         m++;
         if (m == ROAD_MAP_URI_MAX) {
-            ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
-                    "ROAD_MAP_URI_MAX delete node:%s",
-                    behavior->hash_str.data);
+            NX_LOG("ROAD_MAP_URI_MAX delete node:%s", behavior->hash_str.data);
             goto green;
         }
         if (m < ROAD_MAP_URI_MAX && behavior->road_maps[m] == 0) {
@@ -1109,22 +1072,20 @@ int cc_thin_user_behavior_check_node(ngx_http_request_t *r,
         }
     }
     if (behavior->content_types[CONTENT_SIZE - 1] != 0) {
-        ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
-                "CONTENT_SIZE delete node:%s", behavior->hash_str.data);
+        NX_LOG("CONTENT_SIZE delete node:%s", behavior->hash_str.data);
         goto green;
     }
     /**
      *  not the same uri
      */
     if (behavior->rate_0 > 0 && behavior->rate_1 > 0 &&
-            (behavior->uri_amount[3] != 0 || behavior->content_types[3] != 0)) {
+        (behavior->uri_amount[3] != 0 || behavior->content_types[3] != 0)) {
         rate0 = behavior->rate_0 - behavior->rate_1;
         rate1 = now - behavior->rate_0;
         if (rate0 > TIME_RATE_INTERVAL && rate1 > TIME_RATE_INTERVAL &&
-                behavior->referer == 1) {
-            ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
-                    "TIME_RATE_INTERVAL delete node:%s",
-                    behavior->hash_str.data);
+            behavior->referer == 1) {
+            NX_LOG("TIME_RATE_INTERVAL delete node:%s",
+                   behavior->hash_str.data);
 
             goto green;
         }
@@ -1137,12 +1098,12 @@ int cc_thin_user_behavior_check_node(ngx_http_request_t *r,
      *m = uri , n = content_type
      */
     if (behavior->uri_amount[BAD_BEHAVIOR] == 0 &&
-            behavior->content_types[BAD_BEHAVIOR] == 0) {
+        behavior->content_types[BAD_BEHAVIOR] == 0) {
         /**
          *  check  M_RED
          */
 
-        int isred = cc_thin_user_behavior_red(r, behavior, now, hash,hash_uri);
+        int isred = cc_thin_user_behavior_red(r, behavior, now, hash, hash_uri);
         if (isred == 0) {
             cc_thin_user_behavior_delete(&cc_ub_ptr->rbtree, find_node, shpool);
         }
@@ -1165,16 +1126,15 @@ green:
  * =====================================================================================
  */
 int cc_thin_user_behavior_add(ngx_http_request_t *r, ngx_slab_pool_t *shpool,
-        ngx_str_t *key, uint32_t hash_uri,
-        uint32_t hash_type, uint32_t hash, size_t referer,
-        Ngx_etomc2_cc_user_behavior *cc_ub_ptr) {
+                              ngx_str_t *key, uint32_t hash_uri,
+                              uint32_t hash_type, uint32_t hash, size_t referer,
+                              Ngx_etomc2_cc_user_behavior *cc_ub_ptr) {
     ngx_rbtree_node_t *node;
     Ngx_etomc2_cc_user_behavior *behavior;
 
     node = ngx_slab_alloc_locked(shpool, sizeof(Ngx_etomc2_cc_user_behavior));
     if (!node) {
-        ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
-                "node ngx_slab_alloc_locked is null");
+        NX_LOG("node ngx_slab_alloc_locked is null");
 
         return -1;
     }
@@ -1199,8 +1159,7 @@ int cc_thin_user_behavior_add(ngx_http_request_t *r, ngx_slab_pool_t *shpool,
     behavior->hash_str.data =
         ngx_slab_alloc_locked(shpool, behavior->hash_str.len);
     if (!behavior->hash_str.data) {
-        ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
-                "behavior ngx_slab_alloc_locked is null");
+        NX_LOG("behavior ngx_slab_alloc_locked is null");
 
         ngx_slab_free_locked(shpool, node);
 
@@ -1208,7 +1167,7 @@ int cc_thin_user_behavior_add(ngx_http_request_t *r, ngx_slab_pool_t *shpool,
     }
 
     snprintf((char *)behavior->hash_str.data, behavior->hash_str.len, "%s",
-            key->data);
+             key->data);
     ngx_rbtree_insert(&cc_ub_ptr->rbtree, node);
 
     return 0;
@@ -1221,8 +1180,8 @@ int cc_thin_user_behavior_add(ngx_http_request_t *r, ngx_slab_pool_t *shpool,
  * =====================================================================================
  */
 void cc_thin_ub_queue(ngx_http_request_t *r, ngx_http_etomc2_loc_conf_t *lccf,
-        Ngx_etomc2_cc_user_behavior *cc_ub_ptr, ngx_str_t *key,
-        int memory_free) {
+                      Ngx_etomc2_cc_user_behavior *cc_ub_ptr, ngx_str_t *key,
+                      int memory_free) {
     ngx_shm_zone_t *shm_zone_ub_queue;
     Ngx_ub_queue_ptr *ub_queue_ptr;
     Ngx_etomc2_ub_queue *th;
@@ -1240,16 +1199,16 @@ void cc_thin_ub_queue(ngx_http_request_t *r, ngx_http_etomc2_loc_conf_t *lccf,
     th = ub_queue_ptr->head;
     if (th && th->time_reckon != 0) {
         if (((uint32_t)now - th->time_reckon) > TIME_RECKON_OUT ||
-                memory_free == -1) {
+            memory_free == -1) {
             find_node = cc_thin_user_behavior_search(cc_ub_ptr->rbtree.root,
-                    cc_ub_ptr->rbtree.sentinel,
-                    &th->hash_str);
+                                                     cc_ub_ptr->rbtree.sentinel,
+                                                     &th->hash_str);
 
             if (find_node != cc_ub_ptr->rbtree.sentinel) {
                 shpool = (ngx_slab_pool_t *)lccf->shm_zone_cc_ub->shm.addr;
 
                 cc_thin_user_behavior_delete(&cc_ub_ptr->rbtree, find_node,
-                        shpool);
+                                             shpool);
             }
 
             shpool = (ngx_slab_pool_t *)shm_zone_ub_queue->shm.addr;
@@ -1294,8 +1253,7 @@ void cc_thin_user_behavior_lookup(ngx_http_request_t *r, ngx_str_t *key) {
     if (!lccf) return;
 
     if (lccf->shm_zone_cc_ub == NULL) {
-        ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
-                "shm_zone_cc_ub is null");
+        NX_LOG("shm_zone_cc_ub is null");
         return;
     }
 
@@ -1304,7 +1262,7 @@ void cc_thin_user_behavior_lookup(ngx_http_request_t *r, ngx_str_t *key) {
 
     cc_ub_ptr = (Ngx_etomc2_cc_user_behavior *)shm_zone_cc_ub->data;
     if (!cc_ub_ptr) {
-        ngx_log_error(NGX_LOG_ERR, r->connection->log, 0, "cc_ub_ptr is null");
+        NX_LOG("cc_ub_ptr is null");
 
         return;
     }
@@ -1313,8 +1271,7 @@ void cc_thin_user_behavior_lookup(ngx_http_request_t *r, ngx_str_t *key) {
 
     ngx_str_t uri = get_uri(r);
     if (uri.len == 0) {
-        ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
-                "cc_thin_user_behavior_lookup uri is null");
+        NX_LOG("cc_thin_user_behavior_lookup uri is null");
         return;
     }
 
@@ -1330,7 +1287,7 @@ void cc_thin_user_behavior_lookup(ngx_http_request_t *r, ngx_str_t *key) {
     ngx_shmtx_lock(&shpool->mutex);
 
     exist = cc_thin_user_behavior_check_node(r, cc_ub_ptr, key, hash, hash_uri,
-            hash_type, shpool);
+                                             hash_type, shpool);
     if (exist == 0) {
         /**
          * exist  client
@@ -1345,20 +1302,20 @@ void cc_thin_user_behavior_lookup(ngx_http_request_t *r, ngx_str_t *key) {
      * new client
      */
     int isok = cc_thin_user_behavior_add(r, shpool, key, hash_uri, hash_type,
-            hash, referer, cc_ub_ptr);
+                                         hash, referer, cc_ub_ptr);
 
     if (isok == -1) {
         ngx_shmtx_unlock(&shpool->mutex);
-        ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
-                "cc_thin_user_behavior_lookup share memory error");
+        NX_LOG("cc_thin_user_behavior_lookup share memory error");
         // return;
-    }else{
+    } else {
         size_t size;
         size = 1 << ngx_pagesize_shift;
         int freesize = (shpool->pfree * size / 1024 - size / 1024);
         if (freesize < 0) {
-            /**      ngx_log_error(NGX_LOG_ERR, r->connection->log, 0, */
-            /** "free:%12z(KB)   isok:%d",shpool->pfree*size/1024-size/1024,isok */
+            /**      NX_LOG( */
+            /** "free:%12z(KB)   isok:%d",shpool->pfree*size/1024-size/1024,isok
+             */
             /** ); */
             isok = -1;
         }
@@ -1401,8 +1358,8 @@ int ArrayMax(size_t array[]) {
  * =====================================================================================
  */
 ngx_rbtree_node_t *cc_thin_user_behavior_search(ngx_rbtree_node_t *node,
-        ngx_rbtree_node_t *sentinel,
-        ngx_str_t *key) {
+                                                ngx_rbtree_node_t *sentinel,
+                                                ngx_str_t *key) {
     uint32_t hash;
     ngx_int_t cmp;
     Ngx_etomc2_cc_user_behavior *lrn = NULL;
@@ -1421,7 +1378,7 @@ ngx_rbtree_node_t *cc_thin_user_behavior_search(ngx_rbtree_node_t *node,
 
             /*   lrn->hash_str.len == lrnt->hash_str.len  */
             cmp = ngx_memn2cmp(lrn->hash_str.data, key->data, lrn->hash_str.len,
-                    key->len);
+                               key->len);
             /* only key */
             if (cmp == 0) {
                 break;
@@ -1441,7 +1398,7 @@ ngx_rbtree_node_t *cc_thin_user_behavior_search(ngx_rbtree_node_t *node,
  * =====================================================================================
  */
 void cc_thin_user_behavior_delete(ngx_rbtree_t *root, ngx_rbtree_node_t *node,
-        ngx_slab_pool_t *shpool) {
+                                  ngx_slab_pool_t *shpool) {
     Ngx_etomc2_cc_user_behavior *behavior = (Ngx_etomc2_cc_user_behavior *)node;
 
     ngx_rbtree_delete(root, node);
@@ -1458,7 +1415,7 @@ void cc_thin_user_behavior_delete(ngx_rbtree_t *root, ngx_rbtree_node_t *node,
  * =====================================================================================
  */
 void cc_thin_ub_queue_insert(Ngx_ub_queue_ptr *ub_queue_ptr,
-        ngx_slab_pool_t *shpool, ngx_str_t *hash_str) {
+                             ngx_slab_pool_t *shpool, ngx_str_t *hash_str) {
     Ngx_etomc2_ub_queue *new_queue;
 
     time_t seconds;
@@ -1478,7 +1435,7 @@ void cc_thin_ub_queue_insert(Ngx_ub_queue_ptr *ub_queue_ptr,
             ngx_slab_alloc_locked(shpool, hash_str->len);
         if (!ub_queue_ptr->head->hash_str.data) return;
         snprintf((char *)ub_queue_ptr->head->hash_str.data,
-                ub_queue_ptr->head->hash_str.len, "%s", hash_str->data);
+                 ub_queue_ptr->head->hash_str.len, "%s", hash_str->data);
         ub_queue_ptr->head->time_reckon = seconds;
         ub_queue_ptr->tail = ub_queue_ptr->head;
 
@@ -1494,7 +1451,7 @@ void cc_thin_ub_queue_insert(Ngx_ub_queue_ptr *ub_queue_ptr,
         new_queue->time_reckon = seconds;
 
         snprintf((char *)new_queue->hash_str.data, new_queue->hash_str.len,
-                "%s", hash_str->data);
+                 "%s", hash_str->data);
         ub_queue_ptr->tail->next = new_queue;
         ub_queue_ptr->tail = ub_queue_ptr->tail->next;
     }
@@ -1509,7 +1466,7 @@ void cc_thin_ub_queue_insert(Ngx_ub_queue_ptr *ub_queue_ptr,
  * =====================================================================================
  */
 void ngx_cc_rbtree_loop(ngx_http_request_t *r, ngx_rbtree_node_t *node,
-        ngx_rbtree_node_t *sentinel) {
+                        ngx_rbtree_node_t *sentinel) {
     Ngx_etomc2_cc_user_behavior *lrn;
     char str[256];
     char amount[256];
@@ -1529,10 +1486,10 @@ void ngx_cc_rbtree_loop(ngx_http_request_t *r, ngx_rbtree_node_t *node,
                 break;
             }
         }
-        ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
-                "[find  node road_maps:%s,= amount:%s= ctype:%s= "
-                "rate_0:%d, rate_1:%d]",
-                str, amount, ctype, lrn->rate_0, lrn->rate_1);
+        NX_LOG(
+            "[find  node road_maps:%s,= amount:%s= ctype:%s= "
+            "rate_0:%d, rate_1:%d]",
+            str, amount, ctype, lrn->rate_0, lrn->rate_1);
 
         ngx_cc_rbtree_loop(r, node->left, sentinel);
         ngx_cc_rbtree_loop(r, node->right, sentinel);
@@ -1560,8 +1517,7 @@ void ngx_cc_rbtree_showall(ngx_http_request_t *r) {
     if (!lccf) return;
 
     if (lccf->shm_zone_cc_ub == NULL) {
-        ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
-                "shm_zone_cc_ub is null");
+        NX_LOG("shm_zone_cc_ub is null");
         return;
     }
 
@@ -1585,9 +1541,9 @@ void ngx_cc_rbtree_showall(ngx_http_request_t *r) {
             ci += snprintf(&ctype[ci], 256 - ci, ",%ld", lrn->content_types[i]);
         }
         ngx_log_error(
-                NGX_LOG_ERR, r->connection->log, 0,
-                "[find  node road_maps:%s,= amount:%s = ctype:%s,= referer:%s]",
-                str, amount, ctype, lrn->hash_str.data);
+            NGX_LOG_ERR, r->connection->log, 0,
+            "[find  node road_maps:%s,= amount:%s = ctype:%s,= referer:%s]",
+            str, amount, ctype, lrn->hash_str.data);
         ngx_cc_rbtree_loop(r, node->left, sentinel);
         ngx_cc_rbtree_loop(r, node->right, sentinel);
     }
@@ -1611,14 +1567,15 @@ ngx_str_t *ngx_cc_rbtree_hash_key(ngx_http_request_t *r) {
     int i = 0;
     ngx_str_t ip = client_forward_ip(r);
 
-    if(ip.len == 0)return NULL;
+    if (ip.len == 0) return NULL;
 
     //  hash(server_name+ip+ua+key)   key: HASH_COOKIE_KEY  ...
     key = ngx_pcalloc(r->pool, sizeof(ngx_str_t));
     if (!key) return NULL;
 
     if (r->headers_in.user_agent == NULL) {
-        /**         lccf = ngx_http_get_module_loc_conf(r, ngx_http_etomc2_cc_module); */
+        /**         lccf = ngx_http_get_module_loc_conf(r,
+         * ngx_http_etomc2_cc_module); */
         /** if (!lccf || lccf->hdcache_path.len ==0) { */
         /**     return NULL; */
         /** } */
@@ -1628,30 +1585,30 @@ ngx_str_t *ngx_cc_rbtree_hash_key(ngx_http_request_t *r) {
         /**         r, (char *)lccf->hdcache_path.data, hash, M_RED); */
         /** int  hb = hdcache_create_dir((char *)path.data, 0700); */
         /** if (hb == -1) { */
-        /**     ngx_log_error(NGX_LOG_ERR, r->connection->log, 0, */
+        /**     NX_LOG( */
         /**             "hdcache_create_dir  error"); */
         /**     return NULL; */
         /** } */
         /** ngx_str_t file_path = hdcache_file_build(r, path, ip); */
         /** hdcache_create_file((char *)file_path.data, 0, 0); */
-        /** ngx_log_error(NGX_LOG_ERR, r->connection->log, 0, */
+        /** NX_LOG( */
         /** "user_agent is null, %s",ip.data); */
         return NULL;
     }
 
     key->len = snprintf(NULL, 0, fmt, r->headers_in.server.len,
-            r->headers_in.server.data, ip.len, ip.data,
-            r->headers_in.user_agent->value.len,
-            r->headers_in.user_agent->value.data, HASH_COOKIE_KEY);
+                        r->headers_in.server.data, ip.len, ip.data,
+                        r->headers_in.user_agent->value.len,
+                        r->headers_in.user_agent->value.data, HASH_COOKIE_KEY);
 
     key->len += 1;
     key->data = ngx_pcalloc(r->pool, key->len);
     if (!key->data) return NULL;
 
     snprintf((char *)key->data, key->len, fmt, r->headers_in.server.len,
-            r->headers_in.server.data, ip.len, ip.data,
-            r->headers_in.user_agent->value.len,
-            r->headers_in.user_agent->value.data, HASH_COOKIE_KEY);
+             r->headers_in.server.data, ip.len, ip.data,
+             r->headers_in.user_agent->value.len,
+             r->headers_in.user_agent->value.data, HASH_COOKIE_KEY);
 
     ngx_md5_init(&ctx);
     ngx_md5_update(&ctx, key->data, key->len);
@@ -1670,7 +1627,6 @@ ngx_str_t *ngx_cc_rbtree_hash_key(ngx_http_request_t *r) {
     return key;
 } /* -----  end of function ngx_cc_rbtree_hash_key  ----- */
 
-
 /*
  * ===  FUNCTION
  * ======================================================================
@@ -1681,7 +1637,7 @@ ngx_str_t *ngx_cc_rbtree_hash_key(ngx_http_request_t *r) {
 void black_ip_log(ngx_http_request_t *r) {
     ngx_str_t ip = client_forward_ip(r);
     char CARET_RETURN = '\n';
-    if(cc_black_ip_file==NULL || !cc_black_ip_file->file) {
+    if (cc_black_ip_file == NULL || !cc_black_ip_file->file) {
         return;
     }
     ngx_write_fd(cc_black_ip_file->file->fd, ip.data, ip.len);
@@ -1717,7 +1673,7 @@ ngx_str_t client_forward_ip(ngx_http_request_t *r) {
     }
     if (nelts == 0) {
         snprintf((char *)ip.data, ip.len + 1, fmt,
-                r->connection->addr_text.data);
+                 r->connection->addr_text.data);
     } else {
         snprintf((char *)ip.data, ip.len + 1, fmt, forwarded[0]->value.data);
     }

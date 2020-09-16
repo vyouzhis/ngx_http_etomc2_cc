@@ -214,6 +214,24 @@ int hdcache_behavior(ngx_http_request_t *r,
 } /* -----  end of function hdcache_behavior  ----- */
 /* 
  * ===  FUNCTION  ======================================================================
+ *         Name:  hdcache_behavior_exist
+ *  Description:  
+ * =====================================================================================
+ */
+int  hdcache_behavior_exist ( ngx_http_request_t *r,ngx_str_t*key, CC_THIN_COOKIE_MARK mark){
+    uint32_t hash;
+    ngx_str_t path;
+    ngx_str_t file_path;
+
+    hash = to_hash((char *)key->data, key->len);
+    path = hdcache_hash_to_dir(r, hash, mark);
+    file_path = hdcache_file_build(r, path, *key);
+    int isexit = hdcache_file_exist((char *)file_path.data);
+
+    return isexit;
+}		/* -----  end of function hdcache_behavior_exist  ----- */
+/* 
+ * ===  FUNCTION  ======================================================================
  *         Name:  custom_black_ip_attack
  *  Description:  
  * =====================================================================================
@@ -233,3 +251,5 @@ int  custom_ip_attack_exist ( ngx_http_request_t *r,CC_THIN_COOKIE_MARK mark ){
     return hdcache_file_exist((char*)file_path.data);
 
 }		/* -----  end of function custom_black_ip_attack  ----- */
+
+

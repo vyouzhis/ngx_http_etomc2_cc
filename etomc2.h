@@ -36,27 +36,32 @@
  *  define  function
  */
 
+#define LFEATURE 1
+#define DFEATURE 1
 #ifndef __ETOMC2_LOG
 #define __ETOMC2_LOG
-#define NX_LOG(LOG, ST, ...)                                        \
-    do {                                                            \
-        ngx_log_debug(NGX_LOG_DEBUG_HTTP, r->connect->log, LOG, ST, \
-                      __VA_ARGS__);                                 \
+#define NX_LOG(LOG, ...)                                           \
+    do {                                                           \
+        if (LFEATURE)                                              \
+            ngx_log_error(NGX_LOG_ERR, r->connection->log, 0, LOG, \
+                          ##__VA_ARGS__);                          \
     } while (0)
 #endif
 
 #ifndef __ETOMC2_DEBUG
 #define __ETOMC2_DEBUG
-#define NX_DEBUG(FEATURE, DEF, LOG, ST, ...)                   \
-    do {                                                       \
-        if (FEATURE) ngx_log_debug(DEF, LOG, ST, __VA_ARGS__); \
+#define NX_DEBUG(LOG, ...)                                                \
+    do {                                                                  \
+        if (DFEATURE)                                                     \
+            ngx_log_debug(NGX_LOG_DEBUG_HTTP, r->connection->log, 0, LOG, \
+                          ##__VA_ARGS__);                                 \
     } while (0)
 #endif
 
 #ifndef __ETOMC2_CONF_DEBUG
 #define __ETOMC2_CONF_DEBUG
-#define NX_CONF_DEBUG(LOG, ST, ...)                                        \
-    do {                                                                  \
+#define NX_CONF_DEBUG(LOG, ST, ...)                                     \
+    do {                                                                \
         ngx_conf_log_error(NGX_LOG_EMERG, cf, 0, LOG, ST, __VA_ARGS__); \
     } while (0)
 #endif
@@ -68,19 +73,31 @@
  * define  var
  */
 
-
 /***
  * ctx command
+ */
+/**
+ * config http
  */
 #define ETOMC2_CC_ENABLE "ET2CCEnable"
 #define ET2_SHM_SIZE "et2_shm_size"
 
+/**
+ * config  server
+ */
+#define CC_RETURN_STATUS "et2_cc_return_status"
+#define CC_ITEMIZE "et2_cc_itemize"
+#define CC_GT_LEVEL "et2_cc_level"
 
-#define CC_BLACK_IP_FILE  "et2_black_ip_file"
+#define CC_TRUST_STATUS "et2_trust_status"
+/**
+ * web ctrl admin
+ */
+#define ET2_NGX_CTRL "et2_ctrl_admin"
+#define ETOMC2_WEB_API "et2_web_api"
 
 // #define CC_PATH "et2_root_path"
-
-#define ETOMC2_WEB_API "et2_web_api"
+#define CC_BLACK_IP_FILE "et2_black_ip_file"
 
 #define HDCACHE_PATH "et2_hdcache_path"
 #define CUSTOM_IP_PATH "et2_custom_ip_path"
@@ -90,16 +107,9 @@
 
 #define RSA_PEM_AUTH "rsa_pem_auth"
 
-#define ILL_RETURN_STATUS "et2_ill_return_status"
-
 //  itemize behavior  and when  ngx found  itemize will write log
 //  itemize_id for  uri
-#define CC_ITEMIZE "et2_cc_itemize"
 
-#define CC_GT_LEVEL "et2_cc_level"
-#define CC_RETURN_STATUS "et2_cc_return_status"
-
-#define ET2_NGX_CTRL "et2_ctrl_admin"
 #define WEB_ETOMC2 "hello world!"
 
 // share memory size;
@@ -131,8 +141,6 @@
 
 #define MARK_READY_NEXT_TIME 2
 #define MARK_READY_NEXT_TIME_INVALID 4
-
-
 
 #define COOKIE_GREEN_NAME "behavior_cc"
 #define COOKIE_UUID_NAME "__secure-uuid"
@@ -391,14 +399,14 @@ typedef struct ngx_ub_queue_ptr Ngx_ub_queue_ptr;
 /* ngx_slab_alloc_locked((ngx_slab_pool_t*)(p), sizeof(Ngx_etomc2_ub_queue)); */
 
 #define cc_queue_insert_tail(h, x) \
-    Ngx_etomc2_ub_queue *t = h;     \
+    Ngx_etomc2_ub_queue *t = h;    \
     while (t->next) {              \
         t = t->next;               \
     }                              \
     t->next = x;
 
 #define cc_queue_show(h, r)                                                    \
-    Ngx_etomc2_ub_queue *t = h;                                                 \
+    Ngx_etomc2_ub_queue *t = h;                                                \
     while (t && t->time_reckon != 0) {                                         \
         ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,                      \
                       " {hash_str:%s}[%d]", t->hash_str.data, t->time_reckon); \
@@ -407,7 +415,7 @@ typedef struct ngx_ub_queue_ptr Ngx_ub_queue_ptr;
 
 #define cc_queue_pop_head(h, p)                                          \
     time_t seconds = ngx_time();                                         \
-    Ngx_etomc2_ub_queue *th = h;                                          \
+    Ngx_etomc2_ub_queue *th = h;                                         \
     if ((th) && (th)->time_reckon != 0) {                                \
         if (((uint32_t)seconds - (th)->time_reckon) > TIME_RECKON_OUT) { \
             h = h->next;                                                 \
@@ -431,7 +439,7 @@ typedef struct {
     ngx_str_t rsa_pem_pk;
     ngx_str_t rsa_pem;
 
-    ngx_str_t ill_return_status;
+    ngx_str_t cc_trust_status;
 
     ngx_flag_t cc_itemize;
     ngx_uint_t cc_gt_level;
@@ -483,7 +491,7 @@ size_t tree_insert(ngx_http_request_t *r, Ngx_etomc2_shm_tree_data **tree,
                    uint32_t hashkey, void *data, ngx_slab_pool_t *shpool);
 void tree_print(ngx_http_request_t *r, Ngx_etomc2_shm_tree_data *tree);
 Ngx_etomc2_shm_tree_data *tree_search(Ngx_etomc2_shm_tree_data **tree,
-                                     uint32_t hashkey);
+                                      uint32_t hashkey);
 
 Ngx_etomc2_aiwaf_list *list_create(ngx_slab_pool_t *shpool);
 void list_insert(ngx_http_request_t *r, ngx_slab_pool_t *shpool,
@@ -511,7 +519,7 @@ void cc_thin_show(ngx_http_request_t *r, Ngx_visit_cc_attack *thin_root);
 void cc_setcookie(ngx_http_request_t *r, ngx_str_t key);
 void cc_cookie(ngx_http_request_t *r);
 void setcookie(ngx_http_request_t *r, ngx_str_t cookie);
-ngx_int_t cc_cookie_mark(ngx_http_request_t *r);
+ngx_int_t cc_cookie_mark(ngx_http_request_t *r, ngx_str_t *ower_md5);
 int behavior_uuid_cookie(ngx_http_request_t *r);
 
 Ngx_etomc2_cc_domain *domain_uri_create(ngx_slab_pool_t *shpool);
@@ -575,6 +583,8 @@ ngx_str_t hdcache_file_build(ngx_http_request_t *r, ngx_str_t path,
 int hdcache_file_content(const char *file, int *timestamp);
 int hdcache_behavior(ngx_http_request_t *r, ngx_str_t *key,
                      CC_THIN_COOKIE_MARK mark, int *timestamp);
+int hdcache_behavior_exist(ngx_http_request_t *r, ngx_str_t *key,
+                           CC_THIN_COOKIE_MARK mark);
 int custom_ip_attack_exist(ngx_http_request_t *r, CC_THIN_COOKIE_MARK mark);
 //-------- hdcache -----
 
@@ -596,7 +606,7 @@ Ngx_etomc2_shm_tree_data *tree_create(ngx_slab_pool_t *shpool);
 size_t tree_insert(ngx_http_request_t *r, Ngx_etomc2_shm_tree_data **tree,
                    uint32_t hashkey, void *data, ngx_slab_pool_t *shpool);
 Ngx_etomc2_shm_tree_data *tree_search(Ngx_etomc2_shm_tree_data **tree,
-                                     uint32_t hashkey);
+                                      uint32_t hashkey);
 void visit_print(ngx_http_request_t *r, Ngx_etomc2_shm_tree_data *tree);
 ngx_table_elt_t *search_headers_in(ngx_http_request_t *r, u_char *name,
                                    size_t len);
