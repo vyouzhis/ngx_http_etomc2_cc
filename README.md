@@ -61,11 +61,8 @@
 * [起始(Getting Started)](#起始getting-started)
   * [编译安装(Installation)](#编译安装installation)
 * [配置(Usage)](#配置usage)
-* [Roadmap](#roadmap)
-* [Contributing](#contributing)
 * [License](#license)
-* [Contact](#contact)
-* [Acknowledgements](#acknowledgements)
+* [联系(Contact)](#联系contact)
 
 
 
@@ -142,41 +139,3 @@ Distributed under the MIT License. See `LICENSE` for more information.
 ## Contact
 
 vyouzhi - [@github](https://github.com/vyouzhis/ngx_http_etomc2_cc) - vouzhi@gmail.com
-
-Project Link: [https://github.com/your_username/repo_name](https://github.com/your_username/repo_name)
-
-
-
-<!-- ACKNOWLEDGEMENTS -->
-## Acknowledgements
-* [GitHub Emoji Cheat Sheet](https://www.webpagefx.com/tools/emoji-cheat-sheet)
-* [Img Shields](https://shields.io)
-* [Choose an Open Source License](https://choosealicense.com)
-* [GitHub Pages](https://pages.github.com)
-* [Animate.css](https://daneden.github.io/animate.css)
-* [Loaders.css](https://connoratherton.com/loaders)
-* [Slick Carousel](https://kenwheeler.github.io/slick)
-* [Smooth Scroll](https://github.com/cferdinandi/smooth-scroll)
-* [Sticky Kit](http://leafo.net/sticky-kit)
-* [JVectorMap](http://jvectormap.com)
-* [Font Awesome](https://fontawesome.com)
-
-
-
-
-
-<!-- MARKDOWN LINKS & IMAGES -->
-<!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
-[contributors-shield]: https://img.shields.io/github/contributors/vyouzhis/ngx_http_etomc2_cc.svg?style=flat-square
-[contributors-url]: https://github.com/vyouzhis/ngx_http_etomc2_cc/graphs/contributors
-[forks-shield]: https://img.shields.io/github/forks/vyouzhis/ngx_http_etomc2_cc.svg?style=flat-square
-[forks-url]: https://github.com/vyouzhis/ngx_http_etomc2_cc/network/members
-[stars-shield]: https://img.shields.io/github/stars/vyouzhis/ngx_http_etomc2_cc.svg?style=flat-square
-[stars-url]: https://github.com/vyouzhis/ngx_http_etomc2_cc/stargazers
-[issues-shield]: https://img.shields.io/github/issues/vyouzhis/ngx_http_etomc2_cc.svg?style=flat-square
-[issues-url]: https://github.com/vyouzhis/ngx_http_etomc2_cc/issues
-[license-shield]: https://img.shields.io/github/license/vyouzhis/ngx_http_etomc2_cc.svg?style=flat-square
-[license-url]: https://github.com/vyouzhis/ngx_http_etomc2_cc/blob/master/LICENSE.txt
-[linkedin-shield]: https://img.shields.io/badge/-LinkedIn-black.svg?style=flat-square&logo=linkedin&colorB=555
-[linkedin-url]: https://linkedin.com/in/vyouzhis
-[product-screenshot]: images/screenshot.png
