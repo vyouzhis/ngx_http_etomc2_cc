@@ -22,9 +22,9 @@
 <!-- PROJECT LOGO -->
 <br />
 <p align="center">
-  <!--<a href="https://github.com/vyouzhi">
-    <img src="images/logo.png" alt="Logo" width="80" height="80">
-  </a>-->
+  <a href="https://github.com/vyouzhi">
+    <img src="https://avatars2.githubusercontent.com/u/5832145?s=400&u=e1923037c2831a3de8e1bb5b3305c1434b85981d&v=4" alt="Logo" width="80" height="80">
+  </a>
 
   <h3 align="center">ngx_http_etomc2_cc</h3>
 
