@@ -67,7 +67,39 @@
 /**
  * define  var
  */
-#define ETOMC2_CC_ENABLE "Etomc2CCEnable"
+
+
+/***
+ * ctx command
+ */
+#define ETOMC2_CC_ENABLE "ET2CCEnable"
+#define ET2_SHM_SIZE "et2_shm_size"
+
+
+#define CC_BLACK_IP_FILE  "et2_black_ip_file"
+
+// #define CC_PATH "et2_root_path"
+
+#define ETOMC2_WEB_API "et2_web_api"
+
+#define HDCACHE_PATH "et2_hdcache_path"
+#define CUSTOM_IP_PATH "et2_custom_ip_path"
+
+#define PEM_SECURE_TUNNEL "secure-tunnel"
+#define etomc2_PEM_PK_FILE "Etomc2CCPemPrivateKey"
+
+#define RSA_PEM_AUTH "rsa_pem_auth"
+
+#define ILL_RETURN_STATUS "et2_ill_return_status"
+
+//  itemize behavior  and when  ngx found  itemize will write log
+//  itemize_id for  uri
+#define CC_ITEMIZE "et2_cc_itemize"
+
+#define CC_GT_LEVEL "et2_cc_level"
+#define CC_RETURN_STATUS "et2_cc_return_status"
+
+#define ET2_NGX_CTRL "et2_ctrl_admin"
 #define WEB_ETOMC2 "hello world!"
 
 // share memory size;
@@ -100,28 +132,7 @@
 #define MARK_READY_NEXT_TIME 2
 #define MARK_READY_NEXT_TIME_INVALID 4
 
-#define CC_BLACK_IP_FILE  "cc_black_ip_file"
-#define CC_SHM_SIZE "cc_shm_size"
-// #define CC_PATH "cc_path"
 
-#define HDCACHE_PATH "hdcache_path"
-#define CUSTOM_IP_PATH "custom_ip_path"
-
-#define PEM_SECURE_TUNNEL "secure-tunnel"
-#define etomc2_PEM_PK_FILE "Etomc2CCPemPrivateKey"
-
-#define RSA_PEM_AUTH "rsa_pem_auth"
-
-#define ILL_RETURN_STATUS "ill_return_status"
-
-//  itemize behavior  and when  ngx found  itemize will write log
-//  itemize_id for  uri
-#define CC_ITEMIZE "cc_itemize"
-
-#define CC_GT_LEVEL "cc_level"
-#define CC_RETURN_STATUS "cc_return_status"
-
-#define CC_NGX_CTRL "ngx_ctrl_admin"
 
 #define COOKIE_GREEN_NAME "behavior_cc"
 #define COOKIE_UUID_NAME "__secure-uuid"
