@@ -133,7 +133,7 @@ cat hack.sh
 #! /bin/sh
 #
 # hack.sh
-# Copyright (C) 2020 vyouzhi <vyouzhi@gameil.com>
+# Copyright (C) 2020 vyouzhi <vyouzhi@gmail.com>
 #
 # Distributed under terms of the MIT license.
 #
