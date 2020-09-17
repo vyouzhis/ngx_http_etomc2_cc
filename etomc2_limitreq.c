@@ -198,15 +198,15 @@ void lreq_uri_queue(ngx_http_request_t *r) {
             lreq_queue_ptr->lreq[i].lastTime = now;
 
             lreq_queue_ptr->lreq[i].header_time = header_time;
-            ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
-                          "lreq "
-                          "avgtime_0:%.2f,avgtime_1:%.2f,avgtime_2:%.2f,"
-                          "avgtime_3:%.2f, header_time:%d",
-                          lreq_queue_ptr->lreq[i].avgtime[0],
-                          lreq_queue_ptr->lreq[i].avgtime[1],
-                          lreq_queue_ptr->lreq[i].avgtime[2],
-                          lreq_queue_ptr->lreq[i].avgtime[3],
-                          (int)lreq_queue_ptr->lreq[i].header_time);
+/**             NX_DEBUG( */
+                          /** "lreq " */
+                          /** "avgtime_0:%.2f,avgtime_1:%.2f,avgtime_2:%.2f," */
+                          /** "avgtime_3:%.2f, header_time:%d", */
+                          /** lreq_queue_ptr->lreq[i].avgtime[0], */
+                          /** lreq_queue_ptr->lreq[i].avgtime[1], */
+                          /** lreq_queue_ptr->lreq[i].avgtime[2], */
+                          /** lreq_queue_ptr->lreq[i].avgtime[3], */
+                          /** (int)lreq_queue_ptr->lreq[i].header_time); */
             goto release_lreq;
         }
 

@@ -47,8 +47,7 @@ static ngx_int_t ngx_http_etomc2_web_handler(ngx_http_request_t *r);
 
 static char *ngx_http_cc_set_shm_size(ngx_conf_t *cf, ngx_command_t *cmd,
                                       void *conf);
-static char *ngx_conf_black_ip_file(ngx_conf_t *cf, ngx_command_t *cmd,
-                                    void *conf);
+
 static ngx_int_t ngx_etomc2_init_shm_zone_cc_thin(ngx_shm_zone_t *shm_zone,
                                                   void *data);
 static ngx_int_t ngx_etomc2_init_shm_zone_cc_ub(ngx_shm_zone_t *shm_zone,
@@ -143,13 +142,8 @@ static ngx_command_t ngx_http_etomc2_cc_commands[] = {
      NGX_HTTP_SRV_CONF | NGX_HTTP_LOC_CONF | NGX_CONF_TAKE1,
      ngx_conf_set_num_slot, NGX_HTTP_LOC_CONF_OFFSET,
      offsetof(ngx_http_etomc2_loc_conf_t, cc_return_status), NULL},
-    /** {ngx_string(RSA_PEM_AUTH), NGX_HTTP_MAIN_CONF | NGX_CONF_TAKE1, */
-    /** ngx_http_rsa_pem_auth, 0, 0, NULL}, */
-    {ngx_string(CC_BLACK_IP_FILE), NGX_HTTP_MAIN_CONF | NGX_CONF_TAKE1,
-     ngx_conf_black_ip_file, 0, 0, NULL},
-    {ngx_string(CUSTOM_IP_PATH), NGX_HTTP_MAIN_CONF | NGX_CONF_TAKE1,
-     ngx_conf_set_str_slot, NGX_HTTP_LOC_CONF_OFFSET,
-     offsetof(ngx_http_etomc2_loc_conf_t, custom_ip_path), NULL},
+   
+
     {ngx_string(CC_TRUST_STATUS),
      NGX_HTTP_SRV_CONF | NGX_HTTP_LOC_CONF | NGX_CONF_TAKE1,
      ngx_conf_set_str_slot, NGX_HTTP_LOC_CONF_OFFSET,
@@ -272,7 +266,6 @@ static char *ngx_http_etomc2_merge_loc_conf(ngx_conf_t *cf, void *parent,
 
     ngx_conf_merge_uint_value(conf->cc_return_status, prev->cc_return_status,
                               444);
-    ngx_conf_merge_str_value(conf->custom_ip_path, prev->custom_ip_path, "");
     ngx_conf_merge_str_value(conf->cc_trust_status, prev->cc_trust_status, "");
 
     ngx_conf_merge_str_value(conf->hdcache_path, prev->hdcache_path,
@@ -447,7 +440,7 @@ ngx_int_t ngx_http_etomc2_header_filter(ngx_http_request_t *r) {
      *  hdcache  for app  green
      */
 
-    int isexit = hdcache_behavior_exist(r,key,M_GREEN);
+    int isexit = hdcache_behavior_exist(r, key, M_GREEN);
     if (isexit == 0) {
         return ngx_http_next_header_filter(r);
     }
@@ -468,7 +461,7 @@ ngx_int_t ngx_http_etomc2_header_filter(ngx_http_request_t *r) {
         cc_thin_user_behavior_lookup(r, key);
     }
     if (lccf->cc_trust_status.len > 0) {
-        NX_DEBUG("cc_trust_status len:%d ", lccf->cc_trust_status.len);
+        NX_DEBUG("cc_trust_status:[%s] ", lccf->cc_trust_status.data);
         for (m = 0; m < (lccf->cc_trust_status.len - 1); m += 4) {
             ngx_uint_t status =
                 ngx_atoi((u_char *)lccf->cc_trust_status.data + m, 3);
@@ -477,22 +470,11 @@ ngx_int_t ngx_http_etomc2_header_filter(ngx_http_request_t *r) {
                      r->headers_out.status);
             if (r->headers_out.status == status) {
                 bad_status = 1;
+                break;
             }
         }
         if (bad_status == 0) {
-            hash = to_hash((char *)key->data, key->len);
-            path = hdcache_hash_to_dir(r, hash, M_RED);
-            int hb = hdcache_create_dir((char *)path.data, 0700);
-            if (hb == -1) {
-                NX_LOG("hdcache_create_dir  error");
-                break;
-            }
-            file_path = hdcache_file_build(r, path, *key);
-            if (file_path.len == 0) {
-                NX_LOG("file_path  error");
-                break;
-            }
-            hdcache_create_file((char *)file_path.data, 0, ngx_time());
+            hdcache_behavior_add(r, key, M_RED, 0, ngx_time());
             return ngx_http_next_header_filter(r);
         }
     }
@@ -619,42 +601,6 @@ static char *ngx_http_cc_set_shm_size(ngx_conf_t *cf, ngx_command_t *cmd,
     return NGX_CONF_OK;
 
 } /* -----  end of function ngx_http_cc_set_shm_size  ----- */
-
-/*
- * ===  FUNCTION
- * ======================================================================
- *         Name:  ngx_conf_black_ip_file
- *  Description:
- * =====================================================================================
- */
-static char *ngx_conf_black_ip_file(ngx_conf_t *cf, ngx_command_t *cmd,
-                                    void *conf) {
-    ngx_str_t *value;
-
-    value = cf->args->elts;
-    /**     ngx_conf_log_error( */
-    /** NGX_LOG_ERR, cf, 0, */
-    /** "black file:%s",value[1].data); */
-
-    cc_black_ip_file = ngx_palloc(cf->pool, sizeof(ngx_log_t));
-    if (!cc_black_ip_file) {
-        ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
-                           "open black ip file file error, abort.");
-        return (NGX_CONF_ERROR);
-    }
-    ngx_memzero(cc_black_ip_file, sizeof(ngx_log_t));
-
-    cc_black_ip_file->log_level = NGX_LOG_NOTICE;
-    cc_black_ip_file->file = ngx_conf_open_file(cf->cycle, &value[1]);
-    if (!cc_black_ip_file->file) {
-        ngx_pfree(cf->pool, cc_black_ip_file);
-        ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
-                           "open NaxsiLogFile file error, abort.");
-        return (NGX_CONF_ERROR);
-    }
-    return NGX_CONF_OK;
-
-} /* -----  end of function ngx_conf_black_ip_file  ----- */
 
 /*
  * ===  FUNCTION

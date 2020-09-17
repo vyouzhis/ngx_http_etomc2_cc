@@ -97,10 +97,8 @@
 #define ETOMC2_WEB_API "et2_web_api"
 
 // #define CC_PATH "et2_root_path"
-#define CC_BLACK_IP_FILE "et2_black_ip_file"
 
 #define HDCACHE_PATH "et2_hdcache_path"
-#define CUSTOM_IP_PATH "et2_custom_ip_path"
 
 #define PEM_SECURE_TUNNEL "secure-tunnel"
 #define etomc2_PEM_PK_FILE "Etomc2CCPemPrivateKey"
@@ -159,7 +157,6 @@ static const size_t Intensity[] = {5 * 60, 13 * 60, 60 * 60, 24 * 60 * 60,
 extern ngx_module_t ngx_http_etomc2_cc_module;
 
 // static int pem_auth;
-ngx_log_t *cc_black_ip_file;
 
 /**
  *
@@ -435,7 +432,6 @@ typedef struct {
 
     // ngx_str_t cc_path;
     ngx_str_t hdcache_path;
-    ngx_str_t custom_ip_path;
     ngx_str_t rsa_pem_pk;
     ngx_str_t rsa_pem;
 
@@ -550,7 +546,6 @@ Ngx_etomc2_shm_gt *ngx_cc_gt_init(ngx_slab_pool_t *shpool);
 int ngx_cc_gt_check(ngx_http_request_t *r, uint32_t hash_uri);
 int gt_index(SHM_GT_LEVEL gt);
 void ngx_cc_gt_search(ngx_http_request_t *r, Ngx_etomc2_shm_gt **gt_node_ptr);
-void black_ip_log(ngx_http_request_t *r);
 ngx_str_t client_forward_ip(ngx_http_request_t *r);
 // ---- cc function----
 
@@ -585,7 +580,8 @@ int hdcache_behavior(ngx_http_request_t *r, ngx_str_t *key,
                      CC_THIN_COOKIE_MARK mark, int *timestamp);
 int hdcache_behavior_exist(ngx_http_request_t *r, ngx_str_t *key,
                            CC_THIN_COOKIE_MARK mark);
-int custom_ip_attack_exist(ngx_http_request_t *r, CC_THIN_COOKIE_MARK mark);
+void hdcache_behavior_add(ngx_http_request_t *r, ngx_str_t *key,
+                          CC_THIN_COOKIE_MARK mark, int inten, int timestamp);
 //-------- hdcache -----
 
 // ------ limit request   ------

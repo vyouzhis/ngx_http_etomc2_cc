@@ -877,8 +877,7 @@ int cc_thin_user_behavior_red(ngx_http_request_t *r,
             cc_gt_ptr = NULL;
             ngx_cc_gt_search(r, &cc_gt_ptr);
             if (cc_gt_ptr) {
-                ngx_log_error(
-                    NGX_LOG_ERR, r->connection->log, 0,
+                NX_DEBUG(
                     "[CC Attack check:%d  level:%d  cc_id:%z,take:%d]",
                     cc_gt_ptr->count, cc_gt_ptr->level, hash_uri,
                     cc_gt_ptr->take);
@@ -890,8 +889,6 @@ int cc_thin_user_behavior_red(ngx_http_request_t *r,
                 return -1;
             }
         }
-
-        /** lreq_status(r); */
 
         /**
          * fib_index = [2,3]
@@ -914,12 +911,12 @@ int cc_thin_user_behavior_red(ngx_http_request_t *r,
     } else if (behavior->mark == M_YELLOW) {
         rise = (float)maxVal / (float)ROAD_MAP_URI_MAX;
         fib_index = (int)rise;
-
+        NX_DEBUG("M_READY status  rise:%.5f", rise);
         if (rise >= Fibonacci[2][0]) {
             /**
              * enter cc attacking
              */
-            NX_LOG("M_READY status  rise:%.5f", rise);
+            
             if (behavior->uri_amount[BEHAVIOR_URI_SMALL] == 0 &&
                 behavior->content_types[BEHAVIOR_URI_SMALL] == 0) {
                 behavior->mark = M_SMALL;
@@ -937,7 +934,6 @@ int cc_thin_user_behavior_red(ngx_http_request_t *r,
             return -1;
         }
 
-        black_ip_log(r);
         path = hdcache_hash_to_dir(r, hash, behavior->mark);
         hb = hdcache_create_dir((char *)path.data, 0700);
         if (hb == -1) {
@@ -1037,7 +1033,6 @@ int cc_thin_user_behavior_check_node(ngx_http_request_t *r,
                  behavior->uri_amount[2];
     if (behavior->BrowserOrBot == BB_DEFAULT && amount >= 3) {
         int bb = behavior_uuid_cookie(r);
-        NX_LOG("behavior_uuid_cookie:%d", bb);
         if (bb == -1) {
             behavior->BrowserOrBot = BB_BOT;
         } else if (bb == 0) {
@@ -1263,7 +1258,6 @@ void cc_thin_user_behavior_lookup(ngx_http_request_t *r, ngx_str_t *key) {
     cc_ub_ptr = (Ngx_etomc2_cc_user_behavior *)shm_zone_cc_ub->data;
     if (!cc_ub_ptr) {
         NX_LOG("cc_ub_ptr is null");
-
         return;
     }
 
@@ -1307,7 +1301,6 @@ void cc_thin_user_behavior_lookup(ngx_http_request_t *r, ngx_str_t *key) {
     if (isok == -1) {
         ngx_shmtx_unlock(&shpool->mutex);
         NX_LOG("cc_thin_user_behavior_lookup share memory error");
-        // return;
     } else {
         size_t size;
         size = 1 << ngx_pagesize_shift;
@@ -1627,24 +1620,6 @@ ngx_str_t *ngx_cc_rbtree_hash_key(ngx_http_request_t *r) {
     return key;
 } /* -----  end of function ngx_cc_rbtree_hash_key  ----- */
 
-/*
- * ===  FUNCTION
- * ======================================================================
- *         Name:  black_ip_log
- *  Description:
- * =====================================================================================
- */
-void black_ip_log(ngx_http_request_t *r) {
-    ngx_str_t ip = client_forward_ip(r);
-    char CARET_RETURN = '\n';
-    if (cc_black_ip_file == NULL || !cc_black_ip_file->file) {
-        return;
-    }
-    ngx_write_fd(cc_black_ip_file->file->fd, ip.data, ip.len);
-
-    ngx_write_fd(cc_black_ip_file->file->fd, &CARET_RETURN, sizeof(char));
-
-} /* -----  end of function black_ip_log  ----- */
 /*
  * ===  FUNCTION
  * ======================================================================

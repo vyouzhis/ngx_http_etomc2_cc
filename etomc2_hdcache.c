@@ -15,13 +15,13 @@
  *
  * =====================================================================================
  */
-#include "etomc2.h"
-
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <unistd.h>
-#include <stdio.h>
 #include <libgen.h>
+#include <stdio.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <unistd.h>
+
+#include "etomc2.h"
 /*
  * ===  FUNCTION
  * ======================================================================
@@ -73,16 +73,16 @@ void hdcache_create_file(const char *path, int inten, int timestamp) {
     fprintf(fp, "%d-%d", inten, timestamp);
     fclose(fp);
 } /* -----  end of function hdcache_create_file  ----- */
-/* 
- * ===  FUNCTION  ======================================================================
- *         Name:  hdcache_unlink_file
- *  Description:  
+/*
+ * ===  FUNCTION
+ * ====================================================================== Name:
+ * hdcache_unlink_file Description:
  * =====================================================================================
  */
-int  hdcache_unlink_file ( const char *path ){
-   int i = unlink(path);
+int hdcache_unlink_file(const char *path) {
+    int i = unlink(path);
     return i;
-}		/* -----  end of function hdcache_unlink_file  ----- */
+} /* -----  end of function hdcache_unlink_file  ----- */
 /*
  * ===  FUNCTION
  * ======================================================================
@@ -119,11 +119,11 @@ int hdcache_file_content(const char *file, int *timestamp) {
  * =====================================================================================
  */
 ngx_str_t hdcache_file_build(ngx_http_request_t *r, ngx_str_t path,
-        ngx_str_t file_name) {
+                             ngx_str_t file_name) {
     const char *fmt = "%.*s/%.*s";
     ngx_str_t file_path;
     file_path.len = snprintf(NULL, 0, fmt, path.len, path.data, file_name.len,
-            file_name.data);
+                             file_name.data);
     file_path.len += 1;
     file_path.data = ngx_pcalloc(r->pool, file_path.len);
     if (!file_path.data) {
@@ -131,7 +131,7 @@ ngx_str_t hdcache_file_build(ngx_http_request_t *r, ngx_str_t path,
         return file_path;
     }
     snprintf((char *)file_path.data, file_path.len, fmt, path.len, path.data,
-            file_name.len, file_name.data);
+             file_name.len, file_name.data);
 
     return file_path;
 } /* -----  end of function hdcache_file_build  ----- */
@@ -143,8 +143,7 @@ ngx_str_t hdcache_file_build(ngx_http_request_t *r, ngx_str_t path,
  * =====================================================================================
  */
 ngx_str_t hdcache_hash_to_dir_def(ngx_http_request_t *r, const char *path,
-        uint32_t num, CC_THIN_COOKIE_MARK mark) {
-
+                                  uint32_t num, CC_THIN_COOKIE_MARK mark) {
     ngx_str_t dir;
     /** const char *path = "/var/cache/nginx/hdcache"; */
 
@@ -163,34 +162,35 @@ ngx_str_t hdcache_hash_to_dir_def(ngx_http_request_t *r, const char *path,
     }
 
     dir.len = snprintf(NULL, 0, path_fmt, path, mark, pname[0], pname[1],
-            pname[2], pname[3], pname[4]);
+                       pname[2], pname[3], pname[4]);
 
     dir.len += 1;
     dir.data = ngx_pcalloc(r->pool, dir.len);
     if (!dir.data) return dir;
     snprintf((char *)dir.data, dir.len, path_fmt, path, mark, pname[0],
-            pname[1], pname[2], pname[3], pname[4]);
+             pname[1], pname[2], pname[3], pname[4]);
 
     return dir;
 } /* -----  end of function hdcache_hash_to_dir_def  ----- */
-/* 
- * ===  FUNCTION  ======================================================================
- *         Name:  hdcache_hash_to_dir
- *  Description:  
+/*
+ * ===  FUNCTION
+ * ====================================================================== Name:
+ * hdcache_hash_to_dir Description:
  * =====================================================================================
  */
-ngx_str_t hdcache_hash_to_dir(ngx_http_request_t *r,
-        uint32_t num, CC_THIN_COOKIE_MARK mark) {
+ngx_str_t hdcache_hash_to_dir(ngx_http_request_t *r, uint32_t num,
+                              CC_THIN_COOKIE_MARK mark) {
     ngx_http_etomc2_loc_conf_t *lccf;
     lccf = ngx_http_get_module_loc_conf(r, ngx_http_etomc2_cc_module);
     if (!lccf) {
-       ngx_str_t n;
-      n.len = 0; 
+        ngx_str_t n;
+        n.len = 0;
         return n;
     }
 
-    return hdcache_hash_to_dir_def(r,(char*)lccf->hdcache_path.data,num,mark);
-}		/* -----  end of function hdcache_hash_to_dir  ----- */
+    return hdcache_hash_to_dir_def(r, (char *)lccf->hdcache_path.data, num,
+                                   mark);
+} /* -----  end of function hdcache_hash_to_dir  ----- */
 /*
  * ===  FUNCTION
  * ======================================================================
@@ -198,12 +198,10 @@ ngx_str_t hdcache_hash_to_dir(ngx_http_request_t *r,
  *  Description:
  * =====================================================================================
  */
-int hdcache_behavior(ngx_http_request_t *r,
-        ngx_str_t *key, CC_THIN_COOKIE_MARK mark, int *timestamp) {
-
+int hdcache_behavior(ngx_http_request_t *r, ngx_str_t *key,
+                     CC_THIN_COOKIE_MARK mark, int *timestamp) {
     uint32_t hash = to_hash((char *)key->data, key->len);
-    ngx_str_t path =
-        hdcache_hash_to_dir(r, hash, mark);
+    ngx_str_t path = hdcache_hash_to_dir(r, hash, mark);
 
     ngx_str_t file_path = hdcache_file_build(r, path, *key);
 
@@ -212,13 +210,14 @@ int hdcache_behavior(ngx_http_request_t *r,
     return i;
 
 } /* -----  end of function hdcache_behavior  ----- */
-/* 
- * ===  FUNCTION  ======================================================================
- *         Name:  hdcache_behavior_exist
- *  Description:  
+/*
+ * ===  FUNCTION
+ * ====================================================================== Name:
+ * hdcache_behavior_exist Description:
  * =====================================================================================
  */
-int  hdcache_behavior_exist ( ngx_http_request_t *r,ngx_str_t*key, CC_THIN_COOKIE_MARK mark){
+int hdcache_behavior_exist(ngx_http_request_t *r, ngx_str_t *key,
+                           CC_THIN_COOKIE_MARK mark) {
     uint32_t hash;
     ngx_str_t path;
     ngx_str_t file_path;
@@ -229,27 +228,33 @@ int  hdcache_behavior_exist ( ngx_http_request_t *r,ngx_str_t*key, CC_THIN_COOKI
     int isexit = hdcache_file_exist((char *)file_path.data);
 
     return isexit;
-}		/* -----  end of function hdcache_behavior_exist  ----- */
-/* 
- * ===  FUNCTION  ======================================================================
- *         Name:  custom_black_ip_attack
- *  Description:  
+} /* -----  end of function hdcache_behavior_exist  ----- */
+/*
+ * ===  FUNCTION
+ * ====================================================================== Name:
+ * hdcache_behavior_add Description:
  * =====================================================================================
  */
-int  custom_ip_attack_exist ( ngx_http_request_t *r,CC_THIN_COOKIE_MARK mark ){
-    ngx_str_t ip = client_forward_ip(r);
+void hdcache_behavior_add(ngx_http_request_t *r, ngx_str_t *key,
+                          CC_THIN_COOKIE_MARK mark, int inten, int timestamp) {
+    uint32_t hash;
+    ngx_str_t path;
+    ngx_str_t file_path;
 
-    uint32_t hash = to_hash((char *)ip.data, ip.len);
-    /** ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,"[ip:%s]len:%d  black hash:%z",ip.data,ip.len,hash); */
+    hash = to_hash((char *)key->data, key->len);
+    path = hdcache_hash_to_dir(r, hash, mark);
+    int hb = hdcache_create_dir((char *)path.data, 0700);
+    if (hb == -1) {
+        NX_LOG("hdcache_create_dir  error");
+        return;
+    }
+    file_path = hdcache_file_build(r, path, *key);
+    if (file_path.len == 0) {
+        NX_LOG("file_path  error");
+        return;
+    }
+    hdcache_create_file((char *)file_path.data, inten, timestamp);
 
-    ngx_str_t path =
-        hdcache_hash_to_dir(r, hash, mark);
-
-    ngx_str_t file_path = hdcache_file_build(r, path, ip);
-/**     ngx_log_error(NGX_LOG_ERR, r->connection->log, 0, */
-                      /** "custom_ip_path file_path:%s", file_path.data); */
-    return hdcache_file_exist((char*)file_path.data);
-
-}		/* -----  end of function custom_black_ip_attack  ----- */
+} /* -----  end of function hdcache_behavior_add  ----- */
 
 
