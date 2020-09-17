@@ -58,6 +58,7 @@
 * [起始(Getting Started)](#起始getting-started)
   * [编译安装(Installation)](#编译安装installation)
 * [配置(Usage)](#配置usage)
+* [调试(Review)](#调试Review)
 * [License](#license)
 * [联系(Contact)](#联系contact)
 
@@ -123,6 +124,53 @@ gmake install
 
 
 _参考配置 [nginx example conf](https://github.com/vyouzhis/ngx_http_etomc2_cc/tree/master/doc/example_nginx.conf)_
+
+<!-- Review -->
+## 调试(Review)
+采用一个bash shell 进行测试
+```sh
+cat hack.sh
+#! /bin/sh
+#
+# hack.sh
+# Copyright (C) 2020 vyouzhi <vyouzhi@localhost.localdomain>
+#
+# Distributed under terms of the MIT license.
+#
+
+
+for n in {1..15}
+do
+    echo $n
+    ab -n 300 -c 30  -H "User-Agent: abc$n"  http://192.168.2.127/php.php&
+done
+
+```
+nginx 的 access 日志
+```
+tail -50 ../logs/access.log
+192.168.2.149 - - [17/Sep/2020:17:55:23 +0800] "GET /php.php HTTP/1.0" 444 0 "-" "abc15"
+192.168.2.149 - - [17/Sep/2020:17:55:23 +0800] "GET /php.php HTTP/1.0" 444 0 "-" "abc12"
+192.168.2.149 - - [17/Sep/2020:17:55:23 +0800] "GET /php.php HTTP/1.0" 444 0 "-" "abc14"
+192.168.2.149 - - [17/Sep/2020:17:55:23 +0800] "GET /php.php HTTP/1.0" 444 0 "-" "abc6"
+192.168.2.149 - - [17/Sep/2020:17:55:23 +0800] "GET /php.php HTTP/1.0" 444 0 "-" "abc15"
+192.168.2.149 - - [17/Sep/2020:17:55:23 +0800] "GET /php.php HTTP/1.0" 444 0 "-" "abc14"
+192.168.2.149 - - [17/Sep/2020:17:55:23 +0800] "GET /php.php HTTP/1.0" 444 0 "-" "abc6"
+192.168.2.149 - - [17/Sep/2020:17:55:23 +0800] "GET /php.php HTTP/1.0" 444 0 "-" "abc10"
+192.168.2.149 - - [17/Sep/2020:17:55:23 +0800] "GET /php.php HTTP/1.0" 444 0 "-" "abc14"
+192.168.2.149 - - [17/Sep/2020:17:55:23 +0800] "GET /php.php HTTP/1.0" 444 0 "-" "abc6"
+192.168.2.149 - - [17/Sep/2020:17:55:23 +0800] "GET /php.php HTTP/1.0" 444 0 "-" "abc10"
+192.168.2.149 - - [17/Sep/2020:17:55:23 +0800] "GET /php.php HTTP/1.0" 444 0 "-" "abc14"
+192.168.2.149 - - [17/Sep/2020:17:55:23 +0800] "GET /php.php HTTP/1.0" 444 0 "-" "abc6"
+192.168.2.149 - - [17/Sep/2020:17:55:23 +0800] "GET /php.php HTTP/1.0" 444 0 "-" "abc10"
+192.168.2.149 - - [17/Sep/2020:17:55:23 +0800] "GET /php.php HTTP/1.0" 444 0 "-" "abc6"
+192.168.2.149 - - [17/Sep/2020:17:55:23 +0800] "GET /php.php HTTP/1.0" 444 0 "-" "abc10"
+192.168.2.149 - - [17/Sep/2020:17:55:23 +0800] "GET /php.php HTTP/1.0" 444 0 "-" "abc6"
+192.168.2.149 - - [17/Sep/2020:17:55:23 +0800] "GET /php.php HTTP/1.0" 444 0 "-" "abc10"
+192.168.2.149 - - [17/Sep/2020:17:55:23 +0800] "GET /php.php HTTP/1.0" 444 0 "-" "abc10"
+192.168.2.149 - - [17/Sep/2020:17:55:23 +0800] "GET /php.php HTTP/1.0" 444 0 "-" "abc10"
+192.168.2.149 - - [17/Sep/2020:17:55:23 +0800] "GET /php.php HTTP/1.0" 444 0 "-" "abc10
+```
 
 
 <!-- LICENSE -->
