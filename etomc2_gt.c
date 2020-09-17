@@ -36,8 +36,7 @@ void ngx_cc_gt(ngx_http_request_t *r) {
     if (!lccf) return;
 
     if (lccf->shm_zone_cc_gt == NULL) {
-        ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
-                      "shm_zone_cc_ub is null");
+        NX_LOG("shm_zone_cc_ub is null");
         return;
     }
 
@@ -77,7 +76,6 @@ void ngx_cc_gt(ngx_http_request_t *r) {
         }
 
         if (cc_gt_ptr->hash_domain == hash_domain) {
-
             if (diff > SHM_GT_TIMEOUT) {
                 cc_gt_ptr->count = 1;
 
@@ -146,7 +144,8 @@ Ngx_etomc2_shm_gt *ngx_cc_gt_init(ngx_slab_pool_t *shpool) {
     cc_new_ptr->count = 1;
     cc_new_ptr->now = 0;
     cc_new_ptr->take = 0;
-    memset(cc_new_ptr->uri_itemize, 0,(size_t) CC_GT_URI_MAX*sizeof(uint32_t));
+    memset(cc_new_ptr->uri_itemize, 0,
+           (size_t)CC_GT_URI_MAX * sizeof(uint32_t));
     cc_new_ptr->level = GTL_5;
 
     cc_new_ptr->next = NULL;
@@ -160,19 +159,18 @@ Ngx_etomc2_shm_gt *ngx_cc_gt_init(ngx_slab_pool_t *shpool) {
  *  Description:
  * =====================================================================================
  */
-int ngx_cc_gt_check(ngx_http_request_t *r,uint32_t hash_uri) {
-    Ngx_etomc2_shm_gt *cc_gt_ptr; 
+int ngx_cc_gt_check(ngx_http_request_t *r, uint32_t hash_uri) {
+    Ngx_etomc2_shm_gt *cc_gt_ptr;
 
     int i;
     SHM_GT_LEVEL uri_level;
     cc_gt_ptr = NULL;
     ngx_cc_gt_search(r, &cc_gt_ptr);
 
- ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
-                    "[CC Attack check:%d  level:%d]",
-                    cc_gt_ptr->count, cc_gt_ptr->level);
+    NX_DEBUG("[CC Attack check:%d  level:%d]", cc_gt_ptr->count,
+           cc_gt_ptr->level);
     if (cc_gt_ptr != NULL && cc_gt_ptr->count >= cc_gt_ptr->level) {
-        for (i = 0; i < CC_GT_URI_MAX && cc_gt_ptr->uri_itemize[i]!=0; i++) {
+        for (i = 0; i < CC_GT_URI_MAX && cc_gt_ptr->uri_itemize[i] != 0; i++) {
             if (cc_gt_ptr->uri_itemize[i] == hash_uri) {
                 uri_level = cc_gt_ptr->level;
                 switch (uri_level) {
@@ -220,8 +218,7 @@ void ngx_cc_gt_search(ngx_http_request_t *r, Ngx_etomc2_shm_gt **gt_node_ptr) {
     if (!lccf) return;
 
     if (lccf->shm_zone_cc_gt == NULL) {
-        ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
-                      "shm_zone_cc_ub is null");
+        NX_LOG("shm_zone_cc_ub is null");
         return;
     }
 

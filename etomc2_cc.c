@@ -806,7 +806,6 @@ int cc_thin_user_behavior_red(ngx_http_request_t *r,
     ngx_str_t file_path, path;
     ngx_str_t key;
     Ngx_etomc2_shm_gt *cc_gt_ptr;
-    ngx_http_etomc2_loc_conf_t *lccf;
     /***
      *
      * MARK_READY_NEXT_TIME  or  check url is  app loop url
@@ -861,33 +860,22 @@ int cc_thin_user_behavior_red(ngx_http_request_t *r,
                 return -1;
             }
         }
-        NX_LOG("M_RED status  rise:%.5f,  increase:%d max:%d, amount:%d", rise,
+        NX_DEBUG("M_RED status  rise:%.5f,  increase:%d max:%d, amount:%d", rise,
                increase, maxVal, behavior->uri_amount[ROAD_MAP_URI_MAX - 1]);
-        lccf = ngx_http_get_module_loc_conf(r, ngx_http_etomc2_cc_module);
-        if (!lccf) return -1;
 
-        /**
-         *  itemize
-         *
-         */
-        /**         NX_LOG(
-         * "cc_itemize:%d", */
-        /** lccf->cc_itemize); */
-        if (lccf->cc_itemize == 1) {
-            cc_gt_ptr = NULL;
-            ngx_cc_gt_search(r, &cc_gt_ptr);
-            if (cc_gt_ptr) {
-                NX_DEBUG(
-                    "[CC Attack check:%d  level:%d  cc_id:%z,take:%d]",
-                    cc_gt_ptr->count, cc_gt_ptr->level, hash_uri,
-                    cc_gt_ptr->take);
-            } else {
-                ngx_cc_gt(r);
-                NX_LOG("[CC Attack  cc_id:%z]", hash_uri);
-            }
-            if (cc_gt_ptr == NULL || cc_gt_ptr->take == 0) {
-                return -1;
-            }
+        cc_gt_ptr = NULL;
+        ngx_cc_gt_search(r, &cc_gt_ptr);
+        if (cc_gt_ptr) {
+            NX_DEBUG("[CC Attack check:%d  level:%d  cc_id:%z,take:%d]",
+                     cc_gt_ptr->count, cc_gt_ptr->level, hash_uri,
+                     cc_gt_ptr->take);
+        } else {
+            ngx_cc_gt(r);
+            NX_LOG("[CC Attack  cc_id:%z]", hash_uri);
+        }
+        if (cc_gt_ptr == NULL){
+                 /** || cc_gt_ptr->take == 0) { */
+            return -1;
         }
 
         /**
@@ -916,7 +904,7 @@ int cc_thin_user_behavior_red(ngx_http_request_t *r,
             /**
              * enter cc attacking
              */
-            
+
             if (behavior->uri_amount[BEHAVIOR_URI_SMALL] == 0 &&
                 behavior->content_types[BEHAVIOR_URI_SMALL] == 0) {
                 behavior->mark = M_SMALL;
@@ -928,6 +916,7 @@ int cc_thin_user_behavior_red(ngx_http_request_t *r,
     }
 
     if (behavior->mark == M_RED) {
+        NX_DEBUG("M_RED ok");
         int gt = ngx_cc_gt_check(r, hash_uri);
 
         if (gt == -1) {
@@ -1567,25 +1556,7 @@ ngx_str_t *ngx_cc_rbtree_hash_key(ngx_http_request_t *r) {
     if (!key) return NULL;
 
     if (r->headers_in.user_agent == NULL) {
-        /**         lccf = ngx_http_get_module_loc_conf(r,
-         * ngx_http_etomc2_cc_module); */
-        /** if (!lccf || lccf->hdcache_path.len ==0) { */
-        /**     return NULL; */
-        /** } */
-        /** uint32_t hash = to_hash((char *)ip.data, ip.len); */
-        /**  */
-        /** ngx_str_t path = hdcache_hash_to_dir_def( */
-        /**         r, (char *)lccf->hdcache_path.data, hash, M_RED); */
-        /** int  hb = hdcache_create_dir((char *)path.data, 0700); */
-        /** if (hb == -1) { */
-        /**     NX_LOG( */
-        /**             "hdcache_create_dir  error"); */
-        /**     return NULL; */
-        /** } */
-        /** ngx_str_t file_path = hdcache_file_build(r, path, ip); */
-        /** hdcache_create_file((char *)file_path.data, 0, 0); */
-        /** NX_LOG( */
-        /** "user_agent is null, %s",ip.data); */
+        NX_LOG("user_agent is null, %s", ip.data);
         return NULL;
     }
 

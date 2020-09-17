@@ -417,7 +417,9 @@ ngx_int_t ngx_http_etomc2_header_filter(ngx_http_request_t *r) {
     if (lccf->etomc2_cc_enable == 0) {
         return ngx_http_next_header_filter(r);
     }
-
+    if (lccf->cc_itemize == 0) {
+        return NGX_OK;
+    }
     if (r->headers_out.status == 200) {
         lreq_uri_queue(r);
     }
