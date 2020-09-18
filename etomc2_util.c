@@ -221,3 +221,29 @@ uint32_t to_hash(const char *key, size_t length) {
       return hash;                                                                     
   
 }		/* -----  end of function to_hash  ----- */
+/*
+ * ===  FUNCTION
+ * ======================================================================
+ *         Name:  get_uri
+ *  Description:
+ * =====================================================================================
+ */
+ngx_str_t get_uri(ngx_http_request_t *r) {
+    ngx_str_t tmp_uri;
+
+    if (r->uri.len >= (NGX_MAX_UINT32_VALUE / 4) - 1) {
+        r->uri.len /= 4;
+    }
+
+    tmp_uri.len =
+        r->uri.len +
+        (2 * ngx_escape_uri(NULL, r->uri.data, r->uri.len, NGX_ESCAPE_ARGS));
+    tmp_uri.data = ngx_pcalloc(r->pool, tmp_uri.len + 1);
+    if (!tmp_uri.data) {
+        tmp_uri.len = 0;
+        return tmp_uri;
+    }
+    ngx_escape_uri(tmp_uri.data, r->uri.data, r->uri.len, NGX_ESCAPE_ARGS);
+
+    return tmp_uri;
+} /* -----  end of function get_uri  ----- */

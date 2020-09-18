@@ -214,7 +214,7 @@ struct ngx_etomc2_shm_gt {
     size_t count;
     time_t now;
     uint32_t uri_itemize[CC_GT_URI_MAX];  // uri  is loop  itemize level+1;
-    ngx_flag_t take;  // default 0 is  itemizeing,  1 is itemizeed
+    // ngx_flag_t take;  // default 0 is  itemizeing,  1 is itemizeed
     SHM_GT_LEVEL level;
     struct ngx_etomc2_shm_gt *next;
 }; /* ----------  end of struct ngx_etomc2_shm_gt  ---------- */

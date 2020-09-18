@@ -143,7 +143,7 @@ Ngx_etomc2_shm_gt *ngx_cc_gt_init(ngx_slab_pool_t *shpool) {
     cc_new_ptr->hash_domain = 0;
     cc_new_ptr->count = 1;
     cc_new_ptr->now = 0;
-    cc_new_ptr->take = 0;
+    /** cc_new_ptr->take = 0; */
     memset(cc_new_ptr->uri_itemize, 0,
            (size_t)CC_GT_URI_MAX * sizeof(uint32_t));
     cc_new_ptr->level = GTL_5;

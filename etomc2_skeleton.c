@@ -142,7 +142,6 @@ static ngx_command_t ngx_http_etomc2_cc_commands[] = {
      NGX_HTTP_SRV_CONF | NGX_HTTP_LOC_CONF | NGX_CONF_TAKE1,
      ngx_conf_set_num_slot, NGX_HTTP_LOC_CONF_OFFSET,
      offsetof(ngx_http_etomc2_loc_conf_t, cc_return_status), NULL},
-   
 
     {ngx_string(CC_TRUST_STATUS),
      NGX_HTTP_SRV_CONF | NGX_HTTP_LOC_CONF | NGX_CONF_TAKE1,
@@ -418,7 +417,7 @@ ngx_int_t ngx_http_etomc2_header_filter(ngx_http_request_t *r) {
         return ngx_http_next_header_filter(r);
     }
     if (lccf->cc_itemize == 0) {
-        return NGX_OK;
+        return ngx_http_next_header_filter(r);
     }
     if (r->headers_out.status == 200) {
         lreq_uri_queue(r);
@@ -856,6 +855,68 @@ static char *ngx_http_etomc2_ctrl(ngx_conf_t *cf, ngx_command_t *cmd,
 static ngx_int_t ngx_http_etomc2_ctrl_handler(ngx_http_request_t *r) {
     ngx_buf_t *b;
     ngx_chain_t out;
+    size_t html_json = 0;  // 0:html, 1:json
+    u_char ngx_hello_world[] = "hello world";
+    ngx_str_t *resData;
+    ngx_str_t uri = get_uri(r);
+    NX_DEBUG("uri:%s", uri.data);
+    /* Allocate a new buffer for sending out the reply. */
+    b = ngx_pcalloc(r->pool, sizeof(ngx_buf_t));
+
+    /* Insertion in the buffer chain. */
+    out.buf = b;
+    out.next = NULL; /* just one buffer */
+    resData =ngx_pcalloc(r->pool,sizeof(ngx_str_t)); 
+    resData->len = strlen((char*)ngx_hello_world)+1;
+    resData->data = ngx_pcalloc(r->pool,resData->len);
+    snprintf((char*)resData->data,resData->len,"%s",ngx_hello_world);
+
+    if (ngx_strcmp(uri.data, "/") == 0) {
+        html_json = 0;
+
+    } else if (ngx_strcmp(uri.data, "/login") == 0) {
+        html_json = 1;
+
+    } else if (ngx_strcmp(uri.data, "/list") == 0) {
+        html_json = 1;
+
+    } else {
+        NX_DEBUG("else");
+    }
+
+
+    b->pos = resData->data; /* first position in memory of the data */
+    b->last = resData->data + resData->len -
+              1;     /* last position in memory of the data */
+    b->memory = 1;   /* content is in read-only memory */
+    b->last_buf = 1; /* there will be no more buffers in the request */
+
+    /* Set the Content-Type header. */
+    if (html_json == 0) {
+        r->headers_out.content_type.len = sizeof("text/html") - 1;
+        r->headers_out.content_type.data = (u_char *)"text/html";
+    } else {
+        r->headers_out.content_type.len = sizeof("application/json") - 1;
+        r->headers_out.content_type.data = (u_char *)"application/json";
+    }
+    /* Sending the headers for the reply. */
+    r->headers_out.status = NGX_HTTP_OK; /* 200 status code */
+    /* Get the content length of the body. */
+    r->headers_out.content_length_n = resData->len - 1;
+    ngx_http_send_header(r); /* Send the headers */
+
+    /* Send the body, and return the status code of the output filter chain. */
+    return ngx_http_output_filter(r, &out);
+} /* -----  end of function ngx_http_etomc2_ctrl_handler  ----- */
+/*
+ * ===  FUNCTION
+ * ====================================================================== Name:
+ * ngx_http_etomc2_ctrl_handler Description:
+ * =====================================================================================
+ */
+ngx_int_t lngx_http_etomc2_ctrl_handler(ngx_http_request_t *r) {
+    ngx_buf_t *b;
+    ngx_chain_t out;
     ngx_table_elt_t *et;
     ngx_str_t *data;
 
@@ -1289,107 +1350,108 @@ ngx_str_t web_route_del_blackip(ngx_http_request_t *r,
    */
 ngx_int_t web_route_get_gt_take(ngx_http_request_t *r,
                                 ngx_http_etomc2_loc_conf_t *lccf) {
-    ngx_http_core_srv_conf_t **cscfp;
-    ngx_uint_t s;
-    ngx_http_core_main_conf_t *cmcf;
-    ngx_slab_pool_t *shpool;
-    ngx_table_elt_t *hv;
-    uint32_t dm_hash = 0, server_hash;
-    int is_server = -1;
-    int ilevel = -1, itake = 0;
-    const char *take = "take";
-    const char *domain = "domain";
-    ngx_shm_zone_t *shm_zone_cc_gt;
-
-    Ngx_etomc2_shm_gt *cc_gt_ptr, *cc_new_ptr;
-
-    /**
-     *  set  shm_gt_take
+    /**         ngx_http_core_srv_conf_t **cscfp; */
+    /** ngx_uint_t s; */
+    /** ngx_http_core_main_conf_t *cmcf; */
+    /** ngx_slab_pool_t *shpool; */
+    /** ngx_table_elt_t *hv; */
+    /** uint32_t dm_hash = 0, server_hash; */
+    /** int is_server = -1; */
+    /** int ilevel = -1, itake = 0; */
+    /** const char *take = "take"; */
+    /** const char *domain = "domain"; */
+    /** ngx_shm_zone_t *shm_zone_cc_gt; */
+    /**  */
+    /** Ngx_etomc2_shm_gt *cc_gt_ptr, *cc_new_ptr; */
+    /**  */
+    /**  */
+    /** [> set  shm_gt_take <] */
+    /** hv = search_headers_in(r, (u_char *)domain, strlen(domain)); */
+    /** if (hv == NULL || hv->value.len == 0) { */
+    /**     return NGX_ERROR; */
+    /** } */
+    /** dm_hash = to_hash((char *)hv->value.data, hv->value.len); */
+    /**  */
+    /** cmcf = ngx_http_get_module_main_conf(r, ngx_http_core_module); */
+    /**  */
+    /** cscfp = cmcf->servers.elts; */
+    /** for (s = 0; s < cmcf->servers.nelts; s++) { */
+    /**     [> ngx_cc_gt_init(cf,cscfp[s]->server_name); <] */
+    /**     server_hash = to_hash((char *)cscfp[s]->server_name.data, */
+    /**                           cscfp[s]->server_name.len); */
+    /**     if (dm_hash == server_hash) { */
+    /**         is_server = 0; */
+    /**         break; */
+    /**     } */
+    /** } */
+    /** if (is_server == -1) { */
+    /**     return NGX_ERROR; */
+    /** } */
+    /** hv = search_headers_in(r, (u_char *)take, strlen(take)); */
+    /** if (hv == NULL || hv->value.len == 0) { */
+    /**     return NGX_ERROR; */
+    /** } */
+    /** itake = ngx_atoi(hv->value.data, hv->value.len); */
+    /** shm_zone_cc_gt = lccf->shm_zone_cc_gt; */
+    /** shpool = (ngx_slab_pool_t *)shm_zone_cc_gt->shm.addr; */
+    /**  */
+    /** cc_gt_ptr = (Ngx_etomc2_shm_gt *)shm_zone_cc_gt->data; */
+    /** while (cc_gt_ptr) { */
+    /**     if (cc_gt_ptr->hash_domain == 0) { */
+    /**         cc_gt_ptr->hash_domain = dm_hash; */
+    /**     } */
+    /**     if (cc_gt_ptr->hash_domain == dm_hash) { */
+    /**         ngx_shmtx_lock(&shpool->mutex); */
+    /**         cc_gt_ptr->take = itake; */
+    /**         ngx_shmtx_unlock(&shpool->mutex); */
+    /**         ngx_log_error(NGX_LOG_ERR, r->connection->log, 0, */
+    /**                       "[server_name:new,level:%d]", cc_gt_ptr->level);
      */
-    hv = search_headers_in(r, (u_char *)domain, strlen(domain));
-    if (hv == NULL || hv->value.len == 0) {
-        return NGX_ERROR;
-    }
-    dm_hash = to_hash((char *)hv->value.data, hv->value.len);
-
-    cmcf = ngx_http_get_module_main_conf(r, ngx_http_core_module);
-
-    cscfp = cmcf->servers.elts;
-    for (s = 0; s < cmcf->servers.nelts; s++) {
-        /** ngx_cc_gt_init(cf,cscfp[s]->server_name); */
-        server_hash = to_hash((char *)cscfp[s]->server_name.data,
-                              cscfp[s]->server_name.len);
-        if (dm_hash == server_hash) {
-            is_server = 0;
-            break;
-        }
-    }
-    if (is_server == -1) {
-        return NGX_ERROR;
-    }
-    hv = search_headers_in(r, (u_char *)take, strlen(take));
-    if (hv == NULL || hv->value.len == 0) {
-        return NGX_ERROR;
-    }
-    itake = ngx_atoi(hv->value.data, hv->value.len);
-    shm_zone_cc_gt = lccf->shm_zone_cc_gt;
-    shpool = (ngx_slab_pool_t *)shm_zone_cc_gt->shm.addr;
-
-    cc_gt_ptr = (Ngx_etomc2_shm_gt *)shm_zone_cc_gt->data;
-    while (cc_gt_ptr) {
-        if (cc_gt_ptr->hash_domain == 0) {
-            cc_gt_ptr->hash_domain = dm_hash;
-        }
-        if (cc_gt_ptr->hash_domain == dm_hash) {
-            ngx_shmtx_lock(&shpool->mutex);
-            cc_gt_ptr->take = itake;
-            ngx_shmtx_unlock(&shpool->mutex);
-            ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
-                          "[server_name:new,level:%d]", cc_gt_ptr->level);
-
-            break;
-        }
-        if (cc_gt_ptr->next == NULL) {
-            ngx_log_error(NGX_LOG_ERR, r->connection->log, 0,
-                          "[server_name:new]");
-            // new
-            cc_new_ptr =
-                ngx_slab_alloc_locked(shpool, sizeof(Ngx_etomc2_shm_gt));
-            if (!cc_new_ptr) {
-                break;
-            }
-            cc_new_ptr->hash_domain = dm_hash;
-            cc_new_ptr->take = itake;
-            cc_new_ptr->count = 0;
-            cc_new_ptr->now = 0;
-            switch (ilevel) {
-                case 1:
-                    cc_new_ptr->level = GTL_1;
-                    break;
-                case 2:
-                    cc_new_ptr->level = GTL_2;
-                    break;
-                case 3:
-                    cc_new_ptr->level = GTL_3;
-                    break;
-                case 4:
-                    cc_new_ptr->level = GTL_4;
-                    break;
-                case 5:
-                    cc_new_ptr->level = GTL_5;
-                    break;
-                default:
-                    break;
-            } /* -----  end switch  ----- */
-            cc_new_ptr->next = NULL;
-            ngx_shmtx_lock(&shpool->mutex);
-
-            cc_gt_ptr->next = cc_new_ptr;
-            ngx_shmtx_unlock(&shpool->mutex);
-        }
-
-        cc_gt_ptr = cc_gt_ptr->next;
-    }
+    /**  */
+    /**         break; */
+    /**     } */
+    /**     if (cc_gt_ptr->next == NULL) { */
+    /**         ngx_log_error(NGX_LOG_ERR, r->connection->log, 0, */
+    /**                       "[server_name:new]"); */
+    /**         // new */
+    /**         cc_new_ptr = */
+    /**             ngx_slab_alloc_locked(shpool, sizeof(Ngx_etomc2_shm_gt)); */
+    /**         if (!cc_new_ptr) { */
+    /**             break; */
+    /**         } */
+    /**         cc_new_ptr->hash_domain = dm_hash; */
+    /**         cc_new_ptr->take = itake; */
+    /**         cc_new_ptr->count = 0; */
+    /**         cc_new_ptr->now = 0; */
+    /**         switch (ilevel) { */
+    /**             case 1: */
+    /**                 cc_new_ptr->level = GTL_1; */
+    /**                 break; */
+    /**             case 2: */
+    /**                 cc_new_ptr->level = GTL_2; */
+    /**                 break; */
+    /**             case 3: */
+    /**                 cc_new_ptr->level = GTL_3; */
+    /**                 break; */
+    /**             case 4: */
+    /**                 cc_new_ptr->level = GTL_4; */
+    /**                 break; */
+    /**             case 5: */
+    /**                 cc_new_ptr->level = GTL_5; */
+    /**                 break; */
+    /**             default: */
+    /**                 break; */
+    /** } */
+    /* -----  end switch  ----- */
+    /** cc_new_ptr->next = NULL; */
+    /**     ngx_shmtx_lock(&shpool->mutex); */
+    /**  */
+    /**     cc_gt_ptr->next = cc_new_ptr; */
+    /**     ngx_shmtx_unlock(&shpool->mutex); */
+    /** } */
+    /**  */
+    /** cc_gt_ptr = cc_gt_ptr->next; */
+    /** } */
     return NGX_OK;
 } /* -----  end of function web_route_get_gt_take  ----- */
   /*

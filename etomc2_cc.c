@@ -5,32 +5,7 @@
  */
 
 #include "etomc2.h"
-/*
- * ===  FUNCTION
- * ======================================================================
- *         Name:  chekc_uri
- *  Description:
- * =====================================================================================
- */
-ngx_str_t get_uri(ngx_http_request_t *r) {
-    ngx_str_t tmp_uri;
 
-    if (r->uri.len >= (NGX_MAX_UINT32_VALUE / 4) - 1) {
-        r->uri.len /= 4;
-    }
-
-    tmp_uri.len =
-        r->uri.len +
-        (2 * ngx_escape_uri(NULL, r->uri.data, r->uri.len, NGX_ESCAPE_ARGS));
-    tmp_uri.data = ngx_pcalloc(r->pool, tmp_uri.len + 1);
-    if (!tmp_uri.data) {
-        tmp_uri.len = 0;
-        return tmp_uri;
-    }
-    ngx_escape_uri(tmp_uri.data, r->uri.data, r->uri.len, NGX_ESCAPE_ARGS);
-
-    return tmp_uri;
-} /* -----  end of function chekc_uri  ----- */
 /*
  * ===  FUNCTION
  * ======================================================================
@@ -58,7 +33,7 @@ ngx_int_t cc_thin_enter(ngx_http_request_t *r) {
         return (NGX_DECLINED);
     }
     if (lccf->cc_itemize == 0) {
-        return NGX_OK;
+        return NGX_DECLINED;
     }
 
     key = ngx_cc_rbtree_hash_key(r);
@@ -866,9 +841,9 @@ int cc_thin_user_behavior_red(ngx_http_request_t *r,
         cc_gt_ptr = NULL;
         ngx_cc_gt_search(r, &cc_gt_ptr);
         if (cc_gt_ptr) {
-            NX_DEBUG("[CC Attack check:%d  level:%d  cc_id:%z,take:%d]",
-                     cc_gt_ptr->count, cc_gt_ptr->level, hash_uri,
-                     cc_gt_ptr->take);
+            NX_DEBUG("[CC Attack check:%d  level:%d  cc_id:%z]",
+                     cc_gt_ptr->count, cc_gt_ptr->level, hash_uri);
+                     /** cc_gt_ptr->take); */
         } else {
             ngx_cc_gt(r);
             NX_LOG("[CC Attack  cc_id:%z]", hash_uri);
