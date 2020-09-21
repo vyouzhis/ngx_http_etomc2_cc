@@ -107,8 +107,10 @@ int hdcache_file_content(const char *file, int *timestamp) {
     if (fp == NULL) return -1;
     int m = -1;
 
-    fscanf(fp, "%d-%d", &m, timestamp);
+    int n = fscanf(fp, "%d-%d", &m, timestamp);
     fclose(fp);
+    if(n==-1)return -1;
+    
     return m;
 } /* -----  end of function hdcache_file_content  ----- */
 /*
