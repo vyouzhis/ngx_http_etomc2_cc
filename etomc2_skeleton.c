@@ -71,7 +71,8 @@ ngx_str_t *web_route_domain_list(ngx_http_request_t *r,
                                  ngx_http_etomc2_loc_conf_t *lccf);
 ngx_str_t *web_route_main_conf(ngx_http_request_t *r,
                                ngx_http_etomc2_loc_conf_t *lccf);
-
+ngx_str_t *web_route_update_conf(ngx_http_request_t *r,
+                                 ngx_http_etomc2_loc_conf_t *lccf);
 ngx_str_t *web_route_waf_domain_ids(ngx_http_request_t *r,
                                     ngx_http_etomc2_loc_conf_t *lccf);
 ngx_str_t *web_route_waf_domain_rule(ngx_http_request_t *r,
@@ -897,8 +898,10 @@ static ngx_int_t ngx_http_etomc2_ctrl_handler(ngx_http_request_t *r) {
     } else if (ngx_strcmp(uri.data, "/main_conf") == 0) {
         html_json = 1;
         resData = web_route_main_conf(r, lccf);
+    } else if (ngx_strcmp(uri.data, "/update_conf") == 0) {
+        html_json = 1;
+        resData = web_route_update_conf(r, lccf);
     }
-
     if (resData == NULL) {
         resData = ngx_pcalloc(r->pool, sizeof(ngx_str_t));
         resData->len = strlen((char *)ngx_hello_world) + 1;
@@ -1069,7 +1072,7 @@ ngx_int_t lngx_http_etomc2_ctrl_handler(ngx_http_request_t *r) {
  */
 ngx_str_t *web_route_main_conf(ngx_http_request_t *r,
                                ngx_http_etomc2_loc_conf_t *lccf) {
-    ngx_uint_t i,m;
+    ngx_uint_t i, m;
     volatile ngx_list_part_t *part;
     ngx_shm_zone_t *shm_zone;
     ngx_slab_pool_t *shpool;
@@ -1077,13 +1080,13 @@ ngx_str_t *web_route_main_conf(ngx_http_request_t *r,
     ngx_str_t *tmp, *res;
 
     const char *fmt_1 =
-        "{\"shm_name\":\"%s\",\"total\":%d,\"free\":%d,\"size\":%d}";
+        "{\"shm_name\":\"%.*s\",\"total\":%d,\"free\":%d,\"size\":%d}";
     const char *fmt_2 =
-        "%.*s,{\"shm_name\":\"%s\",\"total\":%d,\"free\":%d,\"size\":%d}";
+        "%.*s,{\"shm_name\":\"%.*s\",\"total\":%d,\"free\":%d,\"size\":%d}";
     const char *shm_fmt = "[%.*s]";
     const char *fmt = "{\"shm\":%.*s,\"enable\":%d}";
 
-        NX_DEBUG("cc_enable:%d", lccf->etomc2_cc_enable);
+    NX_DEBUG("cc_enable:%d", lccf->etomc2_cc_enable);
 
     part = &ngx_cycle->shared_memory.part;
     shm_zone = part->elts;
@@ -1109,27 +1112,24 @@ ngx_str_t *web_route_main_conf(ngx_http_request_t *r,
                  shm_zone[i].shm.size / 1024, shpool->pfree * size / 1024,
                  size / 1024);
         if (m == 0) {
-            res->len =
-                snprintf(NULL, 0, fmt_1, 
-                         &shm_zone[i].shm.name, shm_zone[i].shm.size / 1024,
-                         shpool->pfree * size / 1024, size / 1024);
+            res->len = snprintf(NULL, 0, fmt_1, shm_zone[i].shm.name.len,shm_zone[i].shm.name.data,
+                                shm_zone[i].shm.size / 1024,
+                                shpool->pfree * size / 1024, size / 1024);
             res->len += 1;
             res->data = ngx_pcalloc(r->pool, res->len);
-            snprintf((char *)res->data, res->len, fmt_1,
-                      &shm_zone[i].shm.name,
+            snprintf((char *)res->data, res->len, fmt_1, shm_zone[i].shm.name.len,shm_zone[i].shm.name.data,
                      shm_zone[i].shm.size / 1024, shpool->pfree * size / 1024,
                      size / 1024);
         } else {
-            tmp->len = snprintf(NULL, 0, fmt_2, res->len, res->data,
-                                 &shm_zone[i].shm.name,
-                                shm_zone[i].shm.size / 1024,
-                                shpool->pfree * size / 1024, size / 1024);
+            tmp->len =
+                snprintf(NULL, 0, fmt_2, res->len, res->data,shm_zone[i].shm.name.len,
+                         shm_zone[i].shm.name.data, shm_zone[i].shm.size / 1024,
+                         shpool->pfree * size / 1024, size / 1024);
             tmp->len += 1;
             tmp->data = ngx_pcalloc(r->pool, tmp->len);
-            snprintf((char *)tmp->data, tmp->len, fmt_2, res->len, res->data,
-                      &shm_zone[i].shm.name,
-                     shm_zone[i].shm.size / 1024, shpool->pfree * size / 1024,
-                     size / 1024);
+            snprintf((char *)tmp->data, tmp->len, fmt_2, res->len, res->data,shm_zone[i].shm.name.len,
+                     shm_zone[i].shm.name.data, shm_zone[i].shm.size / 1024,
+                     shpool->pfree * size / 1024, size / 1024);
             ngx_pfree(r->pool, res->data);
             res->data = tmp->data;
             res->len = tmp->len;
@@ -1224,6 +1224,78 @@ ngx_str_t *web_route_domain_list(ngx_http_request_t *r,
     snprintf((char *)tmp->data, tmp->len, fmt, res->len, res->data);
     return tmp;
 } /* -----  end of function web_route_domain_list  ----- */
+/*
+ * ===  FUNCTION
+ * ====================================================================== Name:
+ * web_route_update_conf Description:
+ * =====================================================================================
+ */
+ngx_str_t *web_route_update_conf(ngx_http_request_t *r,
+                                 ngx_http_etomc2_loc_conf_t *lccf) {
+    ngx_http_core_srv_conf_t **cscfp;
+    ngx_http_core_main_conf_t *cmcf;
+    ngx_http_etomc2_loc_conf_t *loc_conf;
+    ngx_http_conf_ctx_t *ctx;
+    ngx_uint_t s;
+
+    ngx_table_elt_t *dhv, *ihv, *ghv, *rhv;
+    const char *domain = "domain", *itemize = "itemize", *glevel = "glevel",
+               *rstatus = "rstatus";
+
+    dhv = search_headers_in(r, (u_char *)domain, strlen(domain));
+
+    if (dhv == NULL || dhv->value.len == 0) {
+        NX_LOG("domain  dhv value is null");
+        return NULL;
+    }
+
+    NX_DEBUG("domain:%s, domain%d", dhv->value.data, dhv->value.len);
+
+    ihv = search_headers_in(r, (u_char *)itemize, strlen(itemize));
+
+    if (ihv == NULL || ihv->value.len == 0) {
+        NX_LOG("domain  ihv value is null");
+        return NULL;
+    }
+
+    NX_DEBUG("itemize:%s, itemize%d", ihv->value.data, ihv->value.len);
+
+    ghv = search_headers_in(r, (u_char *)glevel, strlen(glevel));
+
+    if (ghv == NULL || ghv->value.len == 0) {
+        NX_LOG("domain  ghv value is null");
+        return NULL;
+    }
+
+    NX_DEBUG("glevel:%s, glevel%d", ghv->value.data, ghv->value.len);
+
+    rhv = search_headers_in(r, (u_char *)rstatus, strlen(rstatus));
+
+    if (rhv == NULL || rhv->value.len == 0) {
+        NX_LOG("domain  rhv value is null");
+        return NULL;
+    }
+
+    NX_DEBUG("rstatus:%s, rstatus%d", rhv->value.data, rhv->value.len);
+
+
+    cmcf = ngx_http_get_module_main_conf(r, ngx_http_core_module);
+      cscfp = cmcf->servers.elts;
+
+    for (s = 0; s < cmcf->servers.nelts; s++) {
+        ctx = cscfp[s]->ctx;
+        loc_conf = (ngx_http_etomc2_loc_conf_t *)
+                       ctx->loc_conf[ngx_http_etomc2_cc_module.ctx_index];
+
+        if(ngx_strncmp(cscfp[s]->server_name.data,dhv->value.data,cscfp[s]->server_name.len) == 0){
+            loc_conf->cc_return_status = ngx_atoi(rhv->value.data,rhv->value.len);
+            loc_conf->cc_gt_level = ngx_atoi(ghv->value.data, ghv->value.len);
+            loc_conf->cc_itemize = ngx_atoi(ihv->value.data,ihv->value.len);
+            break;
+        }
+    }
+    return NULL;
+} /* -----  end of function web_route_update_conf  ----- */
 /*
  * ===  FUNCTION
  * ====================================================================== Name:
