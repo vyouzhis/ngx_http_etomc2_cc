@@ -60,9 +60,9 @@
 
 #ifndef __ETOMC2_CONF_DEBUG
 #define __ETOMC2_CONF_DEBUG
-#define NX_CONF_DEBUG(LOG, ST, ...)                                     \
+#define NX_CONF_DEBUG(LOG, ...)                                     \
     do {                                                                \
-        ngx_conf_log_error(NGX_LOG_EMERG, cf, 0, LOG, ST, __VA_ARGS__); \
+        ngx_conf_log_error(NGX_LOG_EMERG, cf, 0, LOG, ##__VA_ARGS__); \
     } while (0)
 #endif
 

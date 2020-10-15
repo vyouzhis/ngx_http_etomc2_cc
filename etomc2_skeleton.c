@@ -66,6 +66,12 @@ static void ngx_cc_rbtree_insert_value(ngx_rbtree_node_t *temp,
 static char *ngx_http_etomc2_ctrl(ngx_conf_t *cf, ngx_command_t *cmd,
                                   void *conf);
 static ngx_int_t ngx_http_etomc2_ctrl_handler(ngx_http_request_t *r);
+
+ngx_str_t *web_route_domain_list(ngx_http_request_t *r,
+                                 ngx_http_etomc2_loc_conf_t *lccf);
+ngx_str_t *web_route_main_conf(ngx_http_request_t *r,
+                               ngx_http_etomc2_loc_conf_t *lccf);
+
 ngx_str_t *web_route_waf_domain_ids(ngx_http_request_t *r,
                                     ngx_http_etomc2_loc_conf_t *lccf);
 ngx_str_t *web_route_waf_domain_rule(ngx_http_request_t *r,
@@ -261,6 +267,8 @@ static char *ngx_http_etomc2_merge_loc_conf(ngx_conf_t *cf, void *parent,
     ngx_conf_merge_value(conf->etomc2_cc_enable, prev->etomc2_cc_enable, 0);
 
     ngx_conf_merge_uint_value(conf->cc_gt_level, prev->cc_gt_level, 5);
+    /** NX_CONF_DEBUG("CC_GT_LEVEL:%d,
+     * server:%s",conf->cc_gt_level,cf->cycle->hostname.data); */
     ngx_conf_merge_value(conf->cc_itemize, prev->cc_itemize, 0);
 
     ngx_conf_merge_uint_value(conf->cc_return_status, prev->cc_return_status,
@@ -859,31 +867,45 @@ static ngx_int_t ngx_http_etomc2_ctrl_handler(ngx_http_request_t *r) {
     u_char ngx_hello_world[] = "hello world";
     ngx_str_t *resData;
     ngx_str_t uri = get_uri(r);
-    NX_DEBUG("uri:%s", uri.data);
+    ngx_http_etomc2_loc_conf_t *lccf;
+    lccf = ngx_http_get_module_loc_conf(r, ngx_http_etomc2_cc_module);
+
+    /** NX_DEBUG("uri:%s", uri.data); */
     /* Allocate a new buffer for sending out the reply. */
     b = ngx_pcalloc(r->pool, sizeof(ngx_buf_t));
 
     /* Insertion in the buffer chain. */
     out.buf = b;
     out.next = NULL; /* just one buffer */
-    resData =ngx_pcalloc(r->pool,sizeof(ngx_str_t)); 
-    resData->len = strlen((char*)ngx_hello_world)+1;
-    resData->data = ngx_pcalloc(r->pool,resData->len);
-    snprintf((char*)resData->data,resData->len,"%s",ngx_hello_world);
+    resData = NULL;
 
     if (ngx_strcmp(uri.data, "/") == 0) {
         html_json = 0;
-
+        resData = ngx_pcalloc(r->pool, sizeof(ngx_str_t));
+        resData->len = strlen((char *)ngx_hello_world) + 1;
+        resData->data = ngx_pcalloc(r->pool, resData->len);
+        snprintf((char *)resData->data, resData->len, "%s", ngx_hello_world);
     } else if (ngx_strcmp(uri.data, "/login") == 0) {
         html_json = 1;
-
-    } else if (ngx_strcmp(uri.data, "/list") == 0) {
+        resData = ngx_pcalloc(r->pool, sizeof(ngx_str_t));
+        resData->len = strlen((char *)ngx_hello_world) + 1;
+        resData->data = ngx_pcalloc(r->pool, resData->len);
+        snprintf((char *)resData->data, resData->len, "%s", ngx_hello_world);
+    } else if (ngx_strcmp(uri.data, "/domain_list") == 0) {
         html_json = 1;
-
-    } else {
-        NX_DEBUG("else");
+        resData = web_route_domain_list(r, lccf);
+    } else if (ngx_strcmp(uri.data, "/main_conf") == 0) {
+        html_json = 1;
+        resData = web_route_main_conf(r, lccf);
     }
 
+    if (resData == NULL) {
+        resData = ngx_pcalloc(r->pool, sizeof(ngx_str_t));
+        resData->len = strlen((char *)ngx_hello_world) + 1;
+        resData->data = ngx_pcalloc(r->pool, resData->len);
+        snprintf((char *)resData->data, resData->len, "%s", ngx_hello_world);
+        NX_DEBUG("else");
+    }
 
     b->pos = resData->data; /* first position in memory of the data */
     b->last = resData->data + resData->len -
@@ -1039,7 +1061,169 @@ ngx_int_t lngx_http_etomc2_ctrl_handler(ngx_http_request_t *r) {
     return ngx_http_output_filter(r, &out);
 
 } /* -----  end of function ngx_http_etomc2_ctrl_handler  ----- */
+/*
+ * ===  FUNCTION
+ * ====================================================================== Name:
+ * web_route_main_conf Description:
+ * =====================================================================================
+ */
+ngx_str_t *web_route_main_conf(ngx_http_request_t *r,
+                               ngx_http_etomc2_loc_conf_t *lccf) {
+    ngx_uint_t i,m;
+    volatile ngx_list_part_t *part;
+    ngx_shm_zone_t *shm_zone;
+    ngx_slab_pool_t *shpool;
+    size_t size;
+    ngx_str_t *tmp, *res;
 
+    const char *fmt_1 =
+        "{\"shm_name\":\"%s\",\"total\":%d,\"free\":%d,\"size\":%d}";
+    const char *fmt_2 =
+        "%.*s,{\"shm_name\":\"%s\",\"total\":%d,\"free\":%d,\"size\":%d}";
+    const char *shm_fmt = "[%.*s]";
+    const char *fmt = "{\"shm\":%.*s,\"enable\":%d}";
+
+        NX_DEBUG("cc_enable:%d", lccf->etomc2_cc_enable);
+
+    part = &ngx_cycle->shared_memory.part;
+    shm_zone = part->elts;
+
+    size = 1 << ngx_pagesize_shift;
+    res = ngx_pcalloc(r->pool, sizeof(ngx_str_t));
+    tmp = ngx_pcalloc(r->pool, sizeof(ngx_str_t));
+    m = 0;
+    for (i = 0; /* void */; i++) {
+        if (i >= part->nelts) {
+            if (part->next == NULL) {
+                break;
+            }
+            part = part->next;
+            shm_zone = part->elts;
+            i = 0;
+        }
+        shpool = (ngx_slab_pool_t *)shm_zone[i].shm.addr;
+
+        NX_DEBUG("name len:%d, name:%V", shm_zone[i].shm.name.len,
+                 &shm_zone[i].shm.name);
+        NX_DEBUG(" total:%12z(KB) free:%12z(KB) size:%12z(KB)",
+                 shm_zone[i].shm.size / 1024, shpool->pfree * size / 1024,
+                 size / 1024);
+        if (m == 0) {
+            res->len =
+                snprintf(NULL, 0, fmt_1, 
+                         &shm_zone[i].shm.name, shm_zone[i].shm.size / 1024,
+                         shpool->pfree * size / 1024, size / 1024);
+            res->len += 1;
+            res->data = ngx_pcalloc(r->pool, res->len);
+            snprintf((char *)res->data, res->len, fmt_1,
+                      &shm_zone[i].shm.name,
+                     shm_zone[i].shm.size / 1024, shpool->pfree * size / 1024,
+                     size / 1024);
+        } else {
+            tmp->len = snprintf(NULL, 0, fmt_2, res->len, res->data,
+                                 &shm_zone[i].shm.name,
+                                shm_zone[i].shm.size / 1024,
+                                shpool->pfree * size / 1024, size / 1024);
+            tmp->len += 1;
+            tmp->data = ngx_pcalloc(r->pool, tmp->len);
+            snprintf((char *)tmp->data, tmp->len, fmt_2, res->len, res->data,
+                      &shm_zone[i].shm.name,
+                     shm_zone[i].shm.size / 1024, shpool->pfree * size / 1024,
+                     size / 1024);
+            ngx_pfree(r->pool, res->data);
+            res->data = tmp->data;
+            res->len = tmp->len;
+        }
+        m++;
+    }
+    tmp->len = snprintf(NULL, 0, shm_fmt, res->len, res->data);
+    tmp->len += 1;
+    tmp->data = ngx_pcalloc(r->pool, tmp->len);
+    snprintf((char *)tmp->data, tmp->len, shm_fmt, res->len, res->data);
+    ngx_pfree(r->pool, res->data);
+    res->data = tmp->data;
+    res->len = tmp->len;
+
+    tmp->len =
+        snprintf(NULL, 0, fmt, res->len, res->data, lccf->etomc2_cc_enable);
+    tmp->len += 1;
+    tmp->data = ngx_pcalloc(r->pool, tmp->len);
+    snprintf((char *)tmp->data, tmp->len, fmt, res->len, res->data,
+             lccf->etomc2_cc_enable);
+
+    return tmp;
+} /* -----  end of function web_route_main_conf  ----- */
+/*
+ * ===  FUNCTION
+ * ====================================================================== Name:
+ * web_route_domain_list Description:
+ * =====================================================================================
+ */
+ngx_str_t *web_route_domain_list(ngx_http_request_t *r,
+                                 ngx_http_etomc2_loc_conf_t *lccf) {
+    ngx_http_core_srv_conf_t **cscfp;
+    ngx_http_core_main_conf_t *cmcf;
+    ngx_http_etomc2_loc_conf_t *loc_conf;
+    ngx_http_conf_ctx_t *ctx;
+    ngx_uint_t s;
+    ngx_str_t *tmp;
+
+    const char *fmt_1 =
+        "{\"domain\":\"%.*s\",\"status\":%d,\"gt\":%d,\"itemize\":%d}";
+    const char *fmt_2 =
+        "%.*s,{\"domain\":\"%.*s\",\"status\":%d,\"gt\":%d,\"itemize\":%d}";
+    const char *fmt = "[%.*s]";
+    ngx_str_t *res;
+
+    cmcf = ngx_http_get_module_main_conf(r, ngx_http_core_module);
+    res = ngx_pcalloc(r->pool, sizeof(ngx_str_t));
+    tmp = ngx_pcalloc(r->pool, sizeof(ngx_str_t));
+
+    cscfp = cmcf->servers.elts;
+
+    for (s = 0; s < cmcf->servers.nelts; s++) {
+        ctx = cscfp[s]->ctx;
+        loc_conf = (ngx_http_etomc2_loc_conf_t *)
+                       ctx->loc_conf[ngx_http_etomc2_cc_module.ctx_index];
+
+        if (s == 0) {
+            res->len =
+                snprintf(NULL, 0, fmt_1, cscfp[s]->server_name.len,
+                         cscfp[s]->server_name.data, loc_conf->cc_return_status,
+                         loc_conf->cc_gt_level, loc_conf->cc_itemize);
+            res->len += 1;
+            res->data = ngx_pcalloc(r->pool, res->len);
+            snprintf((char *)res->data, res->len, fmt_1,
+                     cscfp[s]->server_name.len, cscfp[s]->server_name.data,
+                     loc_conf->cc_return_status, loc_conf->cc_gt_level,
+                     loc_conf->cc_itemize);
+        } else {
+            tmp->len = snprintf(
+                NULL, 0, fmt_2, res->len, res->data, cscfp[s]->server_name.len,
+                cscfp[s]->server_name.data, loc_conf->cc_return_status,
+                loc_conf->cc_gt_level, loc_conf->cc_itemize);
+            tmp->len += 1;
+            tmp->data = ngx_pcalloc(r->pool, tmp->len);
+            snprintf((char *)tmp->data, tmp->len, fmt_2, res->len, res->data,
+                     cscfp[s]->server_name.len, cscfp[s]->server_name.data,
+                     loc_conf->cc_return_status, loc_conf->cc_gt_level,
+                     loc_conf->cc_itemize);
+            ngx_pfree(r->pool, res->data);
+            /** ngx_pfree(r->pool,res); */
+            res->data = tmp->data;
+            res->len = tmp->len;
+        }
+
+        NX_DEBUG("server_name:%s", cscfp[s]->server_name.data);
+
+        NX_DEBUG("cc_itemize:%d", loc_conf->cc_return_status);
+    }
+    tmp->len = snprintf(NULL, 0, fmt, res->len, res->data);
+    tmp->len += 1;
+    tmp->data = ngx_pcalloc(r->pool, tmp->len);
+    snprintf((char *)tmp->data, tmp->len, fmt, res->len, res->data);
+    return tmp;
+} /* -----  end of function web_route_domain_list  ----- */
 /*
  * ===  FUNCTION
  * ====================================================================== Name:
