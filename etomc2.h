@@ -119,6 +119,9 @@
 //  10 < ROAD_MAP_URI_MAX
 #define SHM_GT_TIMEOUT 10
 
+// flow
+#define SHM_FLOW_FREQ 60
+
 //#define ITIME_SECOND 300
 #define STIME_SECOND 30
 #define LTIME_SECOND 120
@@ -220,6 +223,20 @@ struct ngx_etomc2_shm_gt {
 }; /* ----------  end of struct ngx_etomc2_shm_gt  ---------- */
 
 typedef struct ngx_etomc2_shm_gt Ngx_etomc2_shm_gt;
+
+/*
+ * one hour flow, one minute step
+ */
+
+struct ngx_etomc2_cc_flow {
+    uint32_t hash_domain;
+    size_t flow[SHM_FLOW_FREQ];
+    time_t now[SHM_FLOW_FREQ];
+    struct ngx_etomc2_cc_flow *next;
+};				/* ----------  end of struct ngx_etomc2_cc_flow  ---------- */
+
+typedef struct ngx_etomc2_cc_flow Ngx_etomc2_cc_flow;
+
 /**
  * the step 0
  * use  Fibonacci to calculate increase
@@ -476,6 +493,11 @@ typedef struct {
      */
     ngx_shm_zone_t *shm_zone_cc_gt;
 
+     /**
+     *  flow global toggle
+     */
+    ngx_shm_zone_t *shm_zone_cc_flow;
+    
 } ngx_http_etomc2_loc_conf_t; /* ----------  end of struct
                                 ngx_http_lb_loc_conf_t  ---------- */
 

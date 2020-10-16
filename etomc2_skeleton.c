@@ -58,7 +58,8 @@ static ngx_int_t ngx_etomc2_init_shm_zone_lreq_queue(ngx_shm_zone_t *shm_zone,
                                                      void *data);
 static ngx_int_t ngx_etomc2_init_shm_zone_cc_gt(ngx_shm_zone_t *shm_zone,
                                                 void *data);
-
+static ngx_int_t ngx_etomc2_init_shm_zone_cc_flow(ngx_shm_zone_t *shm_zone,
+                                                void *data);
 static void ngx_cc_rbtree_insert_value(ngx_rbtree_node_t *temp,
                                        ngx_rbtree_node_t *node,
                                        ngx_rbtree_node_t *sentinel);
@@ -257,10 +258,10 @@ static void *ngx_http_etomc2_create_loc_conf(ngx_conf_t *cf) {
 static char *ngx_http_etomc2_merge_loc_conf(ngx_conf_t *cf, void *parent,
                                             void *child) {
     ngx_shm_zone_t *shm_zone_cc_thin, *shm_zone_cc_ub, *shm_zone_ub_queue,
-        *shm_zone_lreq_queue, *shm_zone_cc_gt;
+        *shm_zone_lreq_queue, *shm_zone_cc_gt, *shm_zone_cc_flow;
 
     ngx_str_t *shm_cc_thin_name, *shm_cc_ub_name, *shm_ub_queue_name,
-        *shm_lreq_queue_name, *shm_gt_name;
+        *shm_lreq_queue_name, *shm_gt_name,*shm_flow_name;
 
     ngx_http_etomc2_loc_conf_t *prev = parent;
     ngx_http_etomc2_loc_conf_t *conf = child;
@@ -332,7 +333,7 @@ static char *ngx_http_etomc2_merge_loc_conf(ngx_conf_t *cf, void *parent,
     ngx_conf_merge_ptr_value(conf->shm_zone_ub_queue, prev->shm_zone_ub_queue,
                              NULL);
 
-    /** ---------- aiwaf list ----------- */
+    /** ---------- queue ----------- */
     shm_lreq_queue_name = ngx_palloc(cf->pool, sizeof *shm_lreq_queue_name);
     shm_lreq_queue_name->len = sizeof("shared_memory_lreq_queue") - 1;
     shm_lreq_queue_name->data = (unsigned char *)"shared_memory_lreq_queue";
@@ -349,7 +350,7 @@ static char *ngx_http_etomc2_merge_loc_conf(ngx_conf_t *cf, void *parent,
     ngx_conf_merge_ptr_value(conf->shm_zone_lreq_queue,
                              prev->shm_zone_lreq_queue, NULL);
 
-    /** -------- global toggle  ----------------*/
+    /** -------- gt global toggle  ----------------*/
     shm_gt_name = ngx_palloc(cf->pool, sizeof *shm_gt_name);
     shm_gt_name->len = sizeof("shared_memory_gt") - 1;
     shm_gt_name->data = (unsigned char *)"shared_memory_gt";
@@ -363,6 +364,22 @@ static char *ngx_http_etomc2_merge_loc_conf(ngx_conf_t *cf, void *parent,
     shm_zone_cc_gt->init = ngx_etomc2_init_shm_zone_cc_gt;
     conf->shm_zone_cc_gt = shm_zone_cc_gt;
     ngx_conf_merge_ptr_value(conf->shm_zone_cc_gt, prev->shm_zone_cc_gt, NULL);
+
+
+    /** -------- flow global toggle  ----------------*/
+    shm_flow_name = ngx_palloc(cf->pool, sizeof *shm_flow_name);
+    shm_flow_name->len = sizeof("shared_memory_flow") - 1;
+    shm_flow_name->data = (unsigned char *)"shared_memory_flow";
+    shm_zone_cc_flow = ngx_shared_memory_add(
+        cf, shm_flow_name, SHM_SIZE_DEFAULT_COMMON, &ngx_http_etomc2_cc_module);
+
+    if (shm_zone_cc_flow == NULL) {
+        return NGX_CONF_ERROR;
+    }
+
+    shm_zone_cc_flow->init = ngx_etomc2_init_shm_zone_cc_flow;
+    conf->shm_zone_cc_flow = shm_zone_cc_flow;
+    ngx_conf_merge_ptr_value(conf->shm_zone_cc_flow, prev->shm_zone_cc_flow, NULL);
 
     return NGX_CONF_OK;
 } /* -----  end of function ngx_http_etomc2_merge_loc_conf  ----- */
@@ -786,7 +803,41 @@ static ngx_int_t ngx_etomc2_init_shm_zone_cc_gt(ngx_shm_zone_t *shm_zone,
     return NGX_OK;
 
 } /* -----  end of function ngx_etomc2_init_shm_zone_cc_gt  ----- */
+/* 
+ * ===  FUNCTION  ======================================================================
+ *         Name:  ngx_etomc2_init_shm_zone_cc_flow
+ *  Description:  
+ * =====================================================================================
+ */
+static ngx_int_t ngx_etomc2_init_shm_zone_cc_flow(ngx_shm_zone_t *shm_zone,
+                                                void *data){
+    ngx_slab_pool_t *shpool;
+    Ngx_etomc2_cc_flow *shm_etomc2;
+    if (data) {
+        shm_zone->data = data;
+        return NGX_OK;
+    }
+    shpool = (ngx_slab_pool_t *)shm_zone->shm.addr;
+    ngx_shmtx_lock(&shpool->mutex);
 
+    shm_etomc2 = ngx_slab_alloc_locked(shpool, sizeof(Ngx_etomc2_shm_gt));
+    if (!shm_etomc2) {
+        ngx_shmtx_unlock(&shpool->mutex);
+
+        return NGX_ERROR;
+    }
+    shm_etomc2->hash_domain = 0;
+    memset(shm_etomc2->flow, 0,
+           (size_t)SHM_FLOW_FREQ * sizeof(size_t));
+    memset(shm_etomc2->now, 0,
+           (size_t)SHM_FLOW_FREQ * sizeof(time_t));
+
+    shm_etomc2->next = NULL;
+    shm_zone->data = shm_etomc2;
+
+    ngx_shmtx_unlock(&shpool->mutex);
+    return NGX_OK;
+}		/* -----  end of function ngx_etomc2_init_shm_zone_cc_flow  ----- */
 /*
  * ===  FUNCTION
  * ======================================================================

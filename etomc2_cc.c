@@ -835,21 +835,22 @@ int cc_thin_user_behavior_red(ngx_http_request_t *r,
                 return -1;
             }
         }
-        NX_DEBUG("M_RED status  rise:%.5f,  increase:%d max:%d, amount:%d", rise,
-               increase, maxVal, behavior->uri_amount[ROAD_MAP_URI_MAX - 1]);
+        NX_DEBUG("M_RED status  rise:%.5f,  increase:%d max:%d, amount:%d",
+                 rise, increase, maxVal,
+                 behavior->uri_amount[ROAD_MAP_URI_MAX - 1]);
 
         cc_gt_ptr = NULL;
         ngx_cc_gt_search(r, &cc_gt_ptr);
         if (cc_gt_ptr) {
             NX_DEBUG("[CC Attack check:%d  level:%d  cc_id:%z]",
                      cc_gt_ptr->count, cc_gt_ptr->level, hash_uri);
-                     /** cc_gt_ptr->take); */
+            /** cc_gt_ptr->take); */
         } else {
             ngx_cc_gt(r);
             NX_LOG("[CC Attack  cc_id:%z]", hash_uri);
         }
-        if (cc_gt_ptr == NULL){
-                 /** || cc_gt_ptr->take == 0) { */
+        if (cc_gt_ptr == NULL) {
+            /** || cc_gt_ptr->take == 0) { */
             return -1;
         }
 
