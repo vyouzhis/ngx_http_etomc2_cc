@@ -58,6 +58,8 @@
 * [起始(Getting Started)](#起始getting-started)
   * [编译安装(Installation)](#编译安装installation)
 * [配置(Usage)](#配置usage)
+* [WebAPI](#WebAPI)
+* [Web Dashboard](#Web Dashboard)
 * [调试(Review)](#调试Review)
 * [License](#license)
 * [联系(Contact)](#联系contact)
@@ -75,6 +77,8 @@
 * 单点访问者：这种访问基本上都是流失型，只会访问次数较少的，产生不了用户行为，就消失了。
 
 目前本插件模块，可以快速分析有恶意的访问者，从而可以进行拦截。
+
+**拥有热更新参数(Runtime Configuration )**
 
 ### 依赖关系(Built With)
 需要用到的软件版本.
@@ -123,7 +127,46 @@ gmake install
 |et2_cc_return_status | server| 当成功拦截后，返回的状态码,默认为:444 |
 
 
-_参考配置 [nginx example conf](https://github.com/vyouzhis/ngx_http_etomc2_cc/tree/master/doc/example_nginx.conf)_
+_参考配置 [nginx example conf](https://github.com/vyouzhis/ngx_http_etomc2_cc/tree/master/doc/example_nginx.conf)
+
+
+## WebAPI
+|     restful api   | curl test           | 说明  |
+| ------------- |:-------------:| -----:|
+| main_conf      | GET | 取全局变量 |
+| json_flow      | POST      |   受到CC攻击流量数据 |
+| update_conf | POST      |    在线更新配置  |
+|domain_list | GET     | 获取域名信息 |
+
+>main_conf
+```
+curl --location --request GET 'http://localhost:1234/main_conf'  
+```
+
+>json_flow
+```
+curl --location --request POST 'http://localhost:1234/json_flow' \
+--header 'domain: www.bb.com'
+```
+
+>update_conf
+```
+curl --location --request POST 'http://localhost:1234/update_conf' \
+--header 'domain: www.bb.com' \
+--header 'glevel: 5' \
+--header 'itemize: 1' \
+--header 'rstatus: 443'
+```
+
+>domain_list
+```
+curl --location --request GET 'http://localhost:1234/domain_list'
+```
+
+## Web Dashboard
+>doc/example_nginx.conf <br />server name :www.mydashboard.com <br /> http://localhost/etomc2_dashboard/
+
+![Dashboard](doc/Etomc2_CC_Dashboard.png)
 
 <!-- Review -->
 ## 调试(Review)

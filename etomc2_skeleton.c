@@ -379,7 +379,7 @@ static ngx_int_t ngx_http_etomc2_access_handler(ngx_http_request_t *r) {
 
     if (rc == NGX_ERROR) {
         r->headers_out.status = lccf->cc_return_status;
-
+        flow_update(r);
         return rc;
     } else if (rc == NGX_BUSY) {
         r->headers_out.status = 503;
@@ -420,7 +420,7 @@ ngx_int_t ngx_http_etomc2_header_filter(ngx_http_request_t *r) {
         NX_LOG("ngx_cc_rbtree_hash_key is null");
         return ngx_http_next_header_filter(r);
     }
-    flow_update(r);
+   
     /**
      *  M_GREEN
      */
