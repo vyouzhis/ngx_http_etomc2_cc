@@ -59,7 +59,7 @@
   * [编译安装(Installation)](#编译安装installation)
 * [配置(Usage)](#配置usage)
 * [WebAPI](#WebAPI)
-* [Web Dashboard](#Web Dashboard)
+* [Web-Dashboard](#Web-Dashboard)
 * [调试(Review)](#调试Review)
 * [License](#license)
 * [联系(Contact)](#联系contact)
@@ -163,7 +163,7 @@ curl --location --request POST 'http://localhost:1234/update_conf' \
 curl --location --request GET 'http://localhost:1234/domain_list'
 ```
 
-## Web Dashboard
+## Web-Dashboard
 >doc/example_nginx.conf <br />server name :www.mydashboard.com <br /> http://localhost/etomc2_dashboard/
 
 ![Dashboard](doc/Etomc2_CC_Dashboard.png)
