@@ -515,6 +515,12 @@ Ngx_etomc2_shm_tree_data *tree_search(Ngx_etomc2_shm_tree_data **tree,
 Ngx_etomc2_aiwaf_list *list_create(ngx_slab_pool_t *shpool);
 void list_insert(ngx_http_request_t *r, ngx_slab_pool_t *shpool,
                  Ngx_etomc2_aiwaf_list **list_root, uint32_t hash_rule);
+
+
+//
+void list_json(ngx_http_request_t *r, Ngx_etomc2_aiwaf_list *nlist,
+        ngx_str_t **data, uint32_t dmhash);
+int isIp_v4(const char *ip);
 int timeIndex();
 int timeSecond();
 int findstring(const char *rest, const char *dest);
@@ -573,7 +579,36 @@ int ngx_cc_gt_check(ngx_http_request_t *r, uint32_t hash_uri);
 int gt_index(SHM_GT_LEVEL gt);
 void ngx_cc_gt_search(ngx_http_request_t *r, Ngx_etomc2_shm_gt **gt_node_ptr);
 ngx_str_t client_forward_ip(ngx_http_request_t *r);
+
+ngx_int_t ngx_http_slab_stat_buf(ngx_pool_t *pool, ngx_buf_t *b);
 // ---- cc function----
+
+//---- web api ---
+ngx_str_t *web_route_domain_list(ngx_http_request_t *r,
+        ngx_http_etomc2_loc_conf_t *lccf);
+ngx_str_t *web_route_main_conf(ngx_http_request_t *r,
+        ngx_http_etomc2_loc_conf_t *lccf);
+ngx_str_t *web_route_update_conf(ngx_http_request_t *r,
+        ngx_http_etomc2_loc_conf_t *lccf);
+ngx_str_t *web_route_json_flow(ngx_http_request_t *r,
+        ngx_http_etomc2_loc_conf_t *lccf);
+ngx_str_t *web_route_waf_domain_ids(ngx_http_request_t *r,
+        ngx_http_etomc2_loc_conf_t *lccf);
+ngx_str_t *web_route_waf_domain_rule(ngx_http_request_t *r,
+        ngx_http_etomc2_loc_conf_t *lccf);
+ngx_int_t web_route_set_gt_level(ngx_http_request_t *r,
+        ngx_http_etomc2_loc_conf_t *lccf);
+ngx_str_t web_route_ip_blacklist(ngx_http_request_t *r,
+        ngx_http_etomc2_loc_conf_t *lccf);
+ngx_str_t web_route_del_blackip(ngx_http_request_t *r,
+        ngx_http_etomc2_loc_conf_t *lccf);
+ngx_int_t web_route_get_gt_take(ngx_http_request_t *r,
+        ngx_http_etomc2_loc_conf_t *lccf);
+ngx_int_t web_route_get_uri_itemize(ngx_http_request_t *r,
+        ngx_http_etomc2_loc_conf_t *lccf);
+//---- web api end ----
+
+
 
 // -----  openssl  rsa  -----
 void rsa_encrypt(ngx_http_request_t *r, const ngx_str_t from);

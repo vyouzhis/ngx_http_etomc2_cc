@@ -1,0 +1,387 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Etomc2 CC Dashboard </title>
+	<link rel="stylesheet" href="css/style.css?v=2">
+	<link rel="stylesheet" type="text/css" href="css/text.css" media="screen" />
+	<link rel="stylesheet" type="text/css" href="css/layout.css" media="screen" />
+	<link rel="stylesheet" type="text/css" href="css/grid.css" media="screen" />
+	<link rel="stylesheet" type="text/css" href="css/fluid.gs.css" media="screen" />
+
+</head>
+
+<body>
+	<div class="container_16">
+		<header>
+			<div class="grid_16">
+				<h1 id="branding">
+					<a href="https://github.com/vyouzhis/ngx_http_etomc2_cc">Etomc2 CC Dashboard</a>
+				</h1>
+			</div>
+			<div class="clear"></div>
+
+			<div class="grid_16">
+				<h2 id="page-heading">控制台</h2>
+			</div>
+			<div class="clear"></div>
+		</header>
+		<div id="main" role="main">
+			<div id="content">
+				<div class="grid_4">
+					<h5 id="page-sub-heading-left"><strong>它是如何工作的呢?</strong></h5>
+					<p>
+						主要分析网站访问者的用户行为.不同的访问者在浏览某一个网站的时候，都会产生不同的用户行为,目前暂把该行为分成三类.
+						用户行为:
+					</p>
+					<ul>
+						<li>正常的访问者：一般的访问者都是从首页进入，之后综横分开访问不同的内页。</li>
+						<li>恶意的访问者：会通过大量的IP同时访问某一个页面或API，从而造成服务器的内存及CPU消耗，而形成攻击。</li>
+						<li>单点访问者：这种访问基本上都是流失型，只会访问次数较少的，产生不了用户行为，就消失了。</li>
+					</ul>
+
+					<fieldset>
+						<legend>帮助</legend>
+						<ul>
+							<li>ET2CCEnable | http | 是否启用本防CC模块:on or off</li>
+							<li>et2_shm_size | http | 本防CC 模块使用的内存</li>
+							<li>et2_cc_level | server | 本防CC 等级,值: [1-5]</li>
+							<li>et2_cc_itemize | server | 当前的server是否启用防CC模块:on or off</li>
+							<li>et2_cc_return_status | server | 当成功拦截后，返回的状态码,默认为:444</li>
+						</ul>
+					</fieldset>
+				</div>
+				<div class="grid_12">
+					<div class="box">
+						<h2>
+							Overview
+						</h2>
+						<div class="block" id="articles">
+							<div class="first article">
+								<div class="sixteen_column section">
+									<div class="sixteen column">
+										<div class="column_content">
+											<a href="#" class="image">
+												<img src="https://avatars2.githubusercontent.com/u/5832145?s=400&u=e1923037c2831a3de8e1bb5b3305c1434b85981d&v=4" width="60" height="60" alt="photo" />
+											</a>
+											<h3>
+												<a href="#">CC</a>
+											</h3>
+											<h4>Version</h4>
+											<p class="meta">0.0.3</p>
+										</div>
+									</div>
+								</div>
+								<div class="sixteen_column section">
+									<div class="five column">
+										<div class="column_content">
+											<h5 id="page-sub-heading-left"><strong>HTTP Set</strong></h5>
+											<ul>
+												<li></li>
+												<li><input type="checkbox" class="floatLeft autoW" id="ccenable" name="ccenable"><label class="floatLeft">ET2CCEnable</label></li>
+												<li></li>
+											</ul>
+
+											<fieldset>
+												<legend>et2_shm_size</legend>
+												<div id="shm_list" name="shm_list">
+
+												</div>
+
+											</fieldset>
+
+										</div>
+
+									</div>
+									<div class="eleven column">
+										<div class="column_content">
+											<strong>Server List</strong><br />
+											<ul class="menu" id="dlist" name="dlist">
+
+											</ul>
+											<form action="">
+												<fieldset>
+													<legend id="dname" name="dname">www.abc.com</legend>
+													<div class="sixteen_column section">
+														<div class="four column">
+															<div class="column_content">
+																<input type="checkbox" class="floatLeft autoW" id="itemize" name="itemize"><label class="floatLeft">et2_cc_itemize</label>
+
+															</div>
+														</div>
+														<div class="twelve column">
+															<div class="column_content">
+																<label>et2_cc_return_status: </label>
+																<input type="text" name="return_status" id="return_status" value="444">
+															</div>
+														</div>
+													</div>
+													<div class="sixteen_column section">
+														<div class="four column">
+															<div class="column_content">
+															</div>
+														</div>
+														<div class="twelve column">
+															<div class="column_content">
+																<label>et2_cc_level: </label>
+																<select name="gt_level" id="gt_level">
+																	<option value="">Select level...</option>
+																	<option value="1">1 </option>
+																	<option value="2">2 </option>
+																	<option value="3">3 </option>
+																	<option value="4">4 </option>
+																	<option value="5">5 </option>
+																</select>
+															</div>
+														</div>
+													</div>
+													<div class="sixteen_column section">
+														<div class="ten column">
+															<div class="column_content">
+															</div>
+														</div>
+														<div class="six column">
+															<div class="column_content">
+																<a href="javascript:void(0)" onclick="update_confs()" class="ui-state-default ui-corner-some floatRight"><span class="ui-icon ui-icon-disk"></span>Save</a>
+															</div>
+														</div>
+													</div>
+												</fieldset>
+
+											</form>
+										</div>
+									</div>
+								</div>
+								<div class="clear"></div>
+							</div>
+						</div>
+					</div>
+
+				</div>
+
+				<div class="grid_4">
+					<p></p>
+				</div>
+				<div class="grid_12">
+					<div class="box">
+						<h2>
+							CC Chart
+						</h2>
+						<div class="block">
+							<canvas id="myChart" height="80px"></canvas>
+						</div>
+					</div>
+				</div>
+				<div class="clear"></div>
+				<footer>
+					<div class="grid_16" id="site_info">
+						<div class="box">
+							<p><a href="https://github.com/vyouzhis/ngx_http_etomc2_cc">ngx_http_etomc2_cc</a></p>
+						</div>
+					</div>
+					<div class="clear"></div>
+				</footer>
+			</div>
+			<script src="https://cdn.bootcdn.net/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+			<script src="https://cdn.jsdelivr.net/npm/chart.js@2.8.0"></script>
+			<script>
+				var select_domain = "";
+				var domain_info;
+				var ng_url = "http://192.168.2.127:1234";
+
+				function get_list() {
+					$.get(ng_url + "/domain_list", function(data) {
+						domain_info = data;
+						var hil = "";
+						for (i = 0; i < data.length; i++) {
+
+							hil += "<li><a href=\"javascript:void(0)\" onclick='getDomainInfo(\"" + data[i].domain + "\");'>" + data[i].domain + "</a></li>";
+						}
+
+						$("#dlist").html(hil);
+						if (select_domain == "") {
+							getDomainInfo(domain_info[0].domain);
+						} else {
+							getDomainInfo(select_domain);
+						}
+
+					});
+				}
+				get_list();
+
+
+				function getDomainInfo(d) {
+					for (i = 0; i < domain_info.length; i++) {
+
+						if (domain_info[i].domain == d) {
+
+							$("#return_status").val(domain_info[i].status);
+							if (domain_info[i].itemize == 1) {
+								$("#itemize").attr("checked", "checked");
+							} else {
+								$("#itemize").attr("checked", "");
+							}
+							$("#gt_level").find("option[value='" + domain_info[i].gt + "']").attr("selected", true);
+							$("#dname").html(d);
+							select_domain = d;
+							chars();
+						}
+
+					}
+				}
+
+				function update_confs() {
+					var itz = 0;
+					if ($("#itemize").is(':checked')) {
+						itz = 1;
+					}
+					var level = $("#gt_level option:selected").val();
+
+					var settings = {
+						"url": ng_url + "/update_conf",
+						"method": "POST",
+						"timeout": 0,
+						"headers": {
+							"domain": select_domain,
+							"itemize": itz,
+							"glevel": level,
+							"rstatus": $("#return_status").val(),
+						},
+					};
+
+					$.ajax(settings).done(function(response) {
+
+						get_list();
+
+					}).error(function(e) {
+
+						get_list();
+
+					});
+
+				}
+
+				$.get(ng_url + "/main_conf", function(data) {
+					if (data.enable == 1) {
+						$("#ccenable").attr("checked", "checked");
+					} else {
+						$("#ccenable").attr("checked", "");
+					}
+					var shm = data.shm;
+					var html = "";
+					for (var m = 0; m < shm.length; m++) {
+						if ("shared_memory_cc_ub" != shm[m].shm_name) continue;
+						html +=
+
+							shm[m].shm_name + ":<ul><li>total(KB):" + shm[m].total + "</li> <li>free(KB):" + shm[m].free + "</li>	<li>size(KB):" + shm[m].size + "</li></ul>";
+
+					}
+
+					$("#shm_list").html(html);
+				});
+
+
+				var ctx = document.getElementById('myChart').getContext('2d');
+				var mchart = new Chart(ctx, {
+					// The type of chart we want to create
+					type: 'line',
+					data: {
+
+						datasets: [{
+
+							backgroundColor: 'rgb(255, 99, 132)',
+							borderColor: 'rgb(255, 99, 132)',
+							fill: false,
+
+						}]
+					},
+
+					options: {
+
+					}
+				});
+
+				function chars() {
+
+					var settings = {
+						"url": ng_url + "/json_flow",
+						"method": "POST",
+						"timeout": 0,
+						"headers": {
+							"domain": select_domain,
+						},
+					};
+
+					$.ajax(settings).complete(function(e) {
+						if (e.status == 200) {
+							var data = JSON.parse(e.responseText);
+							
+							if (!data.hasOwnProperty("flow")) {
+								mchart.data = {
+									labels: [],
+									datasets: [{
+										label: select_domain,
+										backgroundColor: 'rgb(255, 99, 132)',
+										borderColor: 'rgb(255, 99, 132)',
+										fill: false,
+										data: []
+									}]
+								}
+								mchart.update();
+								return;
+							}
+							for (var m = 0; m < data.flow.length; m++) {
+								if (data.date[m] > 0) {
+									var time = new Date((data.date[m] + 8 * 3600) * 1000);
+									data.date[m] = time.toJSON().substr(11, 5).replace('T', ' ');
+								}
+							}
+							var now_date = new Date(new Date().getTime());
+							var index_split = now_date.getMinutes() + 1;
+							var array_len = data.date.length;
+
+							var lable_date = data.date.slice(index_split, array_len);
+
+							lable_date = lable_date.concat(data.date.slice(0, index_split));
+
+							var data_flow = data.flow.slice(index_split, array_len);
+							data_flow = data_flow.concat(data.flow.slice(0, index_split));
+
+							var index_date = new Date().getTime() / 1000;
+
+							for (var m = 0; m < 60; m++) {
+								var t = (parseInt(index_date - m * 60)) * 1000;
+
+								var t1 = new Date(t);
+								var t2 = t1.getMinutes();
+								if(t2<10) t2="0"+t2;
+								var right_date = t1.getHours() + ":" + t2
+
+								if (lable_date[59 - m] != right_date) {
+									lable_date[59 - m] = right_date;
+									data_flow[59 - m] = 0;
+								}
+							}
+
+							mchart.data = {
+								labels: lable_date,
+								datasets: [{
+									label: select_domain,
+									backgroundColor: 'rgb(255, 99, 132)',
+									borderColor: 'rgb(255, 99, 132)',
+									fill: false,
+									data: data_flow
+								}]
+							}
+							mchart.update();
+
+						}
+
+					});
+				}
+				chars();
+			</script>
+</body>
+
+</html>
