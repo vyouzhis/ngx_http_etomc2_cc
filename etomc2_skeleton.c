@@ -59,7 +59,7 @@ static ngx_int_t ngx_etomc2_init_shm_zone_lreq_queue(ngx_shm_zone_t *shm_zone,
 static ngx_int_t ngx_etomc2_init_shm_zone_cc_gt(ngx_shm_zone_t *shm_zone,
                                                 void *data);
 static ngx_int_t ngx_etomc2_init_shm_zone_cc_flow(ngx_shm_zone_t *shm_zone,
-                                                void *data);
+                                                  void *data);
 static void ngx_cc_rbtree_insert_value(ngx_rbtree_node_t *temp,
                                        ngx_rbtree_node_t *node,
                                        ngx_rbtree_node_t *sentinel);
@@ -74,6 +74,8 @@ ngx_str_t *web_route_main_conf(ngx_http_request_t *r,
                                ngx_http_etomc2_loc_conf_t *lccf);
 ngx_str_t *web_route_update_conf(ngx_http_request_t *r,
                                  ngx_http_etomc2_loc_conf_t *lccf);
+ngx_str_t *web_route_json_flow(ngx_http_request_t *r,
+                               ngx_http_etomc2_loc_conf_t *lccf);
 ngx_str_t *web_route_waf_domain_ids(ngx_http_request_t *r,
                                     ngx_http_etomc2_loc_conf_t *lccf);
 ngx_str_t *web_route_waf_domain_rule(ngx_http_request_t *r,
@@ -261,7 +263,7 @@ static char *ngx_http_etomc2_merge_loc_conf(ngx_conf_t *cf, void *parent,
         *shm_zone_lreq_queue, *shm_zone_cc_gt, *shm_zone_cc_flow;
 
     ngx_str_t *shm_cc_thin_name, *shm_cc_ub_name, *shm_ub_queue_name,
-        *shm_lreq_queue_name, *shm_gt_name,*shm_flow_name;
+        *shm_lreq_queue_name, *shm_gt_name, *shm_flow_name;
 
     ngx_http_etomc2_loc_conf_t *prev = parent;
     ngx_http_etomc2_loc_conf_t *conf = child;
@@ -365,7 +367,6 @@ static char *ngx_http_etomc2_merge_loc_conf(ngx_conf_t *cf, void *parent,
     conf->shm_zone_cc_gt = shm_zone_cc_gt;
     ngx_conf_merge_ptr_value(conf->shm_zone_cc_gt, prev->shm_zone_cc_gt, NULL);
 
-
     /** -------- flow global toggle  ----------------*/
     shm_flow_name = ngx_palloc(cf->pool, sizeof *shm_flow_name);
     shm_flow_name->len = sizeof("shared_memory_flow") - 1;
@@ -379,7 +380,8 @@ static char *ngx_http_etomc2_merge_loc_conf(ngx_conf_t *cf, void *parent,
 
     shm_zone_cc_flow->init = ngx_etomc2_init_shm_zone_cc_flow;
     conf->shm_zone_cc_flow = shm_zone_cc_flow;
-    ngx_conf_merge_ptr_value(conf->shm_zone_cc_flow, prev->shm_zone_cc_flow, NULL);
+    ngx_conf_merge_ptr_value(conf->shm_zone_cc_flow, prev->shm_zone_cc_flow,
+                             NULL);
 
     return NGX_CONF_OK;
 } /* -----  end of function ngx_http_etomc2_merge_loc_conf  ----- */
@@ -453,6 +455,7 @@ ngx_int_t ngx_http_etomc2_header_filter(ngx_http_request_t *r) {
         NX_LOG("ngx_cc_rbtree_hash_key is null");
         return ngx_http_next_header_filter(r);
     }
+    flow_update(r);
     /**
      *  M_GREEN
      */
@@ -803,14 +806,14 @@ static ngx_int_t ngx_etomc2_init_shm_zone_cc_gt(ngx_shm_zone_t *shm_zone,
     return NGX_OK;
 
 } /* -----  end of function ngx_etomc2_init_shm_zone_cc_gt  ----- */
-/* 
- * ===  FUNCTION  ======================================================================
- *         Name:  ngx_etomc2_init_shm_zone_cc_flow
- *  Description:  
+/*
+ * ===  FUNCTION
+ * ====================================================================== Name:
+ * ngx_etomc2_init_shm_zone_cc_flow Description:
  * =====================================================================================
  */
 static ngx_int_t ngx_etomc2_init_shm_zone_cc_flow(ngx_shm_zone_t *shm_zone,
-                                                void *data){
+                                                  void *data) {
     ngx_slab_pool_t *shpool;
     Ngx_etomc2_cc_flow *shm_etomc2;
     if (data) {
@@ -820,24 +823,22 @@ static ngx_int_t ngx_etomc2_init_shm_zone_cc_flow(ngx_shm_zone_t *shm_zone,
     shpool = (ngx_slab_pool_t *)shm_zone->shm.addr;
     ngx_shmtx_lock(&shpool->mutex);
 
-    shm_etomc2 = ngx_slab_alloc_locked(shpool, sizeof(Ngx_etomc2_shm_gt));
+    shm_etomc2 = ngx_slab_alloc_locked(shpool, sizeof(Ngx_etomc2_cc_flow));
     if (!shm_etomc2) {
         ngx_shmtx_unlock(&shpool->mutex);
 
         return NGX_ERROR;
     }
     shm_etomc2->hash_domain = 0;
-    memset(shm_etomc2->flow, 0,
-           (size_t)SHM_FLOW_FREQ * sizeof(size_t));
-    memset(shm_etomc2->now, 0,
-           (size_t)SHM_FLOW_FREQ * sizeof(time_t));
-
+    memset(shm_etomc2->flow, 0, (size_t)SHM_FLOW_FREQ * sizeof(size_t));
+    memset(shm_etomc2->now, 0, (size_t)SHM_FLOW_FREQ * sizeof(time_t));
+    shm_etomc2->ptr = 0;
     shm_etomc2->next = NULL;
     shm_zone->data = shm_etomc2;
 
     ngx_shmtx_unlock(&shpool->mutex);
     return NGX_OK;
-}		/* -----  end of function ngx_etomc2_init_shm_zone_cc_flow  ----- */
+} /* -----  end of function ngx_etomc2_init_shm_zone_cc_flow  ----- */
 /*
  * ===  FUNCTION
  * ======================================================================
@@ -952,6 +953,9 @@ static ngx_int_t ngx_http_etomc2_ctrl_handler(ngx_http_request_t *r) {
     } else if (ngx_strcmp(uri.data, "/update_conf") == 0) {
         html_json = 1;
         resData = web_route_update_conf(r, lccf);
+    } else if (ngx_strcmp(uri.data, "/json_flow") == 0) {
+        html_json = 1;
+        resData = web_route_json_flow(r, lccf);
     }
     if (resData == NULL) {
         resData = ngx_pcalloc(r->pool, sizeof(ngx_str_t));
@@ -1137,8 +1141,6 @@ ngx_str_t *web_route_main_conf(ngx_http_request_t *r,
     const char *shm_fmt = "[%.*s]";
     const char *fmt = "{\"shm\":%.*s,\"enable\":%d}";
 
-    NX_DEBUG("cc_enable:%d", lccf->etomc2_cc_enable);
-
     part = &ngx_cycle->shared_memory.part;
     shm_zone = part->elts;
 
@@ -1157,30 +1159,28 @@ ngx_str_t *web_route_main_conf(ngx_http_request_t *r,
         }
         shpool = (ngx_slab_pool_t *)shm_zone[i].shm.addr;
 
-        NX_DEBUG("name len:%d, name:%V", shm_zone[i].shm.name.len,
-                 &shm_zone[i].shm.name);
-        NX_DEBUG(" total:%12z(KB) free:%12z(KB) size:%12z(KB)",
-                 shm_zone[i].shm.size / 1024, shpool->pfree * size / 1024,
-                 size / 1024);
         if (m == 0) {
-            res->len = snprintf(NULL, 0, fmt_1, shm_zone[i].shm.name.len,shm_zone[i].shm.name.data,
-                                shm_zone[i].shm.size / 1024,
-                                shpool->pfree * size / 1024, size / 1024);
+            res->len =
+                snprintf(NULL, 0, fmt_1, shm_zone[i].shm.name.len,
+                         shm_zone[i].shm.name.data, shm_zone[i].shm.size / 1024,
+                         shpool->pfree * size / 1024, size / 1024);
             res->len += 1;
             res->data = ngx_pcalloc(r->pool, res->len);
-            snprintf((char *)res->data, res->len, fmt_1, shm_zone[i].shm.name.len,shm_zone[i].shm.name.data,
+            snprintf((char *)res->data, res->len, fmt_1,
+                     shm_zone[i].shm.name.len, shm_zone[i].shm.name.data,
                      shm_zone[i].shm.size / 1024, shpool->pfree * size / 1024,
                      size / 1024);
         } else {
-            tmp->len =
-                snprintf(NULL, 0, fmt_2, res->len, res->data,shm_zone[i].shm.name.len,
-                         shm_zone[i].shm.name.data, shm_zone[i].shm.size / 1024,
-                         shpool->pfree * size / 1024, size / 1024);
+            tmp->len = snprintf(
+                NULL, 0, fmt_2, res->len, res->data, shm_zone[i].shm.name.len,
+                shm_zone[i].shm.name.data, shm_zone[i].shm.size / 1024,
+                shpool->pfree * size / 1024, size / 1024);
             tmp->len += 1;
             tmp->data = ngx_pcalloc(r->pool, tmp->len);
-            snprintf((char *)tmp->data, tmp->len, fmt_2, res->len, res->data,shm_zone[i].shm.name.len,
-                     shm_zone[i].shm.name.data, shm_zone[i].shm.size / 1024,
-                     shpool->pfree * size / 1024, size / 1024);
+            snprintf((char *)tmp->data, tmp->len, fmt_2, res->len, res->data,
+                     shm_zone[i].shm.name.len, shm_zone[i].shm.name.data,
+                     shm_zone[i].shm.size / 1024, shpool->pfree * size / 1024,
+                     size / 1024);
             ngx_pfree(r->pool, res->data);
             res->data = tmp->data;
             res->len = tmp->len;
@@ -1218,13 +1218,12 @@ ngx_str_t *web_route_domain_list(ngx_http_request_t *r,
     ngx_http_conf_ctx_t *ctx;
     ngx_uint_t s;
     ngx_str_t *tmp;
-
+    ngx_str_t *res;
     const char *fmt_1 =
         "{\"domain\":\"%.*s\",\"status\":%d,\"gt\":%d,\"itemize\":%d}";
     const char *fmt_2 =
         "%.*s,{\"domain\":\"%.*s\",\"status\":%d,\"gt\":%d,\"itemize\":%d}";
     const char *fmt = "[%.*s]";
-    ngx_str_t *res;
 
     cmcf = ngx_http_get_module_main_conf(r, ngx_http_core_module);
     res = ngx_pcalloc(r->pool, sizeof(ngx_str_t));
@@ -1264,10 +1263,6 @@ ngx_str_t *web_route_domain_list(ngx_http_request_t *r,
             res->data = tmp->data;
             res->len = tmp->len;
         }
-
-        NX_DEBUG("server_name:%s", cscfp[s]->server_name.data);
-
-        NX_DEBUG("cc_itemize:%d", loc_conf->cc_return_status);
     }
     tmp->len = snprintf(NULL, 0, fmt, res->len, res->data);
     tmp->len += 1;
@@ -1329,24 +1324,48 @@ ngx_str_t *web_route_update_conf(ngx_http_request_t *r,
 
     NX_DEBUG("rstatus:%s, rstatus%d", rhv->value.data, rhv->value.len);
 
-
     cmcf = ngx_http_get_module_main_conf(r, ngx_http_core_module);
-      cscfp = cmcf->servers.elts;
+    cscfp = cmcf->servers.elts;
 
     for (s = 0; s < cmcf->servers.nelts; s++) {
         ctx = cscfp[s]->ctx;
         loc_conf = (ngx_http_etomc2_loc_conf_t *)
                        ctx->loc_conf[ngx_http_etomc2_cc_module.ctx_index];
 
-        if(ngx_strncmp(cscfp[s]->server_name.data,dhv->value.data,cscfp[s]->server_name.len) == 0){
-            loc_conf->cc_return_status = ngx_atoi(rhv->value.data,rhv->value.len);
+        if (ngx_strncmp(cscfp[s]->server_name.data, dhv->value.data,
+                        cscfp[s]->server_name.len) == 0) {
+            loc_conf->cc_return_status =
+                ngx_atoi(rhv->value.data, rhv->value.len);
             loc_conf->cc_gt_level = ngx_atoi(ghv->value.data, ghv->value.len);
-            loc_conf->cc_itemize = ngx_atoi(ihv->value.data,ihv->value.len);
+            loc_conf->cc_itemize = ngx_atoi(ihv->value.data, ihv->value.len);
             break;
         }
     }
     return NULL;
 } /* -----  end of function web_route_update_conf  ----- */
+/*
+ * ===  FUNCTION
+ * ====================================================================== Name:
+ * web_route_json_flow Description:
+ * =====================================================================================
+ */
+ngx_str_t *web_route_json_flow(ngx_http_request_t *r,
+                               ngx_http_etomc2_loc_conf_t *lccf) {
+    ngx_table_elt_t *dhv;
+    const char *domain = "domain";
+    ngx_str_t *res;
+    dhv = search_headers_in(r, (u_char *)domain, strlen(domain));
+
+    if (dhv == NULL || dhv->value.len == 0) {
+        NX_LOG("domain  dhv value is null");
+        return NULL;
+    }
+
+    NX_DEBUG("domain:%s, domain%d", dhv->value.data, dhv->value.len);
+    res = flow_get(r, &dhv->value);
+
+    return res;
+} /* -----  end of function web_route_json_flow  ----- */
 /*
  * ===  FUNCTION
  * ====================================================================== Name:

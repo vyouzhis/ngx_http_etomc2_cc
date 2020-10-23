@@ -1583,11 +1583,11 @@ ngx_str_t client_forward_ip(ngx_http_request_t *r) {
     forwarded = r->headers_in.x_forwarded_for.elts;
     nelts = r->headers_in.x_forwarded_for.nelts;
     if (nelts == 0) {
-        ip.len = snprintf(NULL, 0, fmt, r->connection->addr_text.data);
+        ip.len = r->connection->addr_text.len;
     } else {
-        ip.len = snprintf(NULL, 0, fmt, forwarded[0]->value.data);
+        ip.len = forwarded[0]->value.len;
     }
-    /** ip.len +=1; */
+    ip.len += 1;
     ip.data = ngx_pcalloc(r->pool, ip.len + 1);
     if (!ip.data) {
         ip.len = 0;

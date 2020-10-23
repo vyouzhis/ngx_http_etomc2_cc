@@ -60,8 +60,8 @@
 
 #ifndef __ETOMC2_CONF_DEBUG
 #define __ETOMC2_CONF_DEBUG
-#define NX_CONF_DEBUG(LOG, ...)                                     \
-    do {                                                                \
+#define NX_CONF_DEBUG(LOG, ...)                                       \
+    do {                                                              \
         ngx_conf_log_error(NGX_LOG_EMERG, cf, 0, LOG, ##__VA_ARGS__); \
     } while (0)
 #endif
@@ -232,8 +232,9 @@ struct ngx_etomc2_cc_flow {
     uint32_t hash_domain;
     size_t flow[SHM_FLOW_FREQ];
     time_t now[SHM_FLOW_FREQ];
+    int ptr;
     struct ngx_etomc2_cc_flow *next;
-};				/* ----------  end of struct ngx_etomc2_cc_flow  ---------- */
+}; /* ----------  end of struct ngx_etomc2_cc_flow  ---------- */
 
 typedef struct ngx_etomc2_cc_flow Ngx_etomc2_cc_flow;
 
@@ -493,11 +494,11 @@ typedef struct {
      */
     ngx_shm_zone_t *shm_zone_cc_gt;
 
-     /**
+    /**
      *  flow global toggle
      */
     ngx_shm_zone_t *shm_zone_cc_flow;
-    
+
 } ngx_http_etomc2_loc_conf_t; /* ----------  end of struct
                                 ngx_http_lb_loc_conf_t  ---------- */
 
@@ -518,6 +519,9 @@ int timeIndex();
 int timeSecond();
 int findstring(const char *rest, const char *dest);
 void visit_print(ngx_http_request_t *r, Ngx_etomc2_shm_tree_data *tree);
+void flow_update(ngx_http_request_t *r);
+Ngx_etomc2_cc_flow *flow_init(ngx_slab_pool_t *shpool);
+ngx_str_t *flow_get(ngx_http_request_t *r, ngx_str_t *domain);
 
 // ---- cc function----
 
