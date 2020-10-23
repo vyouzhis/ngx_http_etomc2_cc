@@ -78,7 +78,7 @@
 
 目前本插件模块，可以快速分析有恶意的访问者，从而可以进行拦截。
 
-**拥有热更新参数(Runtime Configuration )**
+**拥有热更新参数(Runtime Configuration)**
 
 ### 依赖关系(Built With)
 需要用到的软件版本.
