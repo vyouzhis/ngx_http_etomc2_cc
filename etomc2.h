@@ -91,10 +91,14 @@
 
 #define CC_TRUST_STATUS "et2_trust_status"
 /**
- * web ctrl admin
+ * web api
  */
-#define ET2_NGX_CTRL "et2_ctrl_admin"
 #define ETOMC2_WEB_API "et2_web_api"
+
+/**
+ *  ngx config  run time  cluster
+ */
+#define NGX_CLUSTER_BRANCH "ngx_cluster_branch"
 
 // #define CC_PATH "et2_root_path"
 
@@ -145,6 +149,8 @@
 
 #define COOKIE_GREEN_NAME "behavior_cc"
 #define COOKIE_UUID_NAME "__secure-uuid"
+
+
 
 static const float Fibonacci[4][2] = {
     {0.382, 0.5}, {1.13, 1.618}, {2.24, 2.618}, {3.14, 3.618}};
@@ -441,6 +447,11 @@ typedef struct ngx_ub_queue_ptr Ngx_ub_queue_ptr;
 /* ---- etomc2 cc------ */
 
 typedef struct {
+    ngx_int_t status;
+   
+} ngx_http_cluster_ctx_t;
+
+typedef struct {
     ngx_log_t *log;
 
 } ngx_http_etomc2_main_conf_t;
@@ -499,6 +510,12 @@ typedef struct {
      */
     ngx_shm_zone_t *shm_zone_cc_flow;
 
+
+    /**
+     *  web  api  cluster
+     */
+    ngx_array_t *ngx_cluster_branch;
+    u_char * confname;
 } ngx_http_etomc2_loc_conf_t; /* ----------  end of struct
                                 ngx_http_lb_loc_conf_t  ---------- */
 

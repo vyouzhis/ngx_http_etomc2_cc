@@ -25,7 +25,7 @@ static ngx_int_t ngx_http_etomc2_dummy_init(ngx_conf_t *cf);
 void *ngx_http_etomc2_create_main_conf(ngx_conf_t *cf);
 static void *ngx_http_etomc2_create_loc_conf(ngx_conf_t *cf);
 static char *ngx_http_etomc2_merge_loc_conf(ngx_conf_t *cf, void *parent,
-        void *child);
+                                            void *child);
 /** static ngx_int_t ngx_init_etomc2_shm_zone(ngx_shm_zone_t *shm_zone, void
  * *data);
  */
@@ -42,31 +42,36 @@ ngx_int_t ngx_http_etomc2_body_filter(ngx_http_request_t *r, ngx_chain_t *in);
  */
 
 static char *ngx_http_cc_set_shm_size(ngx_conf_t *cf, ngx_command_t *cmd,
-        void *conf);
+                                      void *conf);
 
-static char *ngx_http_etomc2_ctrl(ngx_conf_t *cf, ngx_command_t *cmd,
-        void *conf);
-static ngx_int_t ngx_http_etomc2_ctrl_handler(ngx_http_request_t *r);
-
+static char *ngx_http_etomc2_web_api(ngx_conf_t *cf, ngx_command_t *cmd,
+                                     void *conf);
+static ngx_int_t ngx_http_etomc2_web_api_handler(ngx_http_request_t *r);
 
 // --- shm zone ---
 static void ngx_cc_rbtree_insert_value(ngx_rbtree_node_t *temp,
-        ngx_rbtree_node_t *node,
-        ngx_rbtree_node_t *sentinel);
+                                       ngx_rbtree_node_t *node,
+                                       ngx_rbtree_node_t *sentinel);
 static ngx_int_t ngx_etomc2_init_shm_zone_cc_thin(ngx_shm_zone_t *shm_zone,
-        void *data);
+                                                  void *data);
 static ngx_int_t ngx_etomc2_init_shm_zone_cc_ub(ngx_shm_zone_t *shm_zone,
-        void *data);
+                                                void *data);
 static ngx_int_t ngx_etomc2_init_shm_zone_ub_queue(ngx_shm_zone_t *shm_zone,
-        void *data);
+                                                   void *data);
 static ngx_int_t ngx_etomc2_init_shm_zone_lreq_queue(ngx_shm_zone_t *shm_zone,
-        void *data);
+                                                     void *data);
 static ngx_int_t ngx_etomc2_init_shm_zone_cc_gt(ngx_shm_zone_t *shm_zone,
-        void *data);
+                                                void *data);
 static ngx_int_t ngx_etomc2_init_shm_zone_cc_flow(ngx_shm_zone_t *shm_zone,
-        void *data);
+                                                  void *data);
 // --- shme zone end--
 
+// ---- cluster  ---
+
+static void ngx_http_cluster_body_handler(ngx_http_request_t *r);
+static ngx_int_t ngx_http_cluster_handler_internal(ngx_http_request_t *r);
+static char *ngx_http_branch(ngx_conf_t *cf, ngx_command_t *cmd, void *conf);
+// ----cluster end---
 
 /** static u_char ngx_web_etomc2[] = WEB_ETOMC2; */
 static ngx_http_output_header_filter_pt ngx_http_next_header_filter;
@@ -84,44 +89,48 @@ static ngx_command_t ngx_http_etomc2_cc_commands[] = {
      *  http
      */
     {ngx_string(ETOMC2_CC_ENABLE), NGX_HTTP_MAIN_CONF | NGX_CONF_FLAG,
-        ngx_conf_set_flag_slot, NGX_HTTP_LOC_CONF_OFFSET,
-        offsetof(ngx_http_etomc2_loc_conf_t, etomc2_cc_enable), NULL},
+     ngx_conf_set_flag_slot, NGX_HTTP_LOC_CONF_OFFSET,
+     offsetof(ngx_http_etomc2_loc_conf_t, etomc2_cc_enable), NULL},
     {ngx_string(ET2_SHM_SIZE), NGX_HTTP_MAIN_CONF | NGX_CONF_TAKE1,
-        ngx_http_cc_set_shm_size, 0, 0, NULL},
+     ngx_http_cc_set_shm_size, 0, 0, NULL},
 
     {ngx_string(ETOMC2_WEB_API),          /* directive */
-        NGX_HTTP_LOC_CONF | NGX_CONF_NOARGS, /* location context and takes
-                                                no arguments*/
-        ngx_http_etomc2_ctrl,                /* configuration setup function */
-        0, /* No offset. Only one context is supported. */
-        0, /* No offset when storing the module configuration on struct. */
-        NULL},
+     NGX_HTTP_LOC_CONF | NGX_CONF_NOARGS, /* location context and takes
+                                             no arguments*/
+     ngx_http_etomc2_web_api,             /* configuration setup function */
+     0, /* No offset. Only one context is supported. */
+     0, /* No offset when storing the module configuration on struct. */
+     NULL},
+    {ngx_string(NGX_CLUSTER_BRANCH),
+     NGX_HTTP_MAIN_CONF | NGX_HTTP_SRV_CONF | NGX_HTTP_LOC_CONF |
+         NGX_CONF_TAKE1,
+     ngx_http_branch, NGX_HTTP_LOC_CONF_OFFSET, 0, NULL},
 
     {ngx_string(HDCACHE_PATH), NGX_HTTP_MAIN_CONF | NGX_CONF_TAKE1,
-        ngx_conf_set_str_slot, NGX_HTTP_LOC_CONF_OFFSET,
-        offsetof(ngx_http_etomc2_loc_conf_t, hdcache_path), NULL},
+     ngx_conf_set_str_slot, NGX_HTTP_LOC_CONF_OFFSET,
+     offsetof(ngx_http_etomc2_loc_conf_t, hdcache_path), NULL},
 
     /**     {ngx_string(NAXSI_PEM_PK_FILE), */
     /** NGX_HTTP_SRV_CONF | NGX_HTTP_LOC_CONF | NGX_CONF_TAKE1, */
     /** ngx_conf_set_str_slot, NGX_HTTP_LOC_CONF_OFFSET, */
     /** offsetof(ngx_http_etomc2_loc_conf_t, rsa_pem_pk), NULL}, */
     {ngx_string(CC_GT_LEVEL),
-        NGX_HTTP_SRV_CONF | NGX_HTTP_LOC_CONF | NGX_CONF_TAKE1,
-        ngx_conf_set_num_slot, NGX_HTTP_LOC_CONF_OFFSET,
-        offsetof(ngx_http_etomc2_loc_conf_t, cc_gt_level), NULL},
+     NGX_HTTP_SRV_CONF | NGX_HTTP_LOC_CONF | NGX_CONF_TAKE1,
+     ngx_conf_set_num_slot, NGX_HTTP_LOC_CONF_OFFSET,
+     offsetof(ngx_http_etomc2_loc_conf_t, cc_gt_level), NULL},
     {ngx_string(CC_ITEMIZE),
-        NGX_HTTP_SRV_CONF | NGX_HTTP_LOC_CONF | NGX_CONF_FLAG,
-        ngx_conf_set_flag_slot, NGX_HTTP_LOC_CONF_OFFSET,
-        offsetof(ngx_http_etomc2_loc_conf_t, cc_itemize), NULL},
+     NGX_HTTP_SRV_CONF | NGX_HTTP_LOC_CONF | NGX_CONF_FLAG,
+     ngx_conf_set_flag_slot, NGX_HTTP_LOC_CONF_OFFSET,
+     offsetof(ngx_http_etomc2_loc_conf_t, cc_itemize), NULL},
     {ngx_string(CC_RETURN_STATUS),
-        NGX_HTTP_SRV_CONF | NGX_HTTP_LOC_CONF | NGX_CONF_TAKE1,
-        ngx_conf_set_num_slot, NGX_HTTP_LOC_CONF_OFFSET,
-        offsetof(ngx_http_etomc2_loc_conf_t, cc_return_status), NULL},
+     NGX_HTTP_SRV_CONF | NGX_HTTP_LOC_CONF | NGX_CONF_TAKE1,
+     ngx_conf_set_num_slot, NGX_HTTP_LOC_CONF_OFFSET,
+     offsetof(ngx_http_etomc2_loc_conf_t, cc_return_status), NULL},
 
     {ngx_string(CC_TRUST_STATUS),
-        NGX_HTTP_SRV_CONF | NGX_HTTP_LOC_CONF | NGX_CONF_TAKE1,
-        ngx_conf_set_str_slot, NGX_HTTP_LOC_CONF_OFFSET,
-        offsetof(ngx_http_etomc2_loc_conf_t, cc_trust_status), NULL},
+     NGX_HTTP_SRV_CONF | NGX_HTTP_LOC_CONF | NGX_CONF_TAKE1,
+     ngx_conf_set_str_slot, NGX_HTTP_LOC_CONF_OFFSET,
+     offsetof(ngx_http_etomc2_loc_conf_t, cc_trust_status), NULL},
 
     ngx_null_command /* command termination */
 };
@@ -212,6 +221,9 @@ static void *ngx_http_etomc2_create_loc_conf(ngx_conf_t *cf) {
     conf->cc_return_status = NGX_CONF_UNSET_UINT;
     conf->cc_itemize = NGX_CONF_UNSET;
 
+    // cluster
+    conf->ngx_cluster_branch = NGX_CONF_UNSET_PTR;
+    conf->confname = NGX_CONF_UNSET_PTR;
     return (conf);
 
 } /* -----  end of function ngx_http_etomc2_create_loc_conf  ----- */
@@ -223,12 +235,12 @@ static void *ngx_http_etomc2_create_loc_conf(ngx_conf_t *cf) {
  * =====================================================================================
  */
 static char *ngx_http_etomc2_merge_loc_conf(ngx_conf_t *cf, void *parent,
-        void *child) {
+                                            void *child) {
     ngx_shm_zone_t *shm_zone_cc_thin, *shm_zone_cc_ub, *shm_zone_ub_queue,
-    *shm_zone_lreq_queue, *shm_zone_cc_gt, *shm_zone_cc_flow;
+        *shm_zone_lreq_queue, *shm_zone_cc_gt, *shm_zone_cc_flow;
 
     ngx_str_t *shm_cc_thin_name, *shm_cc_ub_name, *shm_ub_queue_name,
-              *shm_lreq_queue_name, *shm_gt_name, *shm_flow_name;
+        *shm_lreq_queue_name, *shm_gt_name, *shm_flow_name;
 
     ngx_http_etomc2_loc_conf_t *prev = parent;
     ngx_http_etomc2_loc_conf_t *conf = child;
@@ -241,11 +253,17 @@ static char *ngx_http_etomc2_merge_loc_conf(ngx_conf_t *cf, void *parent,
     ngx_conf_merge_value(conf->cc_itemize, prev->cc_itemize, 0);
 
     ngx_conf_merge_uint_value(conf->cc_return_status, prev->cc_return_status,
-            444);
+                              444);
     ngx_conf_merge_str_value(conf->cc_trust_status, prev->cc_trust_status, "");
 
     ngx_conf_merge_str_value(conf->hdcache_path, prev->hdcache_path,
-            "/var/cache/nginx/hdcache");
+                             "/var/cache/nginx/hdcache");
+
+    // cluster
+    ngx_conf_merge_ptr_value(conf->ngx_cluster_branch, prev->ngx_cluster_branch,
+                             NULL);
+    ngx_conf_merge_ptr_value(conf->confname, prev->confname,
+                             cf->conf_file->file.name.data);
 
     /** NX_CONF_DEBUG("%s", conf->cc_path.data); */
     /** -------- cc thin ------ */
@@ -253,7 +271,7 @@ static char *ngx_http_etomc2_merge_loc_conf(ngx_conf_t *cf, void *parent,
     shm_cc_thin_name->len = sizeof("shared_memory_cc_thin") - 1;
     shm_cc_thin_name->data = (unsigned char *)"shared_memory_cc_thin";
     shm_zone_cc_thin = ngx_shared_memory_add(
-            cf, shm_cc_thin_name, SHM_SIZE_MAX_COMMON, &ngx_http_etomc2_cc_module);
+        cf, shm_cc_thin_name, SHM_SIZE_MAX_COMMON, &ngx_http_etomc2_cc_module);
 
     if (shm_zone_cc_thin == NULL) {
         return NGX_CONF_ERROR;
@@ -262,7 +280,7 @@ static char *ngx_http_etomc2_merge_loc_conf(ngx_conf_t *cf, void *parent,
     shm_zone_cc_thin->init = ngx_etomc2_init_shm_zone_cc_thin;
     conf->shm_zone_cc_thin = shm_zone_cc_thin;
     ngx_conf_merge_ptr_value(conf->shm_zone_cc_thin, prev->shm_zone_cc_thin,
-            NULL);
+                             NULL);
 
     /** -------- user  behavior cc attack ------ */
     if (ngx_http_cc_shm_size == 0) {
@@ -272,7 +290,7 @@ static char *ngx_http_etomc2_merge_loc_conf(ngx_conf_t *cf, void *parent,
     shm_cc_ub_name->len = sizeof("shared_memory_cc_ub") - 1;
     shm_cc_ub_name->data = (unsigned char *)"shared_memory_cc_ub";
     shm_zone_cc_ub = ngx_shared_memory_add(
-            cf, shm_cc_ub_name, ngx_http_cc_shm_size, &ngx_http_etomc2_cc_module);
+        cf, shm_cc_ub_name, ngx_http_cc_shm_size, &ngx_http_etomc2_cc_module);
 
     if (shm_zone_cc_ub == NULL) {
         return NGX_CONF_ERROR;
@@ -288,8 +306,8 @@ static char *ngx_http_etomc2_merge_loc_conf(ngx_conf_t *cf, void *parent,
     shm_ub_queue_name->len = sizeof("shared_memory_ub_queue") - 1;
     shm_ub_queue_name->data = (unsigned char *)"shared_memory_ub_queue";
     shm_zone_ub_queue = ngx_shared_memory_add(cf, shm_ub_queue_name,
-            abs(ngx_http_cc_shm_size / 4),
-            &ngx_http_etomc2_cc_module);
+                                              abs(ngx_http_cc_shm_size / 4),
+                                              &ngx_http_etomc2_cc_module);
 
     if (shm_zone_ub_queue == NULL) {
         return NGX_CONF_ERROR;
@@ -298,7 +316,7 @@ static char *ngx_http_etomc2_merge_loc_conf(ngx_conf_t *cf, void *parent,
     shm_zone_ub_queue->init = ngx_etomc2_init_shm_zone_ub_queue;
     conf->shm_zone_ub_queue = shm_zone_ub_queue;
     ngx_conf_merge_ptr_value(conf->shm_zone_ub_queue, prev->shm_zone_ub_queue,
-            NULL);
+                             NULL);
 
     /** ---------- queue ----------- */
     shm_lreq_queue_name = ngx_palloc(cf->pool, sizeof *shm_lreq_queue_name);
@@ -306,7 +324,7 @@ static char *ngx_http_etomc2_merge_loc_conf(ngx_conf_t *cf, void *parent,
     shm_lreq_queue_name->data = (unsigned char *)"shared_memory_lreq_queue";
     shm_zone_lreq_queue =
         ngx_shared_memory_add(cf, shm_lreq_queue_name, SHM_SIZE_MAX_COMMON,
-                &ngx_http_etomc2_cc_module);
+                              &ngx_http_etomc2_cc_module);
 
     if (shm_zone_lreq_queue == NULL) {
         return NGX_CONF_ERROR;
@@ -315,14 +333,14 @@ static char *ngx_http_etomc2_merge_loc_conf(ngx_conf_t *cf, void *parent,
     shm_zone_lreq_queue->init = ngx_etomc2_init_shm_zone_lreq_queue;
     conf->shm_zone_lreq_queue = shm_zone_lreq_queue;
     ngx_conf_merge_ptr_value(conf->shm_zone_lreq_queue,
-            prev->shm_zone_lreq_queue, NULL);
+                             prev->shm_zone_lreq_queue, NULL);
 
     /** -------- gt global toggle  ----------------*/
     shm_gt_name = ngx_palloc(cf->pool, sizeof *shm_gt_name);
     shm_gt_name->len = sizeof("shared_memory_gt") - 1;
     shm_gt_name->data = (unsigned char *)"shared_memory_gt";
     shm_zone_cc_gt = ngx_shared_memory_add(
-            cf, shm_gt_name, SHM_SIZE_DEFAULT_COMMON, &ngx_http_etomc2_cc_module);
+        cf, shm_gt_name, SHM_SIZE_DEFAULT_COMMON, &ngx_http_etomc2_cc_module);
 
     if (shm_zone_cc_gt == NULL) {
         return NGX_CONF_ERROR;
@@ -337,7 +355,7 @@ static char *ngx_http_etomc2_merge_loc_conf(ngx_conf_t *cf, void *parent,
     shm_flow_name->len = sizeof("shared_memory_flow") - 1;
     shm_flow_name->data = (unsigned char *)"shared_memory_flow";
     shm_zone_cc_flow = ngx_shared_memory_add(
-            cf, shm_flow_name, SHM_SIZE_DEFAULT_COMMON, &ngx_http_etomc2_cc_module);
+        cf, shm_flow_name, SHM_SIZE_DEFAULT_COMMON, &ngx_http_etomc2_cc_module);
 
     if (shm_zone_cc_flow == NULL) {
         return NGX_CONF_ERROR;
@@ -346,7 +364,7 @@ static char *ngx_http_etomc2_merge_loc_conf(ngx_conf_t *cf, void *parent,
     shm_zone_cc_flow->init = ngx_etomc2_init_shm_zone_cc_flow;
     conf->shm_zone_cc_flow = shm_zone_cc_flow;
     ngx_conf_merge_ptr_value(conf->shm_zone_cc_flow, prev->shm_zone_cc_flow,
-            NULL);
+                             NULL);
 
     return NGX_CONF_OK;
 } /* -----  end of function ngx_http_etomc2_merge_loc_conf  ----- */
@@ -360,6 +378,8 @@ static char *ngx_http_etomc2_merge_loc_conf(ngx_conf_t *cf, void *parent,
 static ngx_int_t ngx_http_etomc2_access_handler(ngx_http_request_t *r) {
     ngx_http_etomc2_loc_conf_t *lccf;
     ngx_int_t rc;
+    ngx_http_cluster_ctx_t *ctx;
+
     lccf = ngx_http_get_module_loc_conf(r, ngx_http_etomc2_cc_module);
     if (!lccf) {
         NX_LOG("ngx_http_etomc2_access_handler lccf error");
@@ -367,6 +387,34 @@ static ngx_int_t ngx_http_etomc2_access_handler(ngx_http_request_t *r) {
     }
     if (lccf->etomc2_cc_enable == 0) {
         return NGX_DECLINED;
+    }
+
+    if (lccf->ngx_cluster_branch != NULL) {
+        if (r != r->main) {
+            return NGX_DECLINED;
+        }
+        ctx = ngx_http_get_module_ctx(r, ngx_http_etomc2_cc_module);
+
+        if (ctx) {
+            return ctx->status;
+        }
+
+        ctx = ngx_pcalloc(r->pool, sizeof(ngx_http_cluster_ctx_t));
+        if (ctx == NULL) {
+            return NGX_ERROR;
+        }
+
+        ctx->status = NGX_DONE;
+
+        ngx_http_set_ctx(r, ctx, ngx_http_etomc2_cc_module);
+
+        rc =
+            ngx_http_read_client_request_body(r, ngx_http_cluster_body_handler);
+        if (rc >= NGX_HTTP_SPECIAL_RESPONSE) {
+            return rc;
+        }
+        ngx_http_finalize_request(r, NGX_DONE);
+        return NGX_DONE;
     }
 
     initialize_uuid();
@@ -420,7 +468,7 @@ ngx_int_t ngx_http_etomc2_header_filter(ngx_http_request_t *r) {
         NX_LOG("ngx_cc_rbtree_hash_key is null");
         return ngx_http_next_header_filter(r);
     }
-   
+
     /**
      *  M_GREEN
      */
@@ -462,7 +510,7 @@ ngx_int_t ngx_http_etomc2_header_filter(ngx_http_request_t *r) {
                 ngx_atoi((u_char *)lccf->cc_trust_status.data + m, 3);
 
             NX_DEBUG("cc_trust_status:%d status:%d", status,
-                    r->headers_out.status);
+                     r->headers_out.status);
             if (r->headers_out.status == status) {
                 bad_status = 1;
                 break;
@@ -503,7 +551,7 @@ ngx_int_t ngx_http_etomc2_body_filter(ngx_http_request_t *r, ngx_chain_t *in) {
  * =====================================================================================
  */
 static char *ngx_http_cc_set_shm_size(ngx_conf_t *cf, ngx_command_t *cmd,
-        void *conf) {
+                                      void *conf) {
     off_t new_shm_size;
     ngx_str_t *value;
 
@@ -512,7 +560,7 @@ static char *ngx_http_cc_set_shm_size(ngx_conf_t *cf, ngx_command_t *cmd,
     new_shm_size = ngx_parse_offset(&value[1]);
     if (new_shm_size == NGX_ERROR) {
         ngx_conf_log_error(NGX_LOG_EMERG, cf, 0,
-                "Invalid memory area size `%V'", &value[1]);
+                           "Invalid memory area size `%V'", &value[1]);
         return NGX_CONF_ERROR;
     }
 
@@ -520,16 +568,16 @@ static char *ngx_http_cc_set_shm_size(ngx_conf_t *cf, ngx_command_t *cmd,
 
     if (new_shm_size < 8 * (ssize_t)ngx_pagesize) {
         ngx_conf_log_error(NGX_LOG_WARN, cf, 0,
-                "The cc_shm_size value must be at least %udKiB",
-                (8 * ngx_pagesize) >> 10);
+                           "The cc_shm_size value must be at least %udKiB",
+                           (8 * ngx_pagesize) >> 10);
         new_shm_size = 8 * ngx_pagesize;
     }
 
     if (ngx_http_cc_shm_size &&
-            ngx_http_cc_shm_size != (ngx_uint_t)new_shm_size) {
+        ngx_http_cc_shm_size != (ngx_uint_t)new_shm_size) {
         ngx_conf_log_error(
-                NGX_LOG_WARN, cf, 0,
-                "Cannot change memory area size without restart, ignoring change");
+            NGX_LOG_WARN, cf, 0,
+            "Cannot change memory area size without restart, ignoring change");
     } else {
         ngx_http_cc_shm_size = new_shm_size;
     }
@@ -542,32 +590,30 @@ static char *ngx_http_cc_set_shm_size(ngx_conf_t *cf, ngx_command_t *cmd,
 
 } /* -----  end of function ngx_http_cc_set_shm_size  ----- */
 
-
-
 /*
  * ===  FUNCTION
  * ====================================================================== Name:
- * ngx_http_etomc2_ctrl Description:
+ * ngx_http_etomc2_web_api Description:
  * =====================================================================================
  */
-static char *ngx_http_etomc2_ctrl(ngx_conf_t *cf, ngx_command_t *cmd,
-        void *conf) {
+static char *ngx_http_etomc2_web_api(ngx_conf_t *cf, ngx_command_t *cmd,
+                                     void *conf) {
     ngx_http_core_loc_conf_t *clcf; /* pointer to core location configuration */
 
     /* Install the hello world handler. */
     clcf = ngx_http_conf_get_module_loc_conf(cf, ngx_http_core_module);
-    clcf->handler = ngx_http_etomc2_ctrl_handler;
+    clcf->handler = ngx_http_etomc2_web_api_handler;
 
     return NGX_CONF_OK;
 
-} /* -----  end of function ngx_http_etomc2_ctrl  ----- */
+} /* -----  end of function ngx_http_etomc2_web_api  ----- */
 /*
  * ===  FUNCTION
  * ====================================================================== Name:
- * ngx_http_etomc2_ctrl_handler Description:
+ * ngx_http_etomc2_web_api_handler Description:
  * =====================================================================================
  */
-static ngx_int_t ngx_http_etomc2_ctrl_handler(ngx_http_request_t *r) {
+static ngx_int_t ngx_http_etomc2_web_api_handler(ngx_http_request_t *r) {
     ngx_buf_t *b;
     ngx_chain_t out;
     size_t html_json = 0;  // 0:html, 1:json
@@ -576,7 +622,8 @@ static ngx_int_t ngx_http_etomc2_ctrl_handler(ngx_http_request_t *r) {
     ngx_str_t uri = get_uri(r);
     ngx_http_etomc2_loc_conf_t *lccf;
     lccf = ngx_http_get_module_loc_conf(r, ngx_http_etomc2_cc_module);
-
+    /* The empty string. */
+    static u_char ngx_web_cluster[] = " ";
     /** NX_DEBUG("uri:%s", uri.data); */
     /* Allocate a new buffer for sending out the reply. */
     b = ngx_pcalloc(r->pool, sizeof(ngx_buf_t));
@@ -585,7 +632,24 @@ static ngx_int_t ngx_http_etomc2_ctrl_handler(ngx_http_request_t *r) {
     out.buf = b;
     out.next = NULL; /* just one buffer */
     resData = NULL;
+    if (lccf->ngx_cluster_branch != NULL) {
+        b->pos = ngx_web_cluster; /* first position in memory of the data */
+        b->last = ngx_web_cluster + sizeof(ngx_web_cluster) -
+                  1;     /* last position in memory of the data */
+        b->memory = 1;   /* content is in read-only memory */
+        b->last_buf = 1; /* there will be no more buffers in the request */
 
+        /* Sending the headers for the reply. */
+        r->headers_out.status = NGX_HTTP_OK; /* 200 status code */
+        r->chunked = 1;
+        /* Get the content length of the body. */
+        /** r->headers_out.content_length_n = sizeof(ngx_web_cluster) - 1; */
+        ngx_http_send_header(r); /* Send the headers */
+
+        /* Send the body, and return the status code of the output filter chain.
+         */
+        return ngx_http_output_filter(r, &out);
+    }
     if (ngx_strcmp(uri.data, "/") == 0) {
         html_json = 0;
         resData = ngx_pcalloc(r->pool, sizeof(ngx_str_t));
@@ -621,7 +685,7 @@ static ngx_int_t ngx_http_etomc2_ctrl_handler(ngx_http_request_t *r) {
 
     b->pos = resData->data; /* first position in memory of the data */
     b->last = resData->data + resData->len -
-        1;     /* last position in memory of the data */
+              1;     /* last position in memory of the data */
     b->memory = 1;   /* content is in read-only memory */
     b->last_buf = 1; /* there will be no more buffers in the request */
 
@@ -641,9 +705,7 @@ static ngx_int_t ngx_http_etomc2_ctrl_handler(ngx_http_request_t *r) {
 
     /* Send the body, and return the status code of the output filter chain. */
     return ngx_http_output_filter(r, &out);
-} /* -----  end of function ngx_http_etomc2_ctrl_handler  ----- */
-
-
+} /* -----  end of function ngx_http_etomc2_web_api_handler  ----- */
 
 /*
  * ===  FUNCTION
@@ -652,7 +714,7 @@ static ngx_int_t ngx_http_etomc2_ctrl_handler(ngx_http_request_t *r) {
  * =====================================================================================
  */
 static ngx_int_t ngx_etomc2_init_shm_zone_cc_thin(ngx_shm_zone_t *shm_zone,
-        void *data) {
+                                                  void *data) {
     ngx_slab_pool_t *shpool;
     Ngx_visit_cc_attack *shm_etomc2;
     if (data) {
@@ -687,7 +749,7 @@ static ngx_int_t ngx_etomc2_init_shm_zone_cc_thin(ngx_shm_zone_t *shm_zone,
  * =====================================================================================
  */
 static ngx_int_t ngx_etomc2_init_shm_zone_cc_ub(ngx_shm_zone_t *shm_zone,
-        void *data) {
+                                                void *data) {
     ngx_slab_pool_t *shpool;
     Ngx_etomc2_cc_user_behavior *shm_etomc2;
 
@@ -708,7 +770,7 @@ static ngx_int_t ngx_etomc2_init_shm_zone_cc_ub(ngx_shm_zone_t *shm_zone,
 
     shm_zone->data = shm_etomc2;
     ngx_rbtree_init(&shm_etomc2->rbtree, &shm_etomc2->sentinel,
-            ngx_cc_rbtree_insert_value);
+                    ngx_cc_rbtree_insert_value);
     ngx_shmtx_unlock(&shpool->mutex);
 
     return NGX_OK;
@@ -720,7 +782,7 @@ static ngx_int_t ngx_etomc2_init_shm_zone_cc_ub(ngx_shm_zone_t *shm_zone,
  * =====================================================================================
  */
 static ngx_int_t ngx_etomc2_init_shm_zone_ub_queue(ngx_shm_zone_t *shm_zone,
-        void *data) {
+                                                   void *data) {
     ngx_slab_pool_t *shpool;
     Ngx_ub_queue_ptr *shm_etomc2;
 
@@ -756,7 +818,7 @@ static ngx_int_t ngx_etomc2_init_shm_zone_ub_queue(ngx_shm_zone_t *shm_zone,
  * =====================================================================================
  */
 static ngx_int_t ngx_etomc2_init_shm_zone_lreq_queue(ngx_shm_zone_t *shm_zone,
-        void *data) {
+                                                     void *data) {
     ngx_slab_pool_t *shpool;
     Ngx_etomc2_lreq_queue *shm_etomc2;
     if (data) {
@@ -773,7 +835,7 @@ static ngx_int_t ngx_etomc2_init_shm_zone_lreq_queue(ngx_shm_zone_t *shm_zone,
         return NGX_ERROR;
     }
     memset(shm_etomc2->lreq, 0,
-            (size_t)LREQ_QUEUE_MAX * sizeof(Ngx_etomc2_lreq_uri));
+           (size_t)LREQ_QUEUE_MAX * sizeof(Ngx_etomc2_lreq_uri));
 
     shm_etomc2->next = NULL;
 
@@ -791,7 +853,7 @@ static ngx_int_t ngx_etomc2_init_shm_zone_lreq_queue(ngx_shm_zone_t *shm_zone,
  * =====================================================================================
  */
 static ngx_int_t ngx_etomc2_init_shm_zone_cc_gt(ngx_shm_zone_t *shm_zone,
-        void *data) {
+                                                void *data) {
     ngx_slab_pool_t *shpool;
     Ngx_etomc2_shm_gt *shm_etomc2;
     if (data) {
@@ -826,7 +888,7 @@ static ngx_int_t ngx_etomc2_init_shm_zone_cc_gt(ngx_shm_zone_t *shm_zone,
  * =====================================================================================
  */
 static ngx_int_t ngx_etomc2_init_shm_zone_cc_flow(ngx_shm_zone_t *shm_zone,
-        void *data) {
+                                                  void *data) {
     ngx_slab_pool_t *shpool;
     Ngx_etomc2_cc_flow *shm_etomc2;
     if (data) {
@@ -853,7 +915,6 @@ static ngx_int_t ngx_etomc2_init_shm_zone_cc_flow(ngx_shm_zone_t *shm_zone,
     return NGX_OK;
 } /* -----  end of function ngx_etomc2_init_shm_zone_cc_flow  ----- */
 
-
 /*
  * ===  FUNCTION
  * ======================================================================
@@ -862,8 +923,8 @@ static ngx_int_t ngx_etomc2_init_shm_zone_cc_flow(ngx_shm_zone_t *shm_zone,
  * =====================================================================================
  */
 static void ngx_cc_rbtree_insert_value(ngx_rbtree_node_t *temp,
-        ngx_rbtree_node_t *node,
-        ngx_rbtree_node_t *sentinel) {
+                                       ngx_rbtree_node_t *node,
+                                       ngx_rbtree_node_t *sentinel) {
     ngx_rbtree_node_t **p;
     Ngx_etomc2_cc_user_behavior *lrn, *lrnt;
     ngx_int_t cmp = -1;
@@ -885,7 +946,7 @@ static void ngx_cc_rbtree_insert_value(ngx_rbtree_node_t *temp,
 
             /*   lrn->hash_str.len == lrnt->hash_str.len  */
             cmp = ngx_memn2cmp(lrn->hash_str.data, lrnt->hash_str.data,
-                    lrn->hash_str.len, lrnt->hash_str.len);
+                               lrn->hash_str.len, lrnt->hash_str.len);
             /* only key */
             /** if(cmp == 0)break; */
 
@@ -905,3 +966,99 @@ static void ngx_cc_rbtree_insert_value(ngx_rbtree_node_t *temp,
     ngx_rbt_red(node);
 
 } /* -----  end of function ngx_cc_rbtree_insert_value  ----- */
+
+/*
+ * ===  FUNCTION
+ * ====================================================================== Name:
+ * ngx_http_cluster_body_handler Description:
+ * =====================================================================================
+ */
+static void ngx_http_cluster_body_handler(ngx_http_request_t *r) {
+    ngx_http_cluster_ctx_t *ctx;
+
+    ctx = ngx_http_get_module_ctx(r, ngx_http_etomc2_cc_module);
+
+    ctx->status = ngx_http_cluster_handler_internal(r);
+
+    r->preserve_body = 1;
+    ngx_http_clear_content_length(r);
+    ngx_http_clear_accept_ranges(r);
+    ngx_http_weak_etag(r);
+
+    r->write_event_handler = ngx_http_core_run_phases;
+    ngx_http_core_run_phases(r);
+
+} /* -----  end of function ngx_http_cluster_body_handler  ----- */
+/*
+ * ===  FUNCTION
+ * ====================================================================== Name:
+ * ngx_http_cluster_handler_internal Description:
+ * =====================================================================================
+ */
+static ngx_int_t ngx_http_cluster_handler_internal(ngx_http_request_t *r) {
+    ngx_str_t *name;
+    ngx_uint_t i;
+    ngx_http_request_t *sr;
+    ngx_http_etomc2_loc_conf_t *mlcf;
+
+    mlcf = ngx_http_get_module_loc_conf(r, ngx_http_etomc2_cc_module);
+
+    name = mlcf->ngx_cluster_branch->elts;
+
+    for (i = 0; i < mlcf->ngx_cluster_branch->nelts; i++) {
+        if (ngx_http_subrequest(r, &name[i], &r->args, &sr, NULL, 0) !=
+            NGX_OK) {
+            return NGX_HTTP_INTERNAL_SERVER_ERROR;
+        }
+
+        sr->method = r->method;
+        sr->method_name = r->method_name;
+        sr->header_in = sr->header_in;
+    }
+
+    return NGX_DECLINED;
+
+} /* -----  end of function ngx_http_cluster_handler_internal  ----- */
+
+/*
+ * ===  FUNCTION
+ * ====================================================================== Name:
+ * ngx_http_branch Description:
+ * =====================================================================================
+ */
+static char *ngx_http_branch(ngx_conf_t *cf, ngx_command_t *cmd, void *conf) {
+    ngx_http_etomc2_loc_conf_t *mlcf = conf;
+    ngx_str_t *value, *s;
+
+    value = cf->args->elts;
+
+    if (ngx_strcmp(value[1].data, "off") == 0) {
+        if (mlcf->ngx_cluster_branch != NGX_CONF_UNSET_PTR) {
+            return "is duplicate";
+        }
+
+        mlcf->ngx_cluster_branch = NULL;
+        return NGX_CONF_OK;
+    }
+
+    if (mlcf->ngx_cluster_branch == NULL) {
+        return "is duplicate";
+    }
+
+    if (mlcf->ngx_cluster_branch == NGX_CONF_UNSET_PTR) {
+        mlcf->ngx_cluster_branch =
+            ngx_array_create(cf->pool, 4, sizeof(ngx_str_t));
+        if (mlcf->ngx_cluster_branch == NULL) {
+            return NGX_CONF_ERROR;
+        }
+    }
+
+    s = ngx_array_push(mlcf->ngx_cluster_branch);
+    if (s == NULL) {
+        return NGX_CONF_ERROR;
+    }
+
+    *s = value[1];
+
+    return NGX_CONF_OK;
+} /* -----  end of function ngx_http_branch  ----- */
