@@ -543,7 +543,7 @@ ngx_str_t *flow_get(ngx_http_request_t *r, ngx_str_t *domain) {
     const char *fmt_1 = "%d";
     const char *fmt_2 = "%.*s,%d";
 
-    const char *fmt = "{\"flow\":[%.*s],\"date\":[%.*s]}";
+    const char *fmt = "{\"flow\":[%.*s],\"date\":[%.*s]},";
 
     lccf = ngx_http_get_module_loc_conf(r, ngx_http_etomc2_cc_module);
     if (!lccf) {

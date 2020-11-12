@@ -389,6 +389,9 @@ static ngx_int_t ngx_http_etomc2_access_handler(ngx_http_request_t *r) {
         return NGX_DECLINED;
     }
 
+    /**
+     *  cluster  branch ,the it's  a main  server
+     */
     if (lccf->ngx_cluster_branch != NULL) {
         if (r != r->main) {
             return NGX_DECLINED;
@@ -617,7 +620,7 @@ static ngx_int_t ngx_http_etomc2_web_api_handler(ngx_http_request_t *r) {
     ngx_buf_t *b;
     ngx_chain_t out;
     size_t html_json = 0;  // 0:html, 1:json
-    u_char ngx_hello_world[] = "{\"status\":-1}";
+    u_char ngx_status_default[] = "{\"status\":-1},";
     ngx_str_t *resData;
     ngx_str_t uri = get_uri(r);
     ngx_http_etomc2_loc_conf_t *lccf;
@@ -653,15 +656,15 @@ static ngx_int_t ngx_http_etomc2_web_api_handler(ngx_http_request_t *r) {
     if (ngx_strcmp(uri.data, "/") == 0) {
         html_json = 0;
         resData = ngx_pcalloc(r->pool, sizeof(ngx_str_t));
-        resData->len = strlen((char *)ngx_hello_world) + 1;
+        resData->len = strlen((char *)ngx_status_default) + 1;
         resData->data = ngx_pcalloc(r->pool, resData->len);
-        snprintf((char *)resData->data, resData->len, "%s", ngx_hello_world);
+        snprintf((char *)resData->data, resData->len, "%s", ngx_status_default);
     } else if (ngx_strcmp(uri.data, "/login") == 0) {
         html_json = 1;
         resData = ngx_pcalloc(r->pool, sizeof(ngx_str_t));
-        resData->len = strlen((char *)ngx_hello_world) + 1;
+        resData->len = strlen((char *)ngx_status_default) + 1;
         resData->data = ngx_pcalloc(r->pool, resData->len);
-        snprintf((char *)resData->data, resData->len, "%s", ngx_hello_world);
+        snprintf((char *)resData->data, resData->len, "%s", ngx_status_default);
     } else if (ngx_strcmp(uri.data, "/domain_list") == 0) {
         html_json = 1;
         resData = web_route_domain_list(r, lccf);
@@ -677,9 +680,9 @@ static ngx_int_t ngx_http_etomc2_web_api_handler(ngx_http_request_t *r) {
     }
     if (resData == NULL) {
         resData = ngx_pcalloc(r->pool, sizeof(ngx_str_t));
-        resData->len = strlen((char *)ngx_hello_world) + 1;
+        resData->len = strlen((char *)ngx_status_default) + 1;
         resData->data = ngx_pcalloc(r->pool, resData->len);
-        snprintf((char *)resData->data, resData->len, "%s", ngx_hello_world);
+        snprintf((char *)resData->data, resData->len, "%s", ngx_status_default);
         /** NX_DEBUG("else"); */
     }
 

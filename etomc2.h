@@ -98,7 +98,7 @@
 /**
  *  ngx config  run time  cluster
  */
-#define NGX_CLUSTER_BRANCH "ngx_cluster_branch"
+#define NGX_CLUSTER_BRANCH "et2_cluster_branch"
 
 // #define CC_PATH "et2_root_path"
 

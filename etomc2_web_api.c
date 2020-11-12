@@ -37,7 +37,7 @@ ngx_str_t *web_route_main_conf(ngx_http_request_t *r,
     const char *fmt_2 =
         "%.*s,{\"shm_name\":\"%.*s\",\"total\":%d,\"free\":%d,\"size\":%d}";
     const char *shm_fmt = "[%.*s]";
-    const char *fmt = "{\"shm\":%.*s,\"enable\":%d}";
+    const char *fmt = "{\"shm\":%.*s,\"enable\":%d},";
 
     part = &ngx_cycle->shared_memory.part;
     shm_zone = part->elts;
@@ -121,7 +121,7 @@ ngx_str_t *web_route_domain_list(ngx_http_request_t *r,
         "{\"domain\":\"%.*s\",\"status\":%d,\"gt\":%d,\"itemize\":%d}";
     const char *fmt_2 =
         "%.*s,{\"domain\":\"%.*s\",\"status\":%d,\"gt\":%d,\"itemize\":%d}";
-    const char *fmt = "[%.*s]";
+    const char *fmt = "[%.*s],";
 
     cmcf = ngx_http_get_module_main_conf(r, ngx_http_core_module);
     res = ngx_pcalloc(r->pool, sizeof(ngx_str_t));
