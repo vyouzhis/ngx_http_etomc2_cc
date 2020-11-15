@@ -181,7 +181,8 @@ ngx_str_t *web_route_update_conf(ngx_http_request_t *r,
     ngx_http_etomc2_loc_conf_t *loc_conf;
     ngx_http_conf_ctx_t *ctx;
     ngx_uint_t s;
-
+    ngx_str_t *res;
+    const char ok[]="{\"status\":0}";
     ngx_table_elt_t *dhv, *ihv, *ghv, *rhv;
     const char *domain = "domain", *itemize = "itemize", *glevel = "glevel",
           *rstatus = "rstatus";
@@ -235,7 +236,13 @@ ngx_str_t *web_route_update_conf(ngx_http_request_t *r,
             break;
         }
     }
-    return NULL;
+    res = ngx_pcalloc(r->pool,sizeof(ngx_str_t));
+    if(res==NULL) return NULL;
+    res->len = strlen(ok);
+    res->len += 1;
+    res->data = ngx_pcalloc(r->pool,res->len);
+    snprintf((char*)res->data,res->len,"%s",ok);
+    return res;
 } /* -----  end of function web_route_update_conf  ----- */
 /*
  * ===  FUNCTION

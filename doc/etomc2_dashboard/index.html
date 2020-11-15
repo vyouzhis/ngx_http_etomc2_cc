@@ -188,41 +188,52 @@
 			<script>
 				var select_domain = "";
 				var domain_info;
-				var ng_url = "http://192.168.2.127:1234";
+				var ng_url = "http://localhost:1234";
 
 				function get_list() {
-					$.get(ng_url + "/domain_list", function(data) {
-						domain_info = data;
-						var hil = "";
-						for (i = 0; i < data.length; i++) {
 
-							hil += "<li><a href=\"javascript:void(0)\" onclick='getDomainInfo(\"" + data[i].domain + "\");'>" + data[i].domain + "</a></li>";
+					$.ajax({
+						url: ng_url + "/domain_list",
+						complete: function(e) {
+							if (e.status == 200) {
+
+								var data = e.responseText;
+								var strdata = "[" + data + "[]]";
+								domain_info = JSON.parse(strdata);
+								var hil = "";
+								//console.log(domain_info);
+								var listdata = domain_info[0];
+
+								for (i = 0; i < listdata.length; i++) {
+									hil += "<li><a href=\" javascript:void(0)\" onclick='getDomainInfo(\"" + listdata[i].domain + "\");'>" + listdata[i].domain + "</a></li>";
+								}
+
+								$("#dlist").html(hil);
+								if (select_domain == "") {
+									getDomainInfo(listdata[0].domain);
+								} else {
+									getDomainInfo(select_domain);
+								}
+							}
 						}
-
-						$("#dlist").html(hil);
-						if (select_domain == "") {
-							getDomainInfo(domain_info[0].domain);
-						} else {
-							getDomainInfo(select_domain);
-						}
-
 					});
 				}
 				get_list();
 
 
 				function getDomainInfo(d) {
-					for (i = 0; i < domain_info.length; i++) {
+					var listdata = domain_info[0];
+					for (i = 0; i < listdata.length; i++) {
 
-						if (domain_info[i].domain == d) {
+						if (listdata[i].domain == d) {
 
-							$("#return_status").val(domain_info[i].status);
-							if (domain_info[i].itemize == 1) {
+							$("#return_status").val(listdata[i].status);
+							if (listdata[i].itemize == 1) {
 								$("#itemize").attr("checked", "checked");
 							} else {
 								$("#itemize").attr("checked", "");
 							}
-							$("#gt_level").find("option[value='" + domain_info[i].gt + "']").attr("selected", true);
+							$("#gt_level").find("option[value='" + listdata[i].gt + "']").attr("selected", true);
 							$("#dname").html(d);
 							select_domain = d;
 							chars();
@@ -262,38 +273,50 @@
 
 				}
 
-				$.get(ng_url + "/main_conf", function(data) {
-					if (data.enable == 1) {
-						$("#ccenable").attr("checked", "checked");
-					} else {
-						$("#ccenable").attr("checked", "");
+
+				$.ajax({
+					url: ng_url + "/main_conf",
+					complete: function(e) {
+						if (e.status == 200) {
+							var data = e.responseText;
+
+							var strdata = "[" + data + "[]]";
+							var listdata = JSON.parse(strdata);
+
+							var hdata = listdata[0];
+
+							if (hdata.enable == 1) {
+								$("#ccenable").attr("checked", "checked");
+							} else {
+								$("#ccenable").attr("checked", "");
+							}
+							var shm = hdata.shm;
+							var html = "";
+							for (var m = 0; m < shm.length; m++) {
+								if ("shared_memory_cc_ub" != shm[m].shm_name) continue;
+								html +=
+
+									shm[m].shm_name + ":<ul><li>total(KB):" + shm[m].total + "</li> <li>free(KB):" + shm[m].free + "</li>	<li>size(KB):" + shm[m].size + "</li></ul>";
+
+							}
+
+							$("#shm_list").html(html);
+						}
 					}
-					var shm = data.shm;
-					var html = "";
-					for (var m = 0; m < shm.length; m++) {
-						if ("shared_memory_cc_ub" != shm[m].shm_name) continue;
-						html +=
-
-							shm[m].shm_name + ":<ul><li>total(KB):" + shm[m].total + "</li> <li>free(KB):" + shm[m].free + "</li>	<li>size(KB):" + shm[m].size + "</li></ul>";
-
-					}
-
-					$("#shm_list").html(html);
 				});
 
 
 				var ctx = document.getElementById('myChart').getContext('2d');
+
+
 				var mchart = new Chart(ctx, {
 					// The type of chart we want to create
 					type: 'line',
 					data: {
-
 						datasets: [{
-
 							backgroundColor: 'rgb(255, 99, 132)',
 							borderColor: 'rgb(255, 99, 132)',
 							fill: false,
-
 						}]
 					},
 
@@ -301,6 +324,17 @@
 
 					}
 				});
+
+				function sum(arr) {
+					var len = arr.length;
+					if (len == 0) {
+						return 0;
+					} else if (len == 1) {
+						return arr[0];
+					} else {
+						return arr[0] + sum(arr.slice(1));
+					}
+				}
 
 				function chars() {
 
@@ -315,66 +349,84 @@
 
 					$.ajax(settings).complete(function(e) {
 						if (e.status == 200) {
-							var data = JSON.parse(e.responseText);
-							
-							if (!data.hasOwnProperty("flow")) {
-								mchart.data = {
-									labels: [],
-									datasets: [{
-										label: select_domain,
-										backgroundColor: 'rgb(255, 99, 132)',
-										borderColor: 'rgb(255, 99, 132)',
-										fill: false,
-										data: []
-									}]
+							var strdata = "[" + e.responseText + "[]]";
+							var listdata = JSON.parse(strdata);
+							//console.log(listdata)
+							var datasets_arr = [];
+							window.chartColors = {
+								red: 'rgb(255, 99, 132)',
+								orange: 'rgb(255, 159, 64)',
+								yellow: 'rgb(255, 205, 86)',
+								green: 'rgb(75, 192, 192)',
+								blue: 'rgb(54, 162, 235)',
+								purple: 'rgb(153, 102, 255)',
+								PeachPuff: 'rgb(	255 218 185)',
+								SpringGreen4:'rgb(0 139 69)',
+								LightSeaGreen: 'rgb(32 178 170)'
+							};
+							for (var i = 0; i < listdata.length; i++) {
+								var data = listdata[i];
+								if (!data.hasOwnProperty("flow")) {
+
+									continue;
 								}
-								mchart.update();
-								return;
-							}
-							for (var m = 0; m < data.flow.length; m++) {
-								if (data.date[m] > 0) {
-									var time = new Date((data.date[m] + 8 * 3600) * 1000);
-									data.date[m] = time.toJSON().substr(11, 5).replace('T', ' ');
+								for (var m = 0; m < data.flow.length; m++) {
+									if (data.date[m] > 0) {
+										var time = new Date((data.date[m] + 8 * 3600) * 1000);
+										data.date[m] = time.toJSON().substr(11, 5).replace('T', ' ');
+									}
 								}
-							}
-							var now_date = new Date(new Date().getTime());
-							var index_split = now_date.getMinutes() + 1;
-							var array_len = data.date.length;
+								var now_date = new Date(new Date().getTime());
+								var index_split = now_date.getMinutes() + 1;
+								var array_len = data.date.length;
 
-							var lable_date = data.date.slice(index_split, array_len);
+								var lable_date = data.date.slice(index_split, array_len);
 
-							lable_date = lable_date.concat(data.date.slice(0, index_split));
+								lable_date = lable_date.concat(data.date.slice(0, index_split));
 
-							var data_flow = data.flow.slice(index_split, array_len);
-							data_flow = data_flow.concat(data.flow.slice(0, index_split));
+								var data_flow = data.flow.slice(index_split, array_len);
+								data_flow = data_flow.concat(data.flow.slice(0, index_split));
 
-							var index_date = new Date().getTime() / 1000;
+								var index_date = new Date().getTime() / 1000;
 
-							for (var m = 0; m < 60; m++) {
-								var t = (parseInt(index_date - m * 60)) * 1000;
+								for (var m = 0; m < 60; m++) {
+									var t = (parseInt(index_date - m * 60)) * 1000;
 
-								var t1 = new Date(t);
-								var t2 = t1.getMinutes();
-								if(t2<10) t2="0"+t2;
-								var right_date = t1.getHours() + ":" + t2
+									var t1 = new Date(t);
+									var t2 = t1.getMinutes();
+									if (t2 < 10) t2 = "0" + t2;
+									var right_date = t1.getHours() + ":" + t2
 
-								if (lable_date[59 - m] != right_date) {
-									lable_date[59 - m] = right_date;
-									data_flow[59 - m] = 0;
+									if (lable_date[59 - m] != right_date) {
+										lable_date[59 - m] = right_date;
+										data_flow[59 - m] = 0;
+									}
 								}
-							}
-
-							mchart.data = {
-								labels: lable_date,
-								datasets: [{
+								var colorNames = Object.keys(window.chartColors);
+								var rd = sum(data_flow);
+								var colorName = colorNames[rd % colorNames.length];
+								var newColor = window.chartColors[colorName];
+								//console.log(newColor)
+								var vd = {
 									label: select_domain,
-									backgroundColor: 'rgb(255, 99, 132)',
-									borderColor: 'rgb(255, 99, 132)',
+									backgroundColor: newColor,
+									borderColor: newColor,
 									fill: false,
 									data: data_flow
-								}]
+								}
+								datasets_arr.push(vd);
+
 							}
-							mchart.update();
+
+
+							if (datasets_arr.length > 0) {
+								mchart.data = {
+									labels: lable_date,
+									datasets: datasets_arr
+								}
+								mchart.update();
+							}
+
 
 						}
 

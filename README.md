@@ -58,6 +58,7 @@
 * [起始(Getting Started)](#起始getting-started)
   * [编译安装(Installation)](#编译安装installation)
 * [配置(Usage)](#配置usage)
+* [集群(Cluster)](#集群Cluster)
 * [WebAPI](#WebAPI)
 * [Web-Dashboard](#Web-Dashboard)
 * [调试(Review)](#调试Review)
@@ -118,6 +119,9 @@ gmake install
 
 <!-- USAGE EXAMPLES -->
 ## 配置(Usage)
+
+> cc action
+
 | 指令        | 区域           | 说明  |
 | ------------- |:-------------:| -----:|
 | ET2CCEnable      | http | 是否启用本防CC模块:on or off |
@@ -127,7 +131,36 @@ gmake install
 |et2_cc_return_status | server| 当成功拦截后，返回的状态码,默认为:444 |
 
 
-_参考配置 [nginx example conf](https://github.com/vyouzhis/ngx_http_etomc2_cc/tree/master/doc/example_nginx.conf)
+## 集群(Cluster)
+
+>cc cluster
+
+| 指令        | 区域           | 说明  |
+| ------------- |:-------------:| -----:|
+|et2_web_api | location | web api  |
+| et2_cluster_branch      | location | cluster baranch,setting in main server |
+
+
+>use nginx ngx_http_subrequest for cluster
+
+```
+                        user web api Control nodes
+
+                       +-------------------------+
+                       |    main nginx server    |
+                       +------------+------------+
+                                    |
+                +-------------------+-----------------+
+                |                   |                 |
+                |                   |                 |
+   +------------+-----+   +---------+---------+    +--+---------------+
+   |node1 nginx server|   | node2 nginx server|    |node3 nginx server|
+   +------------------+   +-------------------+    +------------------+
+
+
+```
+
+> 参考配置 [nginx example conf](https://github.com/vyouzhis/ngx_http_etomc2_cc/tree/master/doc/example_nginx.conf)
 
 
 ## WebAPI
